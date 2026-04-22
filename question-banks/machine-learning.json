@@ -1,0 +1,4346 @@
+[
+  {
+    "id": "ml_001",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is supervised learning?",
+    "options": [
+      "Learning from labeled data with known outputs",
+      "Learning without any data",
+      "Learning from data without labels",
+      "Learning through trial and error with rewards"
+    ],
+    "correctIndex": 0,
+    "explanation": "Supervised learning uses labeled training data where inputs are paired with known correct outputs. The model learns to map inputs to outputs."
+  },
+  {
+    "id": "ml_002",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "Which of the following is an example of a classification task?",
+    "options": [
+      "Predicting house prices",
+      "Predicting email as spam or not spam",
+      "Predicting stock market returns",
+      "Predicting temperature tomorrow"
+    ],
+    "correctIndex": 1,
+    "explanation": "Classification predicts discrete categories. Spam detection assigns emails to 'spam' or 'not spam' categories. The other options predict continuous values (regression)."
+  },
+  {
+    "id": "ml_003",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is a 'feature' in machine learning?",
+    "options": [
+      "The output that the model predicts",
+      "An input variable used to make predictions",
+      "The algorithm used for training",
+      "The accuracy of the model"
+    ],
+    "correctIndex": 1,
+    "explanation": "A feature is an individual measurable property or characteristic of the data used as input to a machine learning model."
+  },
+  {
+    "id": "ml_004",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "In unsupervised learning, the training data has no labels.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Unsupervised learning works with unlabeled data, finding hidden patterns or structures without predefined output categories."
+  },
+  {
+    "id": "ml_005",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is the purpose of splitting data into training and testing sets?",
+    "options": [
+      "To make the dataset smaller",
+      "To evaluate how well the model generalizes to unseen data",
+      "To speed up the training process",
+      "To remove outliers from the data"
+    ],
+    "correctIndex": 1,
+    "explanation": "The train/test split allows evaluation of how well a model performs on data it has never seen, providing an estimate of real-world performance."
+  },
+  {
+    "id": "ml_006",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is overfitting?",
+    "options": [
+      "The model is too simple to capture patterns",
+      "The model learns training data too well including noise and fails on new data",
+      "The model has too few features",
+      "The model trains too quickly"
+    ],
+    "correctIndex": 1,
+    "explanation": "Overfitting occurs when a model memorizes training data, including noise and outliers, resulting in poor generalization to new, unseen data."
+  },
+  {
+    "id": "ml_007",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "Linear regression is used for predicting continuous numerical values.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Linear regression models the relationship between features and a continuous target variable by fitting a linear equation."
+  },
+  {
+    "id": "ml_008",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "Which algorithm is commonly used for classification by finding the nearest data points?",
+    "options": [
+      "Linear Regression",
+      "K-Nearest Neighbors (KNN)",
+      "Principal Component Analysis",
+      "K-Means Clustering"
+    ],
+    "correctIndex": 1,
+    "explanation": "KNN classifies a new data point based on the majority class of its K nearest neighbors in the feature space."
+  },
+  {
+    "id": "ml_009",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What does 'accuracy' measure in a classification model?",
+    "options": [
+      "The speed of predictions",
+      "The percentage of correct predictions out of total predictions",
+      "The amount of data used for training",
+      "The number of features in the model"
+    ],
+    "correctIndex": 1,
+    "explanation": "Accuracy is the ratio of correctly predicted instances to total instances, expressed as a percentage."
+  },
+  {
+    "id": "ml_010",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "Logistic regression is used for regression tasks despite its name.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. Despite the name, logistic regression is used for classification tasks. It predicts the probability of belonging to a particular class."
+  },
+  {
+    "id": "ml_011",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is a decision tree?",
+    "options": [
+      "A neural network architecture",
+      "A model that makes decisions by splitting data based on feature thresholds",
+      "A clustering algorithm",
+      "A data visualization tool"
+    ],
+    "correctIndex": 1,
+    "explanation": "A decision tree is a flowchart-like model that splits data at each node based on feature values, leading to decision outcomes at the leaves."
+  },
+  {
+    "id": "ml_012",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is the 'label' in a supervised learning dataset?",
+    "options": [
+      "The name of the dataset",
+      "The input variables",
+      "The target variable the model is trying to predict",
+      "The name of the algorithm"
+    ],
+    "correctIndex": 2,
+    "explanation": "The label (or target) is the output variable that the model learns to predict from the input features in supervised learning."
+  },
+  {
+    "id": "ml_013",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.model_selection import train_test_split\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)",
+    "options": [
+      "Splits data into 80% training and 20% testing sets",
+      "Splits data into 20% training and 80% testing sets",
+      "Randomly shuffles the entire dataset",
+      "Removes 20% of the data as outliers"
+    ],
+    "correctIndex": 0,
+    "explanation": "train_test_split with test_size=0.2 allocates 80% of data for training and 20% for testing. random_state=42 ensures reproducibility."
+  },
+  {
+    "id": "ml_014",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is underfitting?",
+    "options": [
+      "The model performs well on both training and test data",
+      "The model is too complex",
+      "The model is too simple to capture the underlying patterns in the data",
+      "The model has too many features"
+    ],
+    "correctIndex": 2,
+    "explanation": "Underfitting occurs when a model is too simple to capture the underlying patterns, resulting in poor performance on both training and test data."
+  },
+  {
+    "id": "ml_015",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code output?",
+    "codeSnippet": "from sklearn.linear_model import LinearRegression\nmodel = LinearRegression()\nmodel.fit([[1], [2], [3]], [2, 4, 6])\nprint(model.predict([[4]]))",
+    "options": [
+      "[8.]",
+      "[6.]",
+      "[4.]",
+      "[10.]"
+    ],
+    "correctIndex": 0,
+    "explanation": "The model learns y = 2x from the data. For x=4, it predicts y=8. LinearRegression fits a linear relationship between inputs and outputs."
+  },
+  {
+    "id": "ml_016",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "Which of these is an unsupervised learning algorithm?",
+    "options": [
+      "Logistic Regression",
+      "Decision Tree Classifier",
+      "K-Means Clustering",
+      "Random Forest Classifier"
+    ],
+    "correctIndex": 2,
+    "explanation": "K-Means is an unsupervised algorithm that groups data into clusters without labeled outputs. The others require labeled data."
+  },
+  {
+    "id": "ml_017",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "A higher K value in KNN always leads to better accuracy.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. Too high a K value can lead to underfitting by oversmoothing decision boundaries. The optimal K depends on the dataset."
+  },
+  {
+    "id": "ml_018",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.preprocessing import StandardScaler\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)",
+    "options": [
+      "Normalizes features to range [0, 1]",
+      "Standardizes features to have mean=0 and standard deviation=1",
+      "Removes duplicate features",
+      "Converts categorical features to numeric"
+    ],
+    "correctIndex": 1,
+    "explanation": "StandardScaler transforms features by removing the mean and scaling to unit variance, resulting in features with mean=0 and std=1."
+  },
+  {
+    "id": "ml_019",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is the difference between regression and classification?",
+    "options": [
+      "Regression uses labels, classification does not",
+      "Regression predicts continuous values, classification predicts discrete categories",
+      "Classification is always more accurate",
+      "There is no difference"
+    ],
+    "correctIndex": 1,
+    "explanation": "Regression predicts continuous numerical values (e.g., price), while classification predicts discrete categories (e.g., spam/not spam)."
+  },
+  {
+    "id": "ml_020",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is a common ratio for train/test split?",
+    "options": [
+      "50/50",
+      "80/20",
+      "95/5",
+      "10/90"
+    ],
+    "correctIndex": 1,
+    "explanation": "A common split is 80% training and 20% testing. This provides enough data for training while maintaining a meaningful test set."
+  },
+  {
+    "id": "ml_021",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What metric does this code compute?",
+    "codeSnippet": "from sklearn.metrics import accuracy_score\ny_true = [1, 0, 1, 1, 0]\ny_pred = [1, 0, 0, 1, 0]\nprint(accuracy_score(y_true, y_pred))",
+    "options": [
+      "0.6",
+      "0.8",
+      "1.0",
+      "0.5"
+    ],
+    "correctIndex": 1,
+    "explanation": "4 out of 5 predictions are correct (indices 0,1,3,4 match), so accuracy = 4/5 = 0.8."
+  },
+  {
+    "id": "ml_022",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "Feature scaling is always necessary for all machine learning algorithms.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. Tree-based algorithms like Decision Trees and Random Forests are not affected by feature scaling. Distance-based algorithms like KNN and SVM benefit from it."
+  },
+  {
+    "id": "ml_023",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What type of machine learning does a spam filter typically use?",
+    "options": [
+      "Unsupervised learning",
+      "Supervised learning (classification)",
+      "Reinforcement learning",
+      "Semi-supervised learning"
+    ],
+    "correctIndex": 1,
+    "explanation": "Spam filters use supervised classification, trained on labeled emails (spam vs not spam) to classify new incoming emails."
+  },
+  {
+    "id": "ml_024",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code create?",
+    "codeSnippet": "from sklearn.tree import DecisionTreeClassifier\nclf = DecisionTreeClassifier(max_depth=3)\nclf.fit(X_train, y_train)\npredictions = clf.predict(X_test)",
+    "options": [
+      "A decision tree with unlimited depth",
+      "A decision tree limited to 3 levels of splits",
+      "A random forest with 3 trees",
+      "A neural network with 3 layers"
+    ],
+    "correctIndex": 1,
+    "explanation": "max_depth=3 limits the tree to 3 levels of decision splits, which helps prevent overfitting by constraining model complexity."
+  },
+  {
+    "id": "ml_025",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What does KNN stand for?",
+    "options": [
+      "K-Nearest Nodes",
+      "K-Nearest Neighbors",
+      "K-Normalized Networks",
+      "Kernel Nearest Neighbors"
+    ],
+    "correctIndex": 1,
+    "explanation": "KNN stands for K-Nearest Neighbors. It classifies data points based on the majority vote of their K closest neighbors."
+  },
+  {
+    "id": "ml_026",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are supervised learning algorithms? (Select all that apply)",
+    "options": [
+      "Linear Regression",
+      "K-Means Clustering",
+      "Logistic Regression",
+      "Principal Component Analysis"
+    ],
+    "correctIndices": [0, 2],
+    "explanation": "Linear Regression and Logistic Regression are supervised (require labeled data). K-Means and PCA are unsupervised algorithms."
+  },
+  {
+    "id": "ml_027",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following can cause overfitting? (Select all that apply)",
+    "options": [
+      "Too many features relative to samples",
+      "Training for too many epochs",
+      "Using a very simple model",
+      "Not using regularization"
+    ],
+    "correctIndices": [0, 1, 3],
+    "explanation": "Too many features, excessive training, and lack of regularization all contribute to overfitting. A very simple model causes underfitting instead."
+  },
+  {
+    "id": "ml_028",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.neighbors import KNeighborsClassifier\nknn = KNeighborsClassifier(n_neighbors=5)\nknn.fit(X_train, y_train)\nscore = knn.score(X_test, y_test)",
+    "options": [
+      "Creates a KNN model with 5 clusters",
+      "Creates a KNN classifier that uses 5 nearest neighbors and evaluates its accuracy",
+      "Creates 5 different KNN models",
+      "Creates a KNN regressor with 5 iterations"
+    ],
+    "correctIndex": 1,
+    "explanation": "This creates a KNN classifier using 5 nearest neighbors, trains it, and computes accuracy on the test set using the .score() method."
+  },
+  {
+    "id": "ml_029",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "A model with high training accuracy but low test accuracy is likely overfitting.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. A large gap between training and test accuracy indicates the model memorized training data but cannot generalize to new data."
+  },
+  {
+    "id": "ml_030",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is the output of logistic regression?",
+    "options": [
+      "A continuous number",
+      "A probability between 0 and 1",
+      "A cluster assignment",
+      "A feature importance score"
+    ],
+    "correctIndex": 1,
+    "explanation": "Logistic regression outputs a probability between 0 and 1 using the sigmoid function, which is then used for binary classification."
+  },
+  {
+    "id": "ml_031",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which are examples of classification problems? (Select all that apply)",
+    "options": [
+      "Predicting whether a tumor is benign or malignant",
+      "Predicting house prices",
+      "Recognizing handwritten digits",
+      "Predicting customer churn (yes/no)"
+    ],
+    "correctIndices": [0, 2, 3],
+    "explanation": "Tumor classification, digit recognition, and churn prediction all involve discrete categories. House price prediction is regression."
+  },
+  {
+    "id": "ml_032",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code compute?",
+    "codeSnippet": "import numpy as np\nX = np.array([[1, 2], [3, 4], [5, 6]])\nprint(X.shape)",
+    "options": [
+      "(2, 3)",
+      "(3, 2)",
+      "(6,)",
+      "(3,)"
+    ],
+    "correctIndex": 1,
+    "explanation": "X is a 2D array with 3 rows and 2 columns, so X.shape returns (3, 2)."
+  },
+  {
+    "id": "ml_033",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is the slope in a simple linear regression equation y = mx + b?",
+    "options": [
+      "The y-intercept",
+      "The rate of change of y with respect to x",
+      "The error term",
+      "The prediction value"
+    ],
+    "correctIndex": 1,
+    "explanation": "The slope m represents how much y changes for a one-unit change in x. It captures the linear relationship between the input and output."
+  },
+  {
+    "id": "ml_034",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "K-Means clustering requires the number of clusters K to be specified in advance.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. K-Means requires you to specify K (the number of clusters) before running the algorithm."
+  },
+  {
+    "id": "ml_035",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are common steps in a machine learning workflow? (Select all that apply)",
+    "options": [
+      "Data collection and cleaning",
+      "Feature selection and engineering",
+      "Model training and evaluation",
+      "All steps are optional"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "Data preparation, feature engineering, and model training/evaluation are all essential steps in a typical ML workflow."
+  },
+  {
+    "id": "ml_036",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.preprocessing import LabelEncoder\nle = LabelEncoder()\nlabels = le.fit_transform(['cat', 'dog', 'cat', 'bird'])\nprint(labels)",
+    "options": [
+      "[0, 1, 0, 2]",
+      "[1, 2, 1, 0]",
+      "[0, 2, 0, 1]",
+      "[2, 1, 2, 0]"
+    ],
+    "correctIndex": 2,
+    "explanation": "LabelEncoder assigns integers alphabetically: bird=0, cat=1, dog=2. Wait - actually: bird=0, cat=1, dog=2, so ['cat','dog','cat','bird'] becomes [1, 2, 1, 0]."
+  },
+  {
+    "id": "ml_037",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is a hyperparameter?",
+    "options": [
+      "A parameter learned from the training data",
+      "A parameter set before training that controls the learning process",
+      "The output of the model",
+      "A feature in the dataset"
+    ],
+    "correctIndex": 1,
+    "explanation": "Hyperparameters are configuration settings chosen before training (like learning rate, K in KNN) that control the training process, unlike model parameters which are learned."
+  },
+  {
+    "id": "ml_038",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.linear_model import LogisticRegression\nmodel = LogisticRegression()\nmodel.fit(X_train, y_train)\nproba = model.predict_proba(X_test)",
+    "options": [
+      "Returns class labels for each test sample",
+      "Returns probability estimates for each class for each test sample",
+      "Returns the model's coefficients",
+      "Returns the training accuracy"
+    ],
+    "correctIndex": 1,
+    "explanation": "predict_proba returns the probability of each class for each test sample, unlike predict which returns only the class label."
+  },
+  {
+    "id": "ml_039",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "More training data always prevents overfitting completely.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. While more data generally helps, it does not guarantee prevention of overfitting, especially with very complex models. Regularization and other techniques may still be needed."
+  },
+  {
+    "id": "ml_040",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "Which metric is commonly used to evaluate regression models?",
+    "options": [
+      "Accuracy",
+      "Mean Squared Error (MSE)",
+      "F1 Score",
+      "Confusion Matrix"
+    ],
+    "correctIndex": 1,
+    "explanation": "MSE measures the average squared difference between predicted and actual values. Accuracy, F1, and confusion matrix are for classification."
+  },
+  {
+    "id": "ml_041",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are types of machine learning? (Select all that apply)",
+    "options": [
+      "Supervised Learning",
+      "Unsupervised Learning",
+      "Reinforcement Learning",
+      "Deterministic Learning"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "The three main types of ML are supervised, unsupervised, and reinforcement learning. Deterministic Learning is not a standard ML category."
+  },
+  {
+    "id": "ml_042",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What will this print?",
+    "codeSnippet": "import numpy as np\narr = np.array([1, 2, 3, 4, 5])\nprint(np.mean(arr))",
+    "options": [
+      "2.5",
+      "3.0",
+      "3.5",
+      "15.0"
+    ],
+    "correctIndex": 1,
+    "explanation": "The mean of [1,2,3,4,5] is (1+2+3+4+5)/5 = 15/5 = 3.0."
+  },
+  {
+    "id": "ml_043",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is the primary goal of a machine learning model?",
+    "options": [
+      "To memorize the training data perfectly",
+      "To generalize well to new, unseen data",
+      "To use the most complex algorithm available",
+      "To minimize training time"
+    ],
+    "correctIndex": 1,
+    "explanation": "The primary goal is generalization: making accurate predictions on new, unseen data, not just performing well on training data."
+  },
+  {
+    "id": "ml_044",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "Decision trees can be used for both classification and regression tasks.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Decision trees can handle both classification (DecisionTreeClassifier) and regression (DecisionTreeRegressor) tasks."
+  },
+  {
+    "id": "ml_045",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "import pandas as pd\ndf = pd.DataFrame({'feature1': [1, 2, None, 4], 'feature2': [5, None, 7, 8]})\ndf_clean = df.dropna()\nprint(df_clean.shape)",
+    "options": [
+      "(4, 2)",
+      "(2, 2)",
+      "(3, 2)",
+      "(4, 1)"
+    ],
+    "correctIndex": 1,
+    "explanation": "dropna() removes rows with any missing values. Rows 0 and 3 have no NaN values, so the result has shape (2, 2)."
+  },
+  {
+    "id": "ml_046",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are distance-based algorithms that benefit from feature scaling? (Select all that apply)",
+    "options": [
+      "K-Nearest Neighbors",
+      "Decision Trees",
+      "Support Vector Machines",
+      "Random Forests"
+    ],
+    "correctIndices": [0, 2],
+    "explanation": "KNN and SVM are distance-based and sensitive to feature scales. Decision Trees and Random Forests split on individual features and are scale-invariant."
+  },
+  {
+    "id": "ml_047",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What does the term 'training' mean in machine learning?",
+    "options": [
+      "Writing code for the algorithm",
+      "The process of a model learning patterns from data",
+      "Manually labeling data",
+      "Deploying the model to production"
+    ],
+    "correctIndex": 1,
+    "explanation": "Training is the process where an algorithm learns patterns and relationships from data by adjusting its internal parameters."
+  },
+  {
+    "id": "ml_048",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code accomplish?",
+    "codeSnippet": "from sklearn.preprocessing import MinMaxScaler\nscaler = MinMaxScaler()\nX_scaled = scaler.fit_transform(X)",
+    "options": [
+      "Scales features to have mean=0 and std=1",
+      "Scales features to the range [0, 1]",
+      "Removes features with low variance",
+      "Converts categorical features to numeric"
+    ],
+    "correctIndex": 1,
+    "explanation": "MinMaxScaler scales each feature to a given range, defaulting to [0, 1], by transforming values linearly."
+  },
+  {
+    "id": "ml_049",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "The test set should be used during model training to improve performance.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. The test set must be kept separate and only used for final evaluation. Using it during training leads to data leakage and unreliable performance estimates."
+  },
+  {
+    "id": "ml_050",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are regression tasks? (Select all that apply)",
+    "options": [
+      "Predicting house prices",
+      "Classifying images as cat or dog",
+      "Predicting a student's exam score",
+      "Predicting daily temperature"
+    ],
+    "correctIndices": [0, 2, 3],
+    "explanation": "House prices, exam scores, and temperature are continuous values (regression). Cat/dog classification is a classification task."
+  },
+  {
+    "id": "ml_051",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What model does this code create?",
+    "codeSnippet": "from sklearn.linear_model import LinearRegression\nmodel = LinearRegression()\nmodel.fit(X_train, y_train)\nprint(model.coef_)",
+    "options": [
+      "A logistic regression model; prints class probabilities",
+      "A linear regression model; prints the learned coefficients (slopes)",
+      "A polynomial regression model; prints the polynomial degree",
+      "A ridge regression model; prints the regularization strength"
+    ],
+    "correctIndex": 1,
+    "explanation": "LinearRegression fits a linear model. coef_ contains the learned coefficients (slopes) for each feature."
+  },
+  {
+    "id": "ml_052",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is a 'model' in machine learning?",
+    "options": [
+      "A database of training examples",
+      "A mathematical representation that maps inputs to outputs",
+      "The programming language used",
+      "The hardware that runs the algorithm"
+    ],
+    "correctIndex": 1,
+    "explanation": "A model is a mathematical representation learned from data that can map input features to predicted outputs."
+  },
+  {
+    "id": "ml_053",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "Clustering is a type of supervised learning.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. Clustering is unsupervised learning because it groups data without using labeled outputs."
+  },
+  {
+    "id": "ml_054",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "Which of the following best describes a 'target variable'?",
+    "options": [
+      "A variable that has missing values",
+      "The variable the model is trying to predict",
+      "The most important input feature",
+      "A variable used for data cleaning"
+    ],
+    "correctIndex": 1,
+    "explanation": "The target variable (also called label or dependent variable) is what the model learns to predict from the input features."
+  },
+  {
+    "id": "ml_055",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code return?",
+    "codeSnippet": "from sklearn.metrics import mean_squared_error\ny_true = [3, 5, 2, 7]\ny_pred = [2.5, 5, 2.5, 8]\nprint(mean_squared_error(y_true, y_pred))",
+    "options": [
+      "0.25",
+      "0.375",
+      "0.5",
+      "1.5"
+    ],
+    "correctIndex": 1,
+    "explanation": "MSE = ((3-2.5)^2 + (5-5)^2 + (2-2.5)^2 + (7-8)^2) / 4 = (0.25 + 0 + 0.25 + 1) / 4 = 0.375."
+  },
+  {
+    "id": "ml_056",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are true about decision trees? (Select all that apply)",
+    "options": [
+      "They can handle both numerical and categorical data",
+      "They are easy to interpret and visualize",
+      "They always outperform neural networks",
+      "They can overfit if not pruned"
+    ],
+    "correctIndices": [0, 1, 3],
+    "explanation": "Decision trees handle mixed data types, are interpretable, and can overfit without constraints. They do not always outperform neural networks."
+  },
+  {
+    "id": "ml_057",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is the sigmoid function used for in logistic regression?",
+    "options": [
+      "To calculate the loss function",
+      "To map values to a probability between 0 and 1",
+      "To normalize input features",
+      "To determine the number of features"
+    ],
+    "correctIndex": 1,
+    "explanation": "The sigmoid function maps any real-valued number to a value between 0 and 1, enabling logistic regression to output class probabilities."
+  },
+  {
+    "id": "ml_058",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "import pandas as pd\ndf = pd.read_csv('data.csv')\nprint(df.isnull().sum())",
+    "options": [
+      "Prints the total number of rows",
+      "Prints the count of missing values per column",
+      "Prints the sum of all numeric columns",
+      "Prints the number of duplicate rows"
+    ],
+    "correctIndex": 1,
+    "explanation": "isnull() creates a boolean mask of missing values, and sum() counts True values per column, showing how many missing values exist in each column."
+  },
+  {
+    "id": "ml_059",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "Random state (random_state parameter) affects the final model's predictive ability.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. random_state only controls the randomness for reproducibility. It affects which specific split or initialization occurs, but not the model's general predictive ability."
+  },
+  {
+    "id": "ml_060",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What happens when you increase the depth of a decision tree?",
+    "options": [
+      "The model becomes simpler",
+      "The model becomes more complex and may overfit",
+      "Training becomes faster",
+      "The model ignores features"
+    ],
+    "correctIndex": 1,
+    "explanation": "Increasing depth allows the tree to create more splits and capture more detail, increasing complexity and the risk of overfitting."
+  },
+  {
+    "id": "ml_061",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which methods can handle missing values? (Select all that apply)",
+    "options": [
+      "Dropping rows with missing values",
+      "Imputing with mean/median",
+      "Ignoring and hoping the model handles it",
+      "Using algorithms that natively handle missing data (e.g., XGBoost)"
+    ],
+    "correctIndices": [0, 1, 3],
+    "explanation": "Dropping rows, imputation, and using algorithms that handle missing values are all valid approaches. Simply ignoring missing values is not a reliable strategy."
+  },
+  {
+    "id": "ml_062",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code output?",
+    "codeSnippet": "import numpy as np\nfrom sklearn.metrics import mean_absolute_error\ny_true = np.array([3, -0.5, 2, 7])\ny_pred = np.array([2.5, 0.0, 2, 8])\nprint(mean_absolute_error(y_true, y_pred))",
+    "options": [
+      "0.5",
+      "0.625",
+      "0.375",
+      "1.0"
+    ],
+    "correctIndex": 0,
+    "explanation": "MAE = (|3-2.5| + |-0.5-0| + |2-2| + |7-8|) / 4 = (0.5 + 0.5 + 0 + 1) / 4 = 0.5."
+  },
+  {
+    "id": "ml_063",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "Which library is most commonly used for machine learning in Python?",
+    "options": [
+      "Flask",
+      "scikit-learn",
+      "Django",
+      "BeautifulSoup"
+    ],
+    "correctIndex": 1,
+    "explanation": "scikit-learn (sklearn) is the most widely used Python library for traditional machine learning, providing tools for classification, regression, clustering, and more."
+  },
+  {
+    "id": "ml_064",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "In binary classification, there are exactly two possible output classes.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Binary classification involves exactly two classes (e.g., yes/no, spam/not spam, positive/negative)."
+  },
+  {
+    "id": "ml_065",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code produce?",
+    "codeSnippet": "from sklearn.datasets import load_iris\niris = load_iris()\nprint(iris.data.shape)\nprint(iris.target_names)",
+    "options": [
+      "(150, 4) and ['setosa' 'versicolor' 'virginica']",
+      "(100, 3) and ['setosa' 'versicolor']",
+      "(150, 5) and ['setosa' 'versicolor' 'virginica']",
+      "(200, 4) and ['setosa' 'versicolor' 'virginica' 'unknown']"
+    ],
+    "correctIndex": 0,
+    "explanation": "The Iris dataset has 150 samples with 4 features each, and 3 target classes: setosa, versicolor, and virginica."
+  },
+  {
+    "id": "ml_066",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are valid evaluation metrics for classification? (Select all that apply)",
+    "options": [
+      "Accuracy",
+      "Mean Squared Error",
+      "Precision",
+      "F1 Score"
+    ],
+    "correctIndices": [0, 2, 3],
+    "explanation": "Accuracy, Precision, and F1 Score are classification metrics. Mean Squared Error is a regression metric."
+  },
+  {
+    "id": "ml_067",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is the simplest approach to handle missing values in a dataset?",
+    "options": [
+      "Replace them with the maximum value",
+      "Remove rows containing missing values",
+      "Set them to infinity",
+      "Duplicate existing rows"
+    ],
+    "correctIndex": 1,
+    "explanation": "The simplest approach is to remove rows with missing values, though this can lead to data loss if many values are missing."
+  },
+  {
+    "id": "ml_068",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.impute import SimpleImputer\nimport numpy as np\nimp = SimpleImputer(strategy='mean')\nX = np.array([[1, 2], [np.nan, 3], [7, 6]])\nprint(imp.fit_transform(X))",
+    "options": [
+      "Replaces NaN with 0",
+      "Replaces NaN with the column mean (4.0 for column 1)",
+      "Removes the row with NaN",
+      "Replaces NaN with the median"
+    ],
+    "correctIndex": 1,
+    "explanation": "SimpleImputer with strategy='mean' replaces missing values with the column mean. Column 1 mean = (1+7)/2 = 4.0."
+  },
+  {
+    "id": "ml_069",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "Neural networks are the only type of machine learning algorithm.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. There are many ML algorithms including decision trees, SVMs, KNN, linear/logistic regression, and ensemble methods, not just neural networks."
+  },
+  {
+    "id": "ml_070",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are true about linear regression? (Select all that apply)",
+    "options": [
+      "It assumes a linear relationship between features and target",
+      "It can only handle one input feature",
+      "It minimizes the sum of squared errors",
+      "It outputs a continuous value"
+    ],
+    "correctIndices": [0, 2, 3],
+    "explanation": "Linear regression assumes linearity, minimizes squared errors, and outputs continuous values. It can handle multiple features (multiple linear regression)."
+  },
+  {
+    "id": "ml_071",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is 'multiclass classification'?",
+    "options": [
+      "A classification task with only two classes",
+      "A classification task with more than two classes",
+      "A regression task with multiple outputs",
+      "A clustering task"
+    ],
+    "correctIndex": 1,
+    "explanation": "Multiclass classification involves predicting one of three or more discrete classes, such as classifying handwritten digits 0-9."
+  },
+  {
+    "id": "ml_072",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What is the output of this code?",
+    "codeSnippet": "import numpy as np\nX = np.array([1, 2, 3, 4, 5])\nprint(np.std(X))",
+    "options": [
+      "1.0",
+      "1.4142",
+      "2.0",
+      "2.5"
+    ],
+    "correctIndex": 1,
+    "explanation": "The standard deviation of [1,2,3,4,5] with mean=3 is sqrt(((1-3)^2+(2-3)^2+(3-3)^2+(4-3)^2+(5-3)^2)/5) = sqrt(2) ≈ 1.4142."
+  },
+  {
+    "id": "ml_073",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is 'dimensionality' in the context of a dataset?",
+    "options": [
+      "The number of rows",
+      "The number of features (columns)",
+      "The file size of the dataset",
+      "The number of missing values"
+    ],
+    "correctIndex": 1,
+    "explanation": "Dimensionality refers to the number of features (attributes) in the dataset. High dimensionality can lead to the 'curse of dimensionality'."
+  },
+  {
+    "id": "ml_074",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "Cross-validation uses the test set during the training process.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. Cross-validation splits the training data into folds for validation. The test set should remain untouched until final evaluation."
+  },
+  {
+    "id": "ml_075",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are examples of features for a house price prediction model? (Select all that apply)",
+    "options": [
+      "Number of bedrooms",
+      "Square footage",
+      "The predicted price itself",
+      "Neighborhood location"
+    ],
+    "correctIndices": [0, 1, 3],
+    "explanation": "Bedrooms, square footage, and neighborhood are input features. The predicted price is the target variable, not a feature."
+  },
+  {
+    "id": "ml_076",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.model_selection import cross_val_score\nfrom sklearn.tree import DecisionTreeClassifier\nscores = cross_val_score(DecisionTreeClassifier(), X, y, cv=5)\nprint(scores.mean())",
+    "options": [
+      "Trains 5 models on different data splits and prints the average accuracy",
+      "Splits data into 5 test sets and trains once",
+      "Runs the model 5 times on the same data",
+      "Creates 5 decision trees in an ensemble"
+    ],
+    "correctIndex": 0,
+    "explanation": "cross_val_score with cv=5 performs 5-fold cross-validation, training and evaluating the model on 5 different train/test splits and returning scores."
+  },
+  {
+    "id": "ml_077",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is the role of the 'bias' term (intercept) in linear regression?",
+    "options": [
+      "It represents the prediction error",
+      "It allows the line to not pass through the origin",
+      "It controls the learning rate",
+      "It determines the number of features"
+    ],
+    "correctIndex": 1,
+    "explanation": "The bias (intercept) term allows the regression line to shift up or down, so it doesn't have to pass through the origin (0,0)."
+  },
+  {
+    "id": "ml_078",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code produce?",
+    "codeSnippet": "import pandas as pd\ndf = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})\nprint(df.describe())",
+    "options": [
+      "Prints only column names",
+      "Prints summary statistics (count, mean, std, min, quartiles, max) for each numeric column",
+      "Prints the first 5 rows",
+      "Prints data types of each column"
+    ],
+    "correctIndex": 1,
+    "explanation": "describe() generates descriptive statistics including count, mean, std, min, 25%, 50%, 75%, and max for each numeric column."
+  },
+  {
+    "id": "ml_079",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "Increasing the number of features always improves model performance.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. Adding irrelevant features can hurt performance (curse of dimensionality) and increase overfitting. Feature selection is important."
+  },
+  {
+    "id": "ml_080",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following can be used to prevent overfitting? (Select all that apply)",
+    "options": [
+      "Using more training data",
+      "Reducing model complexity",
+      "Using cross-validation",
+      "Adding more features without selection"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "More data, simpler models, and cross-validation help prevent overfitting. Blindly adding features can actually increase overfitting."
+  },
+  {
+    "id": "ml_081",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code produce?",
+    "codeSnippet": "from sklearn.datasets import make_classification\nX, y = make_classification(n_samples=100, n_features=5, n_classes=2, random_state=42)\nprint(X.shape, y.shape)",
+    "options": [
+      "(100, 5) (100,)",
+      "(100, 2) (100,)",
+      "(5, 100) (100,)",
+      "(100, 5) (100, 2)"
+    ],
+    "correctIndex": 0,
+    "explanation": "make_classification creates a synthetic dataset with 100 samples and 5 features. X has shape (100,5) and y has shape (100,)."
+  },
+  {
+    "id": "ml_082",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What does the 'fit' method do in scikit-learn?",
+    "options": [
+      "Makes predictions on new data",
+      "Trains the model on the provided data",
+      "Evaluates the model performance",
+      "Preprocesses the input data"
+    ],
+    "correctIndex": 1,
+    "explanation": "The fit() method trains the model by learning patterns from the provided training data (features and target)."
+  },
+  {
+    "id": "ml_083",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What is the output?",
+    "codeSnippet": "from sklearn.metrics import confusion_matrix\ny_true = [0, 0, 1, 1]\ny_pred = [0, 1, 0, 1]\nprint(confusion_matrix(y_true, y_pred))",
+    "options": [
+      "[[1 1] [1 1]]",
+      "[[2 0] [0 2]]",
+      "[[0 2] [2 0]]",
+      "[[1 0] [0 1]]"
+    ],
+    "correctIndex": 0,
+    "explanation": "The confusion matrix shows: TN=1 (0 predicted as 0), FP=1 (0 predicted as 1), FN=1 (1 predicted as 0), TP=1 (1 predicted as 1)."
+  },
+  {
+    "id": "ml_084",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "The predict method in scikit-learn is called before the fit method.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. You must call fit() first to train the model before calling predict() to make predictions. Calling predict before fit raises an error."
+  },
+  {
+    "id": "ml_085",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are common data preprocessing steps? (Select all that apply)",
+    "options": [
+      "Handling missing values",
+      "Feature scaling/normalization",
+      "Encoding categorical variables",
+      "Deleting the target variable"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "Handling missing values, scaling features, and encoding categoricals are standard preprocessing steps. The target variable should be preserved."
+  },
+  {
+    "id": "ml_086",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is one-hot encoding?",
+    "options": [
+      "Converting numbers to binary",
+      "Creating binary columns for each category of a categorical variable",
+      "Normalizing features to range [0,1]",
+      "Removing duplicate categories"
+    ],
+    "correctIndex": 1,
+    "explanation": "One-hot encoding creates a new binary column for each unique category, where 1 indicates the presence of that category and 0 indicates absence."
+  },
+  {
+    "id": "ml_087",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.preprocessing import OneHotEncoder\nimport numpy as np\nenc = OneHotEncoder(sparse_output=False)\ncolors = np.array([['red'], ['blue'], ['green'], ['red']])\nprint(enc.fit_transform(colors))",
+    "options": [
+      "Encodes colors as integers [2, 0, 1, 2]",
+      "Creates binary columns: [[0,0,1],[1,0,0],[0,1,0],[0,0,1]]",
+      "Removes duplicate colors",
+      "Sorts colors alphabetically"
+    ],
+    "correctIndex": 1,
+    "explanation": "OneHotEncoder creates one binary column per unique category: blue=[1,0,0], green=[0,1,0], red=[0,0,1]. Alphabetical order determines column order."
+  },
+  {
+    "id": "ml_088",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "A validation set is the same as a test set.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. A validation set is used during model development for tuning hyperparameters, while the test set is reserved for final evaluation of the model."
+  },
+  {
+    "id": "ml_089",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is the curse of dimensionality?",
+    "options": [
+      "Having too few data points",
+      "Problems that arise when the number of features is very large relative to samples",
+      "When data has too many missing values",
+      "When the model is too simple"
+    ],
+    "correctIndex": 1,
+    "explanation": "The curse of dimensionality refers to problems (sparse data, overfitting, computational costs) that occur when the feature space is very high-dimensional."
+  },
+  {
+    "id": "ml_090",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code compute?",
+    "codeSnippet": "import numpy as np\na = np.array([1, 0, 1, 1])\nb = np.array([1, 1, 1, 0])\nprint(np.sum(a == b) / len(a))",
+    "options": [
+      "0.25",
+      "0.5",
+      "0.75",
+      "1.0"
+    ],
+    "correctIndex": 1,
+    "explanation": "Comparing element-wise: positions 0 and 2 match. 2 matches out of 4 = 0.5. This manually computes accuracy."
+  },
+  {
+    "id": "ml_091",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are true about KNN? (Select all that apply)",
+    "options": [
+      "It stores all training data",
+      "It requires feature scaling",
+      "It has no training phase (lazy learner)",
+      "It always uses K=1"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "KNN stores all data (lazy learner), benefits from scaling (distance-based), and has no explicit training phase. K is a tunable hyperparameter."
+  },
+  {
+    "id": "ml_092",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is batch learning?",
+    "options": [
+      "Learning from one example at a time",
+      "Learning from the entire training dataset at once",
+      "Learning from data in real-time",
+      "Learning from batches of different algorithms"
+    ],
+    "correctIndex": 1,
+    "explanation": "Batch learning trains the model using the entire dataset at once, as opposed to online learning which updates the model incrementally."
+  },
+  {
+    "id": "ml_093",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "Correlation between two variables implies that one causes the other.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. Correlation indicates a statistical relationship but does not prove causation. Two correlated variables may both be caused by a third factor."
+  },
+  {
+    "id": "ml_094",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.model_selection import train_test_split\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y)",
+    "options": [
+      "Splits data with 70/30 ratio, maintaining the class distribution in both sets",
+      "Splits data into 3 stratified folds",
+      "Randomly removes 30% of the data",
+      "Sorts data by class before splitting"
+    ],
+    "correctIndex": 0,
+    "explanation": "stratify=y ensures that the proportion of each class in y is preserved in both training and test sets, with a 70/30 split."
+  },
+  {
+    "id": "ml_095",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is a categorical variable?",
+    "options": [
+      "A variable with continuous numeric values",
+      "A variable that takes a limited set of discrete values (categories)",
+      "A variable with missing values",
+      "A variable used as the target"
+    ],
+    "correctIndex": 1,
+    "explanation": "A categorical variable represents distinct groups or categories (e.g., colors, gender, country) rather than continuous numeric values."
+  },
+  {
+    "id": "ml_096",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "easy",
+    "question": "Which of the following are types of data that require preprocessing? (Select all that apply)",
+    "options": [
+      "Categorical text data",
+      "Data with different scales",
+      "Data with missing values",
+      "Data that is already numeric and complete"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "Categorical data needs encoding, differently scaled data needs normalization, and missing values need handling. Clean numeric data may not need preprocessing."
+  },
+  {
+    "id": "ml_097",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code output?",
+    "codeSnippet": "import numpy as np\nX = np.array([[1, 2], [3, 4], [5, 6]])\nprint(X[:, 0])",
+    "options": [
+      "[1 2]",
+      "[1 3 5]",
+      "[[1], [3], [5]]",
+      "[2 4 6]"
+    ],
+    "correctIndex": 1,
+    "explanation": "X[:, 0] selects all rows of column 0, returning array([1, 3, 5])."
+  },
+  {
+    "id": "ml_098",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "easy",
+    "question": "Scikit-learn models require input data to be in numeric format.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Scikit-learn models work with numeric arrays. Categorical data must be encoded to numeric form before fitting models."
+  },
+  {
+    "id": "ml_099",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "easy",
+    "question": "What is the purpose of the 'predict' method in scikit-learn?",
+    "options": [
+      "To train the model",
+      "To make predictions on new data using a trained model",
+      "To evaluate model performance",
+      "To visualize the model"
+    ],
+    "correctIndex": 1,
+    "explanation": "The predict() method uses the trained model to generate predictions for new, unseen data."
+  },
+  {
+    "id": "ml_100",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "easy",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\npipe = Pipeline([('scaler', StandardScaler()), ('svc', SVC())])\npipe.fit(X_train, y_train)",
+    "options": [
+      "Creates a pipeline that scales data then trains an SVM classifier",
+      "Creates two separate models",
+      "Only scales the data without training",
+      "Creates an ensemble of StandardScaler and SVC"
+    ],
+    "correctIndex": 0,
+    "explanation": "Pipeline chains preprocessing (StandardScaler) and model training (SVC) into a single workflow, ensuring scaling is applied consistently."
+  },
+  {
+    "id": "ml_101",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the main advantage of Random Forests over a single Decision Tree?",
+    "options": [
+      "Faster training time",
+      "Reduced overfitting through ensemble averaging",
+      "Simpler model interpretation",
+      "Requires less data"
+    ],
+    "correctIndex": 1,
+    "explanation": "Random Forests combine multiple decision trees trained on random subsets, reducing variance and overfitting compared to a single tree."
+  },
+  {
+    "id": "ml_102",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What does gradient descent optimize?",
+    "options": [
+      "The number of features",
+      "The model's loss function by iteratively adjusting parameters",
+      "The training data size",
+      "The number of epochs"
+    ],
+    "correctIndex": 1,
+    "explanation": "Gradient descent minimizes the loss function by computing gradients and iteratively updating model parameters in the direction that reduces loss."
+  },
+  {
+    "id": "ml_103",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "In a confusion matrix, what does the False Positive (FP) represent?",
+    "options": [
+      "Correctly predicted positive instances",
+      "Incorrectly predicted as positive when actually negative",
+      "Correctly predicted negative instances",
+      "Incorrectly predicted as negative when actually positive"
+    ],
+    "correctIndex": 1,
+    "explanation": "A False Positive (Type I error) occurs when the model incorrectly predicts the positive class for an instance that is actually negative."
+  },
+  {
+    "id": "ml_104",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "L1 regularization (Lasso) can drive some feature coefficients to exactly zero.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. L1 regularization adds the absolute value of coefficients to the loss, which can shrink some coefficients to exactly zero, performing feature selection."
+  },
+  {
+    "id": "ml_105",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the purpose of cross-validation?",
+    "options": [
+      "To increase the size of the training set",
+      "To provide a more robust estimate of model performance by using multiple train/validation splits",
+      "To replace the need for a test set",
+      "To speed up training"
+    ],
+    "correctIndex": 1,
+    "explanation": "Cross-validation repeatedly splits data into train/validation sets, providing a more reliable performance estimate and reducing dependence on a single split."
+  },
+  {
+    "id": "ml_106",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code compute?",
+    "codeSnippet": "from sklearn.metrics import precision_score, recall_score, f1_score\ny_true = [1, 0, 1, 1, 0, 1]\ny_pred = [1, 0, 0, 1, 0, 1]\nprint(f'Precision: {precision_score(y_true, y_pred):.2f}')\nprint(f'Recall: {recall_score(y_true, y_pred):.2f}')",
+    "options": [
+      "Precision: 1.00, Recall: 0.75",
+      "Precision: 0.75, Recall: 1.00",
+      "Precision: 0.83, Recall: 0.83",
+      "Precision: 0.67, Recall: 0.67"
+    ],
+    "correctIndex": 0,
+    "explanation": "TP=3, FP=0, FN=1. Precision = TP/(TP+FP) = 3/3 = 1.0. Recall = TP/(TP+FN) = 3/4 = 0.75."
+  },
+  {
+    "id": "ml_107",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What does the ROC curve plot?",
+    "options": [
+      "Precision vs Recall",
+      "True Positive Rate vs False Positive Rate at various thresholds",
+      "Training loss vs Validation loss",
+      "Accuracy vs Number of features"
+    ],
+    "correctIndex": 1,
+    "explanation": "The ROC curve plots True Positive Rate (sensitivity) against False Positive Rate (1-specificity) at various classification thresholds."
+  },
+  {
+    "id": "ml_108",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which of the following are ensemble methods? (Select all that apply)",
+    "options": [
+      "Random Forest",
+      "Gradient Boosting",
+      "Logistic Regression",
+      "AdaBoost",
+      "K-Nearest Neighbors"
+    ],
+    "correctIndices": [0, 1, 3],
+    "explanation": "Random Forest (bagging), Gradient Boosting, and AdaBoost (boosting) are ensemble methods. Logistic Regression and KNN are individual models."
+  },
+  {
+    "id": "ml_109",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the bias-variance tradeoff?",
+    "options": [
+      "The tradeoff between training speed and accuracy",
+      "The tradeoff between underfitting (high bias) and overfitting (high variance)",
+      "The tradeoff between data size and model complexity",
+      "The tradeoff between precision and recall"
+    ],
+    "correctIndex": 1,
+    "explanation": "The bias-variance tradeoff balances model simplicity (high bias, underfitting) against complexity (high variance, overfitting). Optimal models minimize total error."
+  },
+  {
+    "id": "ml_110",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.ensemble import RandomForestClassifier\nrf = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)\nrf.fit(X_train, y_train)\nimportances = rf.feature_importances_\nprint(importances)",
+    "options": [
+      "Creates 100 trees and prints which features contribute most to predictions",
+      "Creates 100 separate models and ensembles them",
+      "Creates a single tree with 100 nodes",
+      "Creates a forest and prints the tree depths"
+    ],
+    "correctIndex": 0,
+    "explanation": "RandomForest with n_estimators=100 creates 100 trees. feature_importances_ shows each feature's relative importance in making predictions."
+  },
+  {
+    "id": "ml_111",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the kernel trick in SVM?",
+    "options": [
+      "A method to speed up training",
+      "A technique to map data to a higher-dimensional space where it becomes linearly separable",
+      "A method to reduce the number of features",
+      "A regularization technique"
+    ],
+    "correctIndex": 1,
+    "explanation": "The kernel trick allows SVMs to implicitly map data into higher dimensions where a linear separator can be found, without explicitly computing the transformation."
+  },
+  {
+    "id": "ml_112",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "In K-fold cross-validation with K=5, each data point is used for testing exactly once.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. In 5-fold CV, data is split into 5 folds. Each fold serves as the test set exactly once while the remaining 4 folds are used for training."
+  },
+  {
+    "id": "ml_113",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.model_selection import GridSearchCV\nfrom sklearn.svm import SVC\nparam_grid = {'C': [0.1, 1, 10], 'kernel': ['linear', 'rbf']}\ngrid = GridSearchCV(SVC(), param_grid, cv=5)\ngrid.fit(X_train, y_train)\nprint(grid.best_params_)",
+    "options": [
+      "Trains 6 different SVM configurations using 5-fold CV and finds the best",
+      "Trains a single SVM with default parameters",
+      "Creates a grid of data points for visualization",
+      "Evaluates the model on 6 different test sets"
+    ],
+    "correctIndex": 0,
+    "explanation": "GridSearchCV tries all combinations of C (3 values) and kernel (2 values) = 6 combinations, each evaluated with 5-fold CV, then reports the best."
+  },
+  {
+    "id": "ml_114",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the difference between bagging and boosting?",
+    "options": [
+      "They are the same technique",
+      "Bagging trains models in parallel on random subsets; boosting trains sequentially, focusing on misclassified examples",
+      "Bagging is for regression; boosting is for classification",
+      "Bagging uses neural networks; boosting uses decision trees"
+    ],
+    "correctIndex": 1,
+    "explanation": "Bagging (e.g., Random Forest) trains independent models in parallel on bootstrap samples. Boosting (e.g., AdaBoost) trains sequentially, weighting misclassified examples."
+  },
+  {
+    "id": "ml_115",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which metrics are useful for evaluating imbalanced classification? (Select all that apply)",
+    "options": [
+      "Accuracy alone",
+      "Precision and Recall",
+      "F1 Score",
+      "ROC-AUC"
+    ],
+    "correctIndices": [1, 2, 3],
+    "explanation": "For imbalanced datasets, accuracy alone is misleading. Precision, Recall, F1 Score, and ROC-AUC provide better insight into model performance."
+  },
+  {
+    "id": "ml_116",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What does PCA (Principal Component Analysis) do?",
+    "options": [
+      "Selects the most important features based on correlation",
+      "Reduces dimensionality by projecting data onto new axes that maximize variance",
+      "Removes outliers from the dataset",
+      "Normalizes all features to the same scale"
+    ],
+    "correctIndex": 1,
+    "explanation": "PCA finds orthogonal axes (principal components) that capture the maximum variance in the data, enabling dimensionality reduction."
+  },
+  {
+    "id": "ml_117",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code accomplish?",
+    "codeSnippet": "from sklearn.decomposition import PCA\npca = PCA(n_components=2)\nX_reduced = pca.fit_transform(X)\nprint(f'Explained variance ratio: {pca.explained_variance_ratio_}')",
+    "options": [
+      "Selects the 2 best original features",
+      "Reduces data to 2 principal components and shows how much variance each explains",
+      "Creates 2 copies of the data",
+      "Removes 2 features from the data"
+    ],
+    "correctIndex": 1,
+    "explanation": "PCA with n_components=2 projects data onto 2 principal components. explained_variance_ratio_ shows the proportion of variance captured by each component."
+  },
+  {
+    "id": "ml_118",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the DBSCAN algorithm?",
+    "options": [
+      "A supervised classification algorithm",
+      "A density-based clustering algorithm that finds clusters of arbitrary shape",
+      "A regression algorithm",
+      "A dimensionality reduction technique"
+    ],
+    "correctIndex": 1,
+    "explanation": "DBSCAN groups together points that are closely packed (density-based), marking outliers as noise. It can find clusters of arbitrary shapes unlike K-Means."
+  },
+  {
+    "id": "ml_119",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "L2 regularization (Ridge) can make coefficients exactly zero.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. L2 regularization (Ridge) shrinks coefficients toward zero but rarely makes them exactly zero. L1 (Lasso) can achieve exact zero coefficients."
+  },
+  {
+    "id": "ml_120",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code compute?",
+    "codeSnippet": "from sklearn.metrics import roc_auc_score\ny_true = [0, 0, 1, 1]\ny_scores = [0.1, 0.4, 0.35, 0.8]\nprint(roc_auc_score(y_true, y_scores))",
+    "options": [
+      "0.5",
+      "0.625",
+      "0.75",
+      "1.0"
+    ],
+    "correctIndex": 2,
+    "explanation": "ROC-AUC measures the area under the ROC curve. With these scores, the AUC is 0.75, indicating good but not perfect discrimination."
+  },
+  {
+    "id": "ml_121",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is feature engineering?",
+    "options": [
+      "Automatically selecting the best algorithm",
+      "Creating new informative features from existing data to improve model performance",
+      "Removing all features except the target",
+      "Using only numerical features"
+    ],
+    "correctIndex": 1,
+    "explanation": "Feature engineering involves creating new features (e.g., combining, transforming, or extracting from raw data) to capture information that helps the model learn better."
+  },
+  {
+    "id": "ml_122",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which of the following are advantages of DBSCAN over K-Means? (Select all that apply)",
+    "options": [
+      "Does not require specifying the number of clusters",
+      "Can find arbitrarily shaped clusters",
+      "Can identify noise/outlier points",
+      "Always faster than K-Means"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "DBSCAN doesn't need K specified, finds non-spherical clusters, and labels outliers as noise. However, it's not always faster than K-Means."
+  },
+  {
+    "id": "ml_123",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the learning rate in gradient descent?",
+    "options": [
+      "The number of training iterations",
+      "A hyperparameter that controls the step size of parameter updates",
+      "The ratio of training to test data",
+      "The number of features used"
+    ],
+    "correctIndex": 1,
+    "explanation": "The learning rate determines how large each parameter update step is. Too large causes divergence; too small causes slow convergence."
+  },
+  {
+    "id": "ml_124",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.cluster import KMeans\nimport numpy as np\ninertias = []\nfor k in range(1, 11):\n    km = KMeans(n_clusters=k, random_state=42)\n    km.fit(X)\n    inertias.append(km.inertia_)\n# Plot inertias vs k (elbow method)",
+    "options": [
+      "Trains 10 different classifiers",
+      "Implements the elbow method to find the optimal number of clusters",
+      "Performs 10-fold cross-validation",
+      "Reduces data to 10 dimensions"
+    ],
+    "correctIndex": 1,
+    "explanation": "This implements the elbow method: fitting K-Means for k=1 to 10, recording inertia (within-cluster sum of squares), and plotting to find the optimal K."
+  },
+  {
+    "id": "ml_125",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the F1 Score?",
+    "options": [
+      "The average of accuracy and recall",
+      "The harmonic mean of precision and recall",
+      "The geometric mean of accuracy and F-score",
+      "The arithmetic mean of all metrics"
+    ],
+    "correctIndex": 1,
+    "explanation": "F1 = 2 * (precision * recall) / (precision + recall). The harmonic mean penalizes extreme differences between precision and recall."
+  },
+  {
+    "id": "ml_126",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "An AUC-ROC value of 0.5 indicates a model that performs no better than random guessing.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. AUC-ROC of 0.5 means the model cannot distinguish between classes, equivalent to random guessing. Perfect classification has AUC = 1.0."
+  },
+  {
+    "id": "ml_127",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code implement?",
+    "codeSnippet": "from sklearn.ensemble import GradientBoostingClassifier\ngb = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3)\ngb.fit(X_train, y_train)\nprint(gb.score(X_test, y_test))",
+    "options": [
+      "A random forest with gradient features",
+      "A gradient boosting ensemble that sequentially builds 100 shallow trees",
+      "A neural network with gradient optimization",
+      "A single decision tree with 100 nodes"
+    ],
+    "correctIndex": 1,
+    "explanation": "GradientBoostingClassifier builds trees sequentially, each correcting the errors of the previous ones. n_estimators=100, learning_rate=0.1, max_depth=3 are key hyperparameters."
+  },
+  {
+    "id": "ml_128",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the purpose of the SVM margin?",
+    "options": [
+      "To limit the number of support vectors",
+      "To maximize the distance between the decision boundary and the nearest data points of each class",
+      "To reduce training time",
+      "To handle missing values"
+    ],
+    "correctIndex": 1,
+    "explanation": "SVM finds the hyperplane that maximizes the margin (distance) between the decision boundary and the closest data points (support vectors) of each class."
+  },
+  {
+    "id": "ml_129",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which of the following regularization techniques help prevent overfitting? (Select all that apply)",
+    "options": [
+      "L1 Regularization (Lasso)",
+      "L2 Regularization (Ridge)",
+      "Dropout (in neural networks)",
+      "Elastic Net"
+    ],
+    "correctIndices": [0, 1, 2, 3],
+    "explanation": "All four are regularization techniques. L1/L2/Elastic Net add penalty terms to the loss. Dropout randomly deactivates neurons during training."
+  },
+  {
+    "id": "ml_130",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is stratified sampling?",
+    "options": [
+      "Randomly selecting samples without replacement",
+      "Ensuring each split maintains the same class proportions as the original dataset",
+      "Selecting only the most important samples",
+      "Splitting data chronologically"
+    ],
+    "correctIndex": 1,
+    "explanation": "Stratified sampling preserves the percentage of samples for each class, important for imbalanced datasets to ensure representative splits."
+  },
+  {
+    "id": "ml_131",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code produce?",
+    "codeSnippet": "from sklearn.metrics import classification_report\ny_true = [0, 0, 1, 1, 2, 2]\ny_pred = [0, 1, 1, 1, 2, 0]\nprint(classification_report(y_true, y_pred))",
+    "options": [
+      "Just the overall accuracy",
+      "Precision, recall, F1-score for each class plus weighted averages",
+      "Only the confusion matrix",
+      "Only the ROC curve data"
+    ],
+    "correctIndex": 1,
+    "explanation": "classification_report provides precision, recall, F1-score, and support for each class, along with macro/weighted averages across classes."
+  },
+  {
+    "id": "ml_132",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the elbow method used for?",
+    "options": [
+      "Choosing the learning rate",
+      "Determining the optimal number of clusters in K-Means",
+      "Selecting the best features",
+      "Setting the regularization strength"
+    ],
+    "correctIndex": 1,
+    "explanation": "The elbow method plots inertia vs. number of clusters. The 'elbow' point where inertia stops decreasing significantly suggests the optimal K."
+  },
+  {
+    "id": "ml_133",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "Random Forest uses bootstrap sampling (sampling with replacement) to create diverse training sets for each tree.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Each tree in a Random Forest is trained on a bootstrap sample (random sampling with replacement) of the original dataset, promoting diversity."
+  },
+  {
+    "id": "ml_134",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code accomplish?",
+    "codeSnippet": "from sklearn.feature_selection import SelectKBest, f_classif\nselector = SelectKBest(f_classif, k=5)\nX_selected = selector.fit_transform(X, y)\nprint(selector.get_support())",
+    "options": [
+      "Removes 5 features randomly",
+      "Selects the top 5 features based on ANOVA F-test scores",
+      "Creates 5 new features",
+      "Splits data into 5 folds"
+    ],
+    "correctIndex": 1,
+    "explanation": "SelectKBest with f_classif selects the K features with highest ANOVA F-test scores. get_support() shows which features were selected."
+  },
+  {
+    "id": "ml_135",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the 'C' parameter in SVM?",
+    "options": [
+      "The number of clusters",
+      "The regularization parameter controlling the tradeoff between margin size and misclassification",
+      "The number of components",
+      "The convergence threshold"
+    ],
+    "correctIndex": 1,
+    "explanation": "C controls the penalty for misclassification. High C means less regularization (tight margin), low C allows more misclassification (wide margin)."
+  },
+  {
+    "id": "ml_136",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which of the following are valid SVM kernel functions? (Select all that apply)",
+    "options": [
+      "Linear",
+      "Radial Basis Function (RBF)",
+      "Polynomial",
+      "Sigmoid"
+    ],
+    "correctIndices": [0, 1, 2, 3],
+    "explanation": "All four are valid SVM kernels. Linear for linearly separable data, RBF and Polynomial for non-linear boundaries, Sigmoid for specific applications."
+  },
+  {
+    "id": "ml_137",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is Elastic Net regularization?",
+    "options": [
+      "A type of neural network",
+      "A combination of L1 and L2 regularization",
+      "A feature scaling technique",
+      "A clustering algorithm"
+    ],
+    "correctIndex": 1,
+    "explanation": "Elastic Net combines L1 (Lasso) and L2 (Ridge) penalties, getting benefits of both: feature selection from L1 and coefficient shrinkage from L2."
+  },
+  {
+    "id": "ml_138",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.cluster import DBSCAN\ndb = DBSCAN(eps=0.5, min_samples=5)\nlabels = db.fit_predict(X)\nn_clusters = len(set(labels)) - (1 if -1 in labels else 0)\nn_noise = list(labels).count(-1)\nprint(f'Clusters: {n_clusters}, Noise: {n_noise}')",
+    "options": [
+      "Runs K-Means with 5 clusters",
+      "Runs DBSCAN and reports the number of clusters found and noise points",
+      "Removes noise from the dataset",
+      "Performs hierarchical clustering"
+    ],
+    "correctIndex": 1,
+    "explanation": "DBSCAN finds clusters based on density (eps=0.5, min_samples=5). Label -1 indicates noise. The code counts clusters and noise points."
+  },
+  {
+    "id": "ml_139",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the difference between micro and macro averaging in multiclass metrics?",
+    "options": [
+      "No difference",
+      "Micro aggregates contributions of all classes; macro computes metric per class and averages",
+      "Micro is always higher than macro",
+      "They only differ for binary classification"
+    ],
+    "correctIndex": 1,
+    "explanation": "Micro-averaging aggregates TP, FP, FN across all classes then computes the metric. Macro-averaging computes the metric for each class independently then averages."
+  },
+  {
+    "id": "ml_140",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "In gradient descent, a learning rate that is too large can cause the loss to diverge.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. An excessively large learning rate causes parameter updates to overshoot the minimum, potentially causing the loss to oscillate or diverge."
+  },
+  {
+    "id": "ml_141",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code implement?",
+    "codeSnippet": "from sklearn.model_selection import RandomizedSearchCV\nfrom sklearn.ensemble import RandomForestClassifier\nfrom scipy.stats import randint\nparam_dist = {'n_estimators': randint(50, 200), 'max_depth': randint(3, 15)}\nrandom_search = RandomizedSearchCV(RandomForestClassifier(), param_dist, n_iter=20, cv=5)\nrandom_search.fit(X_train, y_train)\nprint(random_search.best_params_)",
+    "options": [
+      "Grid search over all parameter combinations",
+      "Random search over hyperparameter distributions with 20 random samples and 5-fold CV",
+      "A random forest with 20 trees",
+      "Cross-validation with 20 folds"
+    ],
+    "correctIndex": 1,
+    "explanation": "RandomizedSearchCV samples 20 random parameter combinations from the specified distributions and evaluates each with 5-fold CV."
+  },
+  {
+    "id": "ml_142",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the silhouette score used for?",
+    "options": [
+      "Evaluating classification models",
+      "Measuring how well clusters are separated and how cohesive they are",
+      "Computing feature importance",
+      "Determining the learning rate"
+    ],
+    "correctIndex": 1,
+    "explanation": "The silhouette score ranges from -1 to 1, measuring how similar an object is to its own cluster versus other clusters. Higher values indicate better-defined clusters."
+  },
+  {
+    "id": "ml_143",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which of the following are hyperparameters of a Random Forest? (Select all that apply)",
+    "options": [
+      "n_estimators (number of trees)",
+      "max_depth (maximum tree depth)",
+      "The learned split thresholds",
+      "min_samples_split"
+    ],
+    "correctIndices": [0, 1, 3],
+    "explanation": "n_estimators, max_depth, and min_samples_split are set before training. Learned split thresholds are model parameters determined during training."
+  },
+  {
+    "id": "ml_144",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the purpose of the validation set?",
+    "options": [
+      "To train the model",
+      "To tune hyperparameters and make model selection decisions during development",
+      "To be the final evaluation set",
+      "To increase the amount of training data"
+    ],
+    "correctIndex": 1,
+    "explanation": "The validation set is used during model development for hyperparameter tuning and model selection, keeping the test set uncontaminated for final evaluation."
+  },
+  {
+    "id": "ml_145",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code demonstrate?",
+    "codeSnippet": "from sklearn.linear_model import Ridge, Lasso\nridge = Ridge(alpha=1.0)\nlasso = Lasso(alpha=1.0)\nridge.fit(X_train, y_train)\nlasso.fit(X_train, y_train)\nprint(f'Ridge coefficients: {ridge.coef_}')\nprint(f'Lasso coefficients: {lasso.coef_}')",
+    "options": [
+      "The difference between L1 (Lasso, sparse coefficients) and L2 (Ridge, small coefficients) regularization",
+      "Two identical regression models",
+      "Ridge for classification and Lasso for regression",
+      "Feature selection using both models together"
+    ],
+    "correctIndex": 0,
+    "explanation": "This compares Ridge (L2, shrinks coefficients) and Lasso (L1, can zero out coefficients). Lasso tends to produce sparse solutions."
+  },
+  {
+    "id": "ml_146",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the difference between stochastic gradient descent (SGD) and batch gradient descent?",
+    "options": [
+      "SGD is always faster",
+      "SGD updates parameters using one sample at a time; batch GD uses the entire dataset",
+      "Batch GD is more noisy",
+      "They produce identical results"
+    ],
+    "correctIndex": 1,
+    "explanation": "SGD updates parameters after each sample (faster, noisier), batch GD uses all samples (slower, smoother). Mini-batch GD is the common compromise."
+  },
+  {
+    "id": "ml_147",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "Random Forests can give feature importance scores based on how much each feature contributes to reducing impurity.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Random Forests compute feature importance by averaging the decrease in impurity (e.g., Gini) across all trees for each feature."
+  },
+  {
+    "id": "ml_148",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.preprocessing import PolynomialFeatures\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\npoly_model = Pipeline([\n    ('poly', PolynomialFeatures(degree=3)),\n    ('linear', LinearRegression())\n])\npoly_model.fit(X_train, y_train)",
+    "options": [
+      "Fits 3 separate linear models",
+      "Creates polynomial features up to degree 3 then fits a linear regression (polynomial regression)",
+      "Performs PCA with 3 components",
+      "Creates 3 copies of the dataset"
+    ],
+    "correctIndex": 1,
+    "explanation": "PolynomialFeatures(degree=3) creates polynomial and interaction features up to degree 3. LinearRegression then fits a model to these, effectively creating polynomial regression."
+  },
+  {
+    "id": "ml_149",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the Gini impurity used for in decision trees?",
+    "options": [
+      "Measuring the model's overall accuracy",
+      "Measuring how often a randomly chosen element would be misclassified, guiding split decisions",
+      "Determining the number of features",
+      "Calculating the learning rate"
+    ],
+    "correctIndex": 1,
+    "explanation": "Gini impurity measures the probability of misclassification. Decision trees choose splits that minimize Gini impurity, creating purer nodes."
+  },
+  {
+    "id": "ml_150",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which techniques can help with imbalanced datasets? (Select all that apply)",
+    "options": [
+      "Oversampling the minority class (e.g., SMOTE)",
+      "Undersampling the majority class",
+      "Using class weights in the model",
+      "Ignoring the imbalance and using accuracy"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "Oversampling, undersampling, and class weights address imbalance. Using accuracy alone with imbalanced data gives misleading results."
+  },
+  {
+    "id": "ml_151",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is information gain in decision trees?",
+    "options": [
+      "The total amount of information in the dataset",
+      "The reduction in entropy after splitting on a feature",
+      "The number of bits needed to encode the tree",
+      "The accuracy improvement after adding a feature"
+    ],
+    "correctIndex": 1,
+    "explanation": "Information gain measures the reduction in entropy (disorder) when the dataset is split on a particular feature. Higher gain means a more informative split."
+  },
+  {
+    "id": "ml_152",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code achieve?",
+    "codeSnippet": "from sklearn.metrics import silhouette_score\nfrom sklearn.cluster import KMeans\nscores = []\nfor k in range(2, 10):\n    km = KMeans(n_clusters=k, random_state=42).fit(X)\n    scores.append(silhouette_score(X, km.labels_))\nprint(f'Best k: {range(2,10)[scores.index(max(scores))]}')",
+    "options": [
+      "Finds the K with highest accuracy",
+      "Finds the optimal number of clusters using silhouette score",
+      "Performs cross-validation for K-Means",
+      "Computes classification metrics for K-Means"
+    ],
+    "correctIndex": 1,
+    "explanation": "This iterates over K values, computing silhouette scores for each, and identifies the K that produces the best cluster separation."
+  },
+  {
+    "id": "ml_153",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the 'max_features' parameter in Random Forest?",
+    "options": [
+      "The maximum number of trees",
+      "The maximum number of features considered for splitting at each node",
+      "The maximum depth of each tree",
+      "The total number of features in the dataset"
+    ],
+    "correctIndex": 1,
+    "explanation": "max_features controls how many features are randomly selected for consideration at each split, adding randomness that helps reduce correlation between trees."
+  },
+  {
+    "id": "ml_154",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "PCA is a supervised dimensionality reduction technique that uses labels.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. PCA is unsupervised; it uses only feature data to find directions of maximum variance, without considering labels."
+  },
+  {
+    "id": "ml_155",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code compute?",
+    "codeSnippet": "import numpy as np\nfrom sklearn.metrics import log_loss\ny_true = [0, 0, 1, 1]\ny_prob = [0.1, 0.4, 0.8, 0.9]\nprint(f'Log Loss: {log_loss(y_true, y_prob):.4f}')",
+    "options": [
+      "Accuracy of the predictions",
+      "The logarithmic loss (cross-entropy) measuring confidence of predictions",
+      "The mean squared error",
+      "The R-squared score"
+    ],
+    "correctIndex": 1,
+    "explanation": "Log loss (cross-entropy) penalizes confident wrong predictions heavily. It measures how well predicted probabilities match actual class labels."
+  },
+  {
+    "id": "ml_156",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the purpose of the 'gamma' parameter in RBF kernel SVM?",
+    "options": [
+      "Controls the number of support vectors",
+      "Controls how far the influence of a single training example reaches",
+      "Sets the regularization strength",
+      "Determines the number of classes"
+    ],
+    "correctIndex": 1,
+    "explanation": "Gamma defines how far the influence of a training point extends. High gamma = close influence (complex boundary), low gamma = far influence (smoother boundary)."
+  },
+  {
+    "id": "ml_157",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which of the following are common causes of data leakage? (Select all that apply)",
+    "options": [
+      "Using test data information during training",
+      "Feature engineering using future data",
+      "Scaling features before splitting data",
+      "Using proper cross-validation"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "Data leakage occurs when training uses information from outside the training set: test data access, future data, or global scaling before splitting. Proper CV prevents leakage."
+  },
+  {
+    "id": "ml_158",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the difference between precision and recall?",
+    "options": [
+      "They are the same metric",
+      "Precision measures exactness of positive predictions; recall measures completeness of finding actual positives",
+      "Precision is for regression; recall is for classification",
+      "Precision is always higher than recall"
+    ],
+    "correctIndex": 1,
+    "explanation": "Precision = TP/(TP+FP) measures how many positive predictions were correct. Recall = TP/(TP+FN) measures how many actual positives were found."
+  },
+  {
+    "id": "ml_159",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.ensemble import VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.svm import SVC\nvoting = VotingClassifier(\n    estimators=[('lr', LogisticRegression()), ('dt', DecisionTreeClassifier()), ('svc', SVC())],\n    voting='hard'\n)\nvoting.fit(X_train, y_train)",
+    "options": [
+      "Trains 3 models and picks the one with highest accuracy",
+      "Creates an ensemble that takes a majority vote from 3 different classifiers",
+      "Trains a single model with 3 different datasets",
+      "Performs 3-fold cross-validation"
+    ],
+    "correctIndex": 1,
+    "explanation": "VotingClassifier with voting='hard' trains all 3 models and makes predictions based on majority vote. Each model gets one vote."
+  },
+  {
+    "id": "ml_160",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the purpose of the confusion matrix?",
+    "options": [
+      "To confuse the model during training",
+      "To visualize the performance of a classifier showing true vs predicted labels",
+      "To compute the learning rate",
+      "To select the best features"
+    ],
+    "correctIndex": 1,
+    "explanation": "A confusion matrix shows the counts of true positives, true negatives, false positives, and false negatives for evaluating classification performance."
+  },
+  {
+    "id": "ml_161",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "AdaBoost assigns higher weights to misclassified samples in each iteration.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. AdaBoost increases weights of misclassified samples so subsequent weak learners focus on the hardest-to-classify examples."
+  },
+  {
+    "id": "ml_162",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code demonstrate?",
+    "codeSnippet": "from sklearn.model_selection import learning_curve\nimport numpy as np\ntrain_sizes, train_scores, val_scores = learning_curve(\n    DecisionTreeClassifier(), X, y, train_sizes=np.linspace(0.1, 1.0, 10), cv=5\n)\n# Plot train_scores.mean(axis=1) and val_scores.mean(axis=1) vs train_sizes",
+    "options": [
+      "A validation curve for hyperparameter tuning",
+      "A learning curve showing how model performance changes with training set size",
+      "A ROC curve",
+      "A feature importance plot"
+    ],
+    "correctIndex": 1,
+    "explanation": "learning_curve evaluates model performance at different training set sizes, helping diagnose whether more data would improve the model (bias-variance diagnosis)."
+  },
+  {
+    "id": "ml_163",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is mini-batch gradient descent?",
+    "options": [
+      "Gradient descent using the entire dataset",
+      "Gradient descent using small random subsets of the data for each parameter update",
+      "Gradient descent using a single sample",
+      "Gradient descent with a small learning rate"
+    ],
+    "correctIndex": 1,
+    "explanation": "Mini-batch GD updates parameters using small random batches (e.g., 32-256 samples), balancing the efficiency of SGD with the stability of batch GD."
+  },
+  {
+    "id": "ml_164",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which statements about cross-validation are true? (Select all that apply)",
+    "options": [
+      "It provides a more reliable performance estimate than a single train/test split",
+      "It uses all data for both training and validation",
+      "K-fold CV with K=10 trains the model 10 times",
+      "It increases the effective training data used"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "CV provides robust estimates, uses all data (each point is in both train and validation), and trains K times. It increases reliability, not effective data size."
+  },
+  {
+    "id": "ml_165",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code accomplish?",
+    "codeSnippet": "from sklearn.model_selection import StratifiedKFold\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\nskf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)\nscores = []\nfor train_idx, val_idx in skf.split(X, y):\n    model = LogisticRegression()\n    model.fit(X[train_idx], y[train_idx])\n    scores.append(accuracy_score(y[val_idx], model.predict(X[val_idx])))\nprint(f'Mean accuracy: {np.mean(scores):.4f}')",
+    "options": [
+      "5-fold stratified cross-validation maintaining class distribution in each fold",
+      "Random 5-fold cross-validation",
+      "5 independent train/test splits",
+      "Leave-one-out cross-validation"
+    ],
+    "correctIndex": 0,
+    "explanation": "StratifiedKFold ensures each fold has the same proportion of classes as the full dataset, important for imbalanced classification."
+  },
+  {
+    "id": "ml_166",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is R-squared (R^2) in regression?",
+    "options": [
+      "The correlation coefficient",
+      "The proportion of variance in the target variable explained by the model",
+      "The mean squared error",
+      "The number of features squared"
+    ],
+    "correctIndex": 1,
+    "explanation": "R-squared measures the proportion of variance in the dependent variable that is predictable from the independent variables. R^2=1 means perfect fit."
+  },
+  {
+    "id": "ml_167",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "The curse of dimensionality means that as features increase, the amount of data needed to generalize grows exponentially.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. In high-dimensional spaces, data becomes increasingly sparse, requiring exponentially more data to maintain statistical significance."
+  },
+  {
+    "id": "ml_168",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nfrom sklearn.pipeline import Pipeline\npipe = Pipeline([\n    ('scaler', StandardScaler()),\n    ('pca', PCA(n_components=0.95)),\n    ('clf', LogisticRegression())\n])\npipe.fit(X_train, y_train)",
+    "options": [
+      "Scales data, keeps components explaining 95% variance, then classifies",
+      "Scales data, removes 95% of features, then classifies",
+      "Scales data, keeps 95 features, then classifies",
+      "Performs 95% train/test split with PCA"
+    ],
+    "correctIndex": 0,
+    "explanation": "PCA with n_components=0.95 (a float) keeps enough components to explain 95% of the variance. The pipeline scales, reduces dimensions, then classifies."
+  },
+  {
+    "id": "ml_169",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the difference between hard and soft voting in ensemble methods?",
+    "options": [
+      "Hard voting uses class labels for majority vote; soft voting uses predicted probabilities",
+      "Hard voting is more accurate",
+      "Soft voting can only be used with neural networks",
+      "There is no difference"
+    ],
+    "correctIndex": 0,
+    "explanation": "Hard voting takes majority vote of predicted class labels. Soft voting averages predicted probabilities, often performing better when models output well-calibrated probabilities."
+  },
+  {
+    "id": "ml_170",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which of the following are true about gradient descent? (Select all that apply)",
+    "options": [
+      "It finds the minimum of a function iteratively",
+      "The gradient points in the direction of steepest ascent",
+      "Parameters are updated in the negative gradient direction",
+      "It always finds the global minimum"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "GD iteratively minimizes functions, the gradient points uphill (steepest ascent), and parameters move in the opposite direction. It may find local, not global, minima."
+  },
+  {
+    "id": "ml_171",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.model_selection import validation_curve\nimport numpy as np\ntrain_scores, val_scores = validation_curve(\n    DecisionTreeClassifier(), X, y,\n    param_name='max_depth', param_range=range(1, 20), cv=5\n)\n# Plot mean train and val scores vs max_depth",
+    "options": [
+      "Evaluates model at different training sizes",
+      "Plots how train and validation scores change with max_depth to identify optimal complexity",
+      "Performs 20-fold cross-validation",
+      "Trains 20 different decision tree models"
+    ],
+    "correctIndex": 1,
+    "explanation": "validation_curve shows how a hyperparameter affects training and validation scores, helping identify underfitting (low scores) and overfitting (diverging scores)."
+  },
+  {
+    "id": "ml_172",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the purpose of early stopping?",
+    "options": [
+      "To speed up data loading",
+      "To stop training when validation performance stops improving, preventing overfitting",
+      "To reduce the number of features",
+      "To stop when training accuracy reaches 100%"
+    ],
+    "correctIndex": 1,
+    "explanation": "Early stopping monitors validation performance and stops training when it starts degrading, preventing the model from overfitting by training too long."
+  },
+  {
+    "id": "ml_173",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "In K-Means, the initial centroid placement can affect the final clustering result.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. K-Means can converge to different solutions depending on initial centroids. This is why multiple initializations (n_init) or k-means++ initialization are used."
+  },
+  {
+    "id": "ml_174",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.ensemble import AdaBoostClassifier\nfrom sklearn.tree import DecisionTreeClassifier\nada = AdaBoostClassifier(\n    estimator=DecisionTreeClassifier(max_depth=1),\n    n_estimators=50, learning_rate=1.0\n)\nada.fit(X_train, y_train)",
+    "options": [
+      "Creates a single deep decision tree",
+      "Creates an AdaBoost ensemble of 50 decision stumps (depth-1 trees)",
+      "Creates 50 random forests",
+      "Creates a gradient boosting model"
+    ],
+    "correctIndex": 1,
+    "explanation": "AdaBoost with max_depth=1 creates 'stumps' (trees with one split). 50 stumps are trained sequentially, each focusing on previously misclassified samples."
+  },
+  {
+    "id": "ml_175",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the 'out-of-bag' (OOB) score in Random Forests?",
+    "options": [
+      "The accuracy on outlier samples",
+      "The validation score computed using samples not included in each bootstrap sample",
+      "The score on the test set",
+      "The training accuracy"
+    ],
+    "correctIndex": 1,
+    "explanation": "OOB score uses samples not selected for each tree's bootstrap sample as a built-in validation set, providing an unbiased performance estimate without a separate validation set."
+  },
+  {
+    "id": "ml_176",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which are valid strategies for handling categorical features? (Select all that apply)",
+    "options": [
+      "One-Hot Encoding",
+      "Label Encoding",
+      "Target Encoding",
+      "Ignoring them completely"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "One-Hot, Label, and Target Encoding are valid strategies for converting categorical features to numeric. Ignoring categoricals loses potentially valuable information."
+  },
+  {
+    "id": "ml_177",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code produce?",
+    "codeSnippet": "from sklearn.metrics import roc_curve\nimport matplotlib.pyplot as plt\ny_scores = model.predict_proba(X_test)[:, 1]\nfpr, tpr, thresholds = roc_curve(y_test, y_scores)\nplt.plot(fpr, tpr)\nplt.plot([0, 1], [0, 1], 'k--')\nplt.xlabel('False Positive Rate')\nplt.ylabel('True Positive Rate')",
+    "options": [
+      "A precision-recall curve",
+      "An ROC curve with a diagonal reference line",
+      "A learning curve",
+      "A feature importance bar chart"
+    ],
+    "correctIndex": 1,
+    "explanation": "roc_curve computes FPR and TPR at various thresholds. The plot shows the ROC curve with a diagonal dashed line representing random chance."
+  },
+  {
+    "id": "ml_178",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What does the 'class_weight' parameter do in sklearn classifiers?",
+    "options": [
+      "Removes classes with fewer samples",
+      "Assigns higher importance to underrepresented classes during training",
+      "Weights features based on class membership",
+      "Creates balanced training batches"
+    ],
+    "correctIndex": 1,
+    "explanation": "class_weight adjusts the loss function to penalize misclassification of minority classes more heavily, helping handle imbalanced datasets."
+  },
+  {
+    "id": "ml_179",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "Entropy in decision trees measures the disorder or impurity of a dataset.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Entropy measures the randomness or impurity of labels in a set. A pure set (one class only) has entropy 0. Maximum entropy occurs with equal class distribution."
+  },
+  {
+    "id": "ml_180",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.ensemble import StackingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.svm import SVC\nstacking = StackingClassifier(\n    estimators=[('dt', DecisionTreeClassifier()), ('svc', SVC())],\n    final_estimator=LogisticRegression()\n)\nstacking.fit(X_train, y_train)",
+    "options": [
+      "Trains two models and picks the best one",
+      "Uses a logistic regression to combine predictions from a decision tree and SVM",
+      "Trains three models independently",
+      "Performs bagging with two models"
+    ],
+    "correctIndex": 1,
+    "explanation": "Stacking uses base estimators (DT and SVC) to generate predictions, then a meta-learner (LogisticRegression) learns how to best combine them."
+  },
+  {
+    "id": "ml_181",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the purpose of feature selection?",
+    "options": [
+      "To add more features to the dataset",
+      "To identify and use only the most relevant features, improving model performance and reducing complexity",
+      "To create synthetic features",
+      "To standardize feature scales"
+    ],
+    "correctIndex": 1,
+    "explanation": "Feature selection identifies the most informative features, reducing overfitting, improving interpretability, and decreasing training time."
+  },
+  {
+    "id": "ml_182",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which of the following can be used for feature selection? (Select all that apply)",
+    "options": [
+      "Recursive Feature Elimination (RFE)",
+      "Feature importance from tree-based models",
+      "Correlation analysis",
+      "StandardScaler"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "RFE, tree-based importance, and correlation analysis are feature selection methods. StandardScaler is a preprocessing technique, not feature selection."
+  },
+  {
+    "id": "ml_183",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code accomplish?",
+    "codeSnippet": "from sklearn.feature_selection import RFE\nfrom sklearn.linear_model import LogisticRegression\nrfe = RFE(LogisticRegression(), n_features_to_select=5)\nrfe.fit(X_train, y_train)\nprint(rfe.support_)\nprint(rfe.ranking_)",
+    "options": [
+      "Randomly selects 5 features",
+      "Recursively eliminates features, keeping the 5 most important based on model coefficients",
+      "Creates 5 new features",
+      "Trains 5 logistic regression models"
+    ],
+    "correctIndex": 1,
+    "explanation": "RFE recursively removes the least important features based on model weights, keeping the top 5. support_ shows selected features, ranking_ shows their ranks."
+  },
+  {
+    "id": "ml_184",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the difference between KMeans++ and standard KMeans initialization?",
+    "options": [
+      "KMeans++ is slower and less effective",
+      "KMeans++ selects initial centroids spread apart, leading to better convergence",
+      "KMeans++ uses more clusters",
+      "There is no difference"
+    ],
+    "correctIndex": 1,
+    "explanation": "KMeans++ initializes centroids by choosing them far apart probabilistically, leading to faster convergence and better results than random initialization."
+  },
+  {
+    "id": "ml_185",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "Precision-Recall curves are particularly useful for imbalanced datasets.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Precision-Recall curves focus on the positive class performance, making them more informative than ROC curves when classes are highly imbalanced."
+  },
+  {
+    "id": "ml_186",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the effect of increasing the regularization parameter alpha in Ridge regression?",
+    "options": [
+      "Coefficients become larger",
+      "Coefficients shrink toward zero, reducing model complexity",
+      "More features are selected",
+      "The model becomes more complex"
+    ],
+    "correctIndex": 1,
+    "explanation": "Increasing alpha in Ridge strengthens the L2 penalty, shrinking coefficients more toward zero, reducing model complexity and variance."
+  },
+  {
+    "id": "ml_187",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.calibration import CalibratedClassifierCV\nfrom sklearn.svm import SVC\nsvc = SVC()\ncalibrated_svc = CalibratedClassifierCV(svc, cv=5, method='sigmoid')\ncalibrated_svc.fit(X_train, y_train)\nprobs = calibrated_svc.predict_proba(X_test)",
+    "options": [
+      "Adds probability output to SVC, which doesn't natively support predict_proba well",
+      "Trains 5 SVC models and averages them",
+      "Calibrates the regularization parameter of SVC",
+      "Performs cross-validation on SVC"
+    ],
+    "correctIndex": 0,
+    "explanation": "CalibratedClassifierCV wraps SVC to produce well-calibrated probability estimates using Platt scaling (sigmoid method), enabling predict_proba."
+  },
+  {
+    "id": "ml_188",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which of the following are disadvantages of K-Means clustering? (Select all that apply)",
+    "options": [
+      "Requires specifying K in advance",
+      "Sensitive to initial centroid placement",
+      "Assumes spherical clusters of similar size",
+      "Can handle any cluster shape"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "K-Means requires K upfront, is sensitive to initialization, and assumes spherical clusters. It cannot handle arbitrary shapes; DBSCAN is better for that."
+  },
+  {
+    "id": "ml_189",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code produce?",
+    "codeSnippet": "from sklearn.metrics import precision_recall_curve\nimport matplotlib.pyplot as plt\ny_scores = model.predict_proba(X_test)[:, 1]\nprecisions, recalls, thresholds = precision_recall_curve(y_test, y_scores)\nplt.plot(recalls, precisions)\nplt.xlabel('Recall')\nplt.ylabel('Precision')",
+    "options": [
+      "An ROC curve",
+      "A precision-recall curve showing the tradeoff at different thresholds",
+      "A learning curve",
+      "A confusion matrix visualization"
+    ],
+    "correctIndex": 1,
+    "explanation": "precision_recall_curve computes precision and recall pairs at various probability thresholds, visualizing the precision-recall tradeoff."
+  },
+  {
+    "id": "ml_190",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the purpose of the 'warm_start' parameter in scikit-learn estimators?",
+    "options": [
+      "To initialize parameters randomly",
+      "To reuse the solution of the previous fit as initialization for the next fit",
+      "To speed up the first iteration",
+      "To increase the temperature in simulated annealing"
+    ],
+    "correctIndex": 1,
+    "explanation": "warm_start=True reuses previously learned parameters as the starting point for additional training, useful for incremental learning or hyperparameter search."
+  },
+  {
+    "id": "ml_191",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "Multicollinearity among features can be problematic for linear regression but not for tree-based models.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Multicollinearity inflates variance of coefficient estimates in linear regression. Tree-based models handle correlated features more naturally."
+  },
+  {
+    "id": "ml_192",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the Matthews Correlation Coefficient (MCC)?",
+    "options": [
+      "A metric only for regression",
+      "A balanced metric that accounts for all four quadrants of the confusion matrix",
+      "A feature correlation measure",
+      "A clustering metric"
+    ],
+    "correctIndex": 1,
+    "explanation": "MCC ranges from -1 to +1, using all four confusion matrix values (TP, TN, FP, FN). It's considered a balanced metric even for imbalanced datasets."
+  },
+  {
+    "id": "ml_193",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code accomplish?",
+    "codeSnippet": "from sklearn.preprocessing import PowerTransformer\npt = PowerTransformer(method='yeo-johnson')\nX_transformed = pt.fit_transform(X)\n# X_transformed is now closer to a Gaussian distribution",
+    "options": [
+      "Standardizes features to mean=0, std=1",
+      "Applies a power transformation to make features more Gaussian-like",
+      "Removes outliers from the data",
+      "Reduces dimensionality of the data"
+    ],
+    "correctIndex": 1,
+    "explanation": "PowerTransformer applies the Yeo-Johnson transformation to make features more normally distributed, which can improve performance of models that assume normality."
+  },
+  {
+    "id": "ml_194",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which of the following are true about gradient boosting? (Select all that apply)",
+    "options": [
+      "It builds trees sequentially, each correcting previous errors",
+      "It uses gradient descent to minimize the loss function",
+      "Trees are built in parallel",
+      "It can overfit if too many trees are used"
+    ],
+    "correctIndices": [0, 1, 3],
+    "explanation": "Gradient boosting builds trees sequentially using gradient descent to minimize loss, and can overfit with too many trees. Trees are NOT built in parallel."
+  },
+  {
+    "id": "ml_195",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code do?",
+    "codeSnippet": "from sklearn.multiclass import OneVsRestClassifier\nfrom sklearn.svm import SVC\novr = OneVsRestClassifier(SVC())\novr.fit(X_train, y_train)\npredictions = ovr.predict(X_test)",
+    "options": [
+      "Trains one SVM for all classes simultaneously",
+      "Trains one SVM per class (each class vs all others)",
+      "Trains one SVM per pair of classes",
+      "Trains an ensemble of random SVMs"
+    ],
+    "correctIndex": 1,
+    "explanation": "OneVsRestClassifier trains one binary classifier per class, where each classifier distinguishes one class from all others."
+  },
+  {
+    "id": "ml_196",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is the Adjusted R-squared?",
+    "options": [
+      "R-squared divided by the number of features",
+      "R-squared that penalizes the addition of features that don't improve the model",
+      "R-squared for classification tasks",
+      "R-squared computed on the test set"
+    ],
+    "correctIndex": 1,
+    "explanation": "Adjusted R-squared modifies R-squared to penalize additional features that don't improve the model, preventing artificially inflated R-squared from adding irrelevant features."
+  },
+  {
+    "id": "ml_197",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "intermediate",
+    "question": "In a Random Forest, each tree is trained on a different random subset of features at each split.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. At each node, Random Forest considers only a random subset of features for splitting, introducing diversity among trees and reducing overfitting."
+  },
+  {
+    "id": "ml_198",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "intermediate",
+    "question": "What does this code compute?",
+    "codeSnippet": "from sklearn.metrics import cohen_kappa_score\ny_true = [0, 1, 2, 0, 1, 2]\ny_pred = [0, 2, 1, 0, 0, 1]\nprint(f'Cohen Kappa: {cohen_kappa_score(y_true, y_pred):.4f}')",
+    "options": [
+      "Accuracy adjusted for random chance agreement",
+      "The F1 score",
+      "The precision of the model",
+      "The area under the ROC curve"
+    ],
+    "correctIndex": 0,
+    "explanation": "Cohen's Kappa measures inter-rater agreement adjusted for chance. A kappa of 0 means agreement is no better than chance, 1 means perfect agreement."
+  },
+  {
+    "id": "ml_199",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "intermediate",
+    "question": "Which of the following help diagnose model issues? (Select all that apply)",
+    "options": [
+      "Learning curves (performance vs training size)",
+      "Validation curves (performance vs hyperparameter)",
+      "Confusion matrices",
+      "Data type inspection"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "Learning curves diagnose bias/variance, validation curves find optimal hyperparameters, and confusion matrices reveal classification error patterns."
+  },
+  {
+    "id": "ml_200",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "intermediate",
+    "question": "What is label smoothing?",
+    "options": [
+      "Removing noisy labels from the dataset",
+      "Softening hard labels (e.g., changing [1,0] to [0.9,0.1]) to prevent overconfidence",
+      "Averaging labels across similar samples",
+      "Encoding labels as continuous values"
+    ],
+    "correctIndex": 1,
+    "explanation": "Label smoothing replaces hard targets with soft targets, preventing the model from becoming overconfident and improving generalization."
+  },
+  {
+    "id": "ml_201",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the vanishing gradient problem in deep neural networks?",
+    "options": [
+      "Gradients become too large during backpropagation",
+      "Gradients become exponentially small in earlier layers, preventing effective weight updates",
+      "The network runs out of memory",
+      "The loss function becomes undefined"
+    ],
+    "correctIndex": 1,
+    "explanation": "In deep networks with sigmoid/tanh activations, gradients shrink exponentially as they propagate back through layers, making early layers learn very slowly."
+  },
+  {
+    "id": "ml_202",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "How does the attention mechanism in Transformers work?",
+    "options": [
+      "It processes tokens sequentially like RNNs",
+      "It computes weighted relationships between all positions using Query, Key, and Value matrices",
+      "It uses convolutional filters on the input",
+      "It randomly selects which tokens to focus on"
+    ],
+    "correctIndex": 1,
+    "explanation": "Attention computes dot products between Query and Key vectors to get weights, then applies these weights to Value vectors, allowing each position to attend to all others."
+  },
+  {
+    "id": "ml_203",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the key difference between GANs and VAEs?",
+    "options": [
+      "GANs use supervised learning; VAEs use unsupervised",
+      "GANs use adversarial training (generator vs discriminator); VAEs optimize an evidence lower bound (ELBO)",
+      "VAEs generate better images; GANs generate better text",
+      "GANs are deterministic; VAEs are probabilistic"
+    ],
+    "correctIndex": 1,
+    "explanation": "GANs train a generator against a discriminator in a minimax game. VAEs maximize the ELBO (reconstruction + KL divergence), providing a probabilistic framework."
+  },
+  {
+    "id": "ml_204",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "Batch normalization normalizes the inputs of each layer to have zero mean and unit variance, which helps with internal covariate shift.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Batch normalization normalizes layer inputs using batch statistics, then applies learnable scale and shift parameters, stabilizing training."
+  },
+  {
+    "id": "ml_205",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of skip connections in ResNets?",
+    "options": [
+      "To skip layers during inference for speed",
+      "To allow gradients to flow directly through shortcut paths, enabling training of very deep networks",
+      "To randomly skip training some layers",
+      "To reduce the number of parameters"
+    ],
+    "correctIndex": 1,
+    "explanation": "Skip connections add the input of a block to its output, creating a shortcut path for gradients. This mitigates vanishing gradients and enables training of 100+ layer networks."
+  },
+  {
+    "id": "ml_206",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef softmax(z):\n    exp_z = np.exp(z - np.max(z))\n    return exp_z / exp_z.sum()\n\nlogits = np.array([2.0, 1.0, 0.1])\nprint(softmax(logits))",
+    "options": [
+      "Converts logits to probabilities that sum to 1, with numerical stability",
+      "Normalizes the array to range [0, 1]",
+      "Applies ReLU activation",
+      "Computes the sigmoid of each element"
+    ],
+    "correctIndex": 0,
+    "explanation": "Softmax converts raw logits to a probability distribution. Subtracting max(z) prevents numerical overflow without changing the result."
+  },
+  {
+    "id": "ml_207",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "In reinforcement learning, what is the exploration-exploitation tradeoff?",
+    "options": [
+      "Balancing model training and evaluation",
+      "Balancing trying new actions (exploration) vs using known best actions (exploitation)",
+      "Balancing training speed and accuracy",
+      "Balancing model complexity and interpretability"
+    ],
+    "correctIndex": 1,
+    "explanation": "The agent must balance exploring new actions to discover potentially better rewards versus exploiting known good actions. Epsilon-greedy is a common strategy."
+  },
+  {
+    "id": "ml_208",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which techniques help address the vanishing gradient problem? (Select all that apply)",
+    "options": [
+      "ReLU activation function",
+      "LSTM gates",
+      "Skip/residual connections",
+      "Using sigmoid activation in all layers"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "ReLU has non-saturating gradients, LSTMs use gates to maintain gradients, and skip connections provide gradient shortcuts. Sigmoid worsens the problem."
+  },
+  {
+    "id": "ml_209",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the SHAP (SHapley Additive exPlanations) method used for?",
+    "options": [
+      "Training neural networks faster",
+      "Explaining individual predictions by computing each feature's contribution using game theory",
+      "Selecting hyperparameters",
+      "Data augmentation"
+    ],
+    "correctIndex": 1,
+    "explanation": "SHAP uses Shapley values from cooperative game theory to assign each feature a contribution to a specific prediction, providing model-agnostic interpretability."
+  },
+  {
+    "id": "ml_210",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef cross_entropy_loss(y_true, y_pred):\n    y_pred = np.clip(y_pred, 1e-15, 1 - 1e-15)\n    return -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))\n\ny_true = np.array([1, 0, 1, 1])\ny_pred = np.array([0.9, 0.1, 0.8, 0.7])\nprint(f'{cross_entropy_loss(y_true, y_pred):.4f}')",
+    "options": [
+      "Binary cross-entropy loss with numerical stability clipping",
+      "Mean squared error loss",
+      "Hinge loss for SVM",
+      "Huber loss"
+    ],
+    "correctIndex": 0,
+    "explanation": "This implements binary cross-entropy loss. np.clip prevents log(0). The formula -[y*log(p) + (1-y)*log(1-p)] penalizes confident wrong predictions."
+  },
+  {
+    "id": "ml_211",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between transductive and inductive learning?",
+    "options": [
+      "Transductive learning uses more data",
+      "Inductive learning builds a general model; transductive learning makes predictions directly for specific test points without a general model",
+      "Transductive learning is always supervised",
+      "There is no practical difference"
+    ],
+    "correctIndex": 1,
+    "explanation": "Inductive learning learns a general function from training data. Transductive learning directly predicts labels for given test points without deriving a general model."
+  },
+  {
+    "id": "ml_212",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "In a CNN, the number of parameters in a convolutional layer depends on the size of the input image.",
+    "options": ["True", "False"],
+    "correctIndex": 1,
+    "explanation": "False. Conv layer parameters = (kernel_height * kernel_width * input_channels + 1) * num_filters. This is independent of input spatial dimensions."
+  },
+  {
+    "id": "ml_213",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef gradient_descent(X, y, lr=0.01, epochs=1000):\n    m, n = X.shape\n    w = np.zeros(n)\n    b = 0\n    for _ in range(epochs):\n        y_pred = X @ w + b\n        dw = (2/m) * X.T @ (y_pred - y)\n        db = (2/m) * np.sum(y_pred - y)\n        w -= lr * dw\n        b -= lr * db\n    return w, b",
+    "options": [
+      "Stochastic gradient descent for logistic regression",
+      "Batch gradient descent for linear regression (minimizing MSE)",
+      "Newton's method for optimization",
+      "Gradient descent for SVM"
+    ],
+    "correctIndex": 1,
+    "explanation": "This implements batch gradient descent for linear regression. The gradients dw and db are the partial derivatives of MSE with respect to weights and bias."
+  },
+  {
+    "id": "ml_214",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between model-based and model-free reinforcement learning?",
+    "options": [
+      "Model-based uses neural networks; model-free doesn't",
+      "Model-based learns a model of the environment dynamics; model-free learns directly from experience",
+      "Model-free is always more accurate",
+      "Model-based can only handle discrete states"
+    ],
+    "correctIndex": 1,
+    "explanation": "Model-based RL learns a transition model of the environment for planning. Model-free RL (e.g., Q-learning) learns value functions or policies directly from rewards."
+  },
+  {
+    "id": "ml_215",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following are components of the Transformer architecture? (Select all that apply)",
+    "options": [
+      "Multi-head self-attention",
+      "Positional encoding",
+      "Feed-forward neural networks",
+      "Recurrent connections"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "Transformers use multi-head self-attention, positional encodings (since no recurrence), and feed-forward layers. They explicitly avoid recurrent connections."
+  },
+  {
+    "id": "ml_216",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is LIME (Local Interpretable Model-agnostic Explanations)?",
+    "options": [
+      "A type of loss function",
+      "A method that explains individual predictions by fitting a simple interpretable model locally around the prediction",
+      "A regularization technique",
+      "A data augmentation strategy"
+    ],
+    "correctIndex": 1,
+    "explanation": "LIME perturbs input features around a prediction, observes changes in output, and fits a local linear model to explain which features most influenced that specific prediction."
+  },
+  {
+    "id": "ml_217",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What optimization technique does this code implement?",
+    "codeSnippet": "import numpy as np\ndef adam_update(w, dw, m, v, t, lr=0.001, beta1=0.9, beta2=0.999, eps=1e-8):\n    m = beta1 * m + (1 - beta1) * dw\n    v = beta2 * v + (1 - beta2) * dw**2\n    m_hat = m / (1 - beta1**t)\n    v_hat = v / (1 - beta2**t)\n    w -= lr * m_hat / (np.sqrt(v_hat) + eps)\n    return w, m, v",
+    "options": [
+      "Standard SGD with momentum",
+      "Adam optimizer (Adaptive Moment Estimation)",
+      "RMSprop optimizer",
+      "Adagrad optimizer"
+    ],
+    "correctIndex": 1,
+    "explanation": "Adam combines momentum (first moment m) and RMSprop (second moment v) with bias correction. It adapts learning rates per parameter."
+  },
+  {
+    "id": "ml_218",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the mode collapse problem in GANs?",
+    "options": [
+      "The discriminator becomes too strong",
+      "The generator produces only a limited variety of outputs, failing to capture the full data distribution",
+      "Training takes too long",
+      "The loss becomes NaN"
+    ],
+    "correctIndex": 1,
+    "explanation": "Mode collapse occurs when the generator learns to produce only a few types of outputs that fool the discriminator, ignoring the diversity of the real data distribution."
+  },
+  {
+    "id": "ml_219",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "LSTM (Long Short-Term Memory) networks use gates to control the flow of information, addressing the vanishing gradient problem of standard RNNs.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. LSTMs have forget, input, and output gates that regulate information flow through the cell state, allowing gradients to flow over long sequences."
+  },
+  {
+    "id": "ml_220",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef relu(z):\n    return np.maximum(0, z)\n\ndef relu_derivative(z):\n    return (z > 0).astype(float)\n\ndef forward_pass(X, W1, b1, W2, b2):\n    Z1 = X @ W1 + b1\n    A1 = relu(Z1)\n    Z2 = A1 @ W2 + b2\n    A2 = 1 / (1 + np.exp(-Z2))  # sigmoid\n    return Z1, A1, Z2, A2",
+    "options": [
+      "A single-layer perceptron",
+      "Forward pass of a 2-layer neural network with ReLU hidden layer and sigmoid output",
+      "A convolutional neural network",
+      "A recurrent neural network"
+    ],
+    "correctIndex": 1,
+    "explanation": "This implements the forward pass: input -> linear -> ReLU -> linear -> sigmoid. The hidden layer uses ReLU, and the output uses sigmoid for binary classification."
+  },
+  {
+    "id": "ml_221",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of the KL divergence term in a Variational Autoencoder (VAE)?",
+    "options": [
+      "To maximize reconstruction quality",
+      "To regularize the latent space by pushing it toward a standard normal distribution",
+      "To compute classification accuracy",
+      "To increase model complexity"
+    ],
+    "correctIndex": 1,
+    "explanation": "The KL divergence term penalizes the encoder's distribution for deviating from a standard normal prior, ensuring a smooth, continuous latent space suitable for generation."
+  },
+  {
+    "id": "ml_222",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following are types of attention mechanisms? (Select all that apply)",
+    "options": [
+      "Scaled dot-product attention",
+      "Multi-head attention",
+      "Cross-attention",
+      "Convolutional attention"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "Scaled dot-product, multi-head, and cross-attention are standard attention types. Convolutional attention is not a standard category in the transformer framework."
+  },
+  {
+    "id": "ml_223",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the Bellman equation in reinforcement learning?",
+    "options": [
+      "A loss function for supervised learning",
+      "A recursive relationship expressing the value of a state as the expected reward plus the discounted value of the next state",
+      "An optimization algorithm for gradient descent",
+      "A metric for evaluating RL agents"
+    ],
+    "correctIndex": 1,
+    "explanation": "The Bellman equation V(s) = max_a[R(s,a) + gamma * V(s')] expresses optimal state values recursively, forming the basis of dynamic programming and Q-learning."
+  },
+  {
+    "id": "ml_224",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef backprop(X, y, W1, b1, W2, b2, lr=0.01):\n    m = X.shape[0]\n    # Forward\n    Z1 = X @ W1 + b1; A1 = np.maximum(0, Z1)\n    Z2 = A1 @ W2 + b2; A2 = 1/(1+np.exp(-Z2))\n    # Backward\n    dZ2 = A2 - y\n    dW2 = (1/m) * A1.T @ dZ2\n    db2 = (1/m) * np.sum(dZ2, axis=0)\n    dA1 = dZ2 @ W2.T\n    dZ1 = dA1 * (Z1 > 0)\n    dW1 = (1/m) * X.T @ dZ1\n    db1 = (1/m) * np.sum(dZ1, axis=0)\n    return W1-lr*dW1, b1-lr*db1, W2-lr*dW2, b2-lr*db2",
+    "options": [
+      "Forward propagation only",
+      "Full backpropagation with gradient computation and weight update for a 2-layer network",
+      "PCA computation",
+      "K-Means centroid update"
+    ],
+    "correctIndex": 1,
+    "explanation": "This implements full backpropagation: forward pass, compute output error, propagate gradients backward through layers, and update weights using gradient descent."
+  },
+  {
+    "id": "ml_225",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between policy gradient and value-based methods in RL?",
+    "options": [
+      "They are identical approaches",
+      "Policy gradient directly optimizes the policy; value-based methods learn a value function and derive the policy from it",
+      "Value-based methods are always superior",
+      "Policy gradient only works with continuous actions"
+    ],
+    "correctIndex": 1,
+    "explanation": "Policy gradient methods (e.g., REINFORCE) directly parameterize and optimize the policy. Value-based methods (e.g., DQN) learn Q-values and derive the policy from them."
+  },
+  {
+    "id": "ml_226",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "Positional encoding in Transformers uses fixed sinusoidal functions because Transformers have no inherent notion of sequence order.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Unlike RNNs, Transformers process all positions simultaneously. Sinusoidal positional encodings inject position information so the model can distinguish token order."
+  },
+  {
+    "id": "ml_227",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of the discriminator in a GAN?",
+    "options": [
+      "To generate realistic fake data",
+      "To distinguish between real and generated data, providing feedback to the generator",
+      "To encode data into a latent space",
+      "To decode latent representations"
+    ],
+    "correctIndex": 1,
+    "explanation": "The discriminator learns to classify inputs as real or fake. Its gradients guide the generator to produce more realistic outputs in the adversarial training loop."
+  },
+  {
+    "id": "ml_228",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef kernel_rbf(x1, x2, gamma=1.0):\n    return np.exp(-gamma * np.linalg.norm(x1 - x2)**2)\n\ndef compute_kernel_matrix(X, gamma=1.0):\n    n = X.shape[0]\n    K = np.zeros((n, n))\n    for i in range(n):\n        for j in range(n):\n            K[i, j] = kernel_rbf(X[i], X[j], gamma)\n    return K",
+    "options": [
+      "A linear kernel matrix",
+      "An RBF (Gaussian) kernel matrix for kernel methods like SVM",
+      "A covariance matrix",
+      "A confusion matrix"
+    ],
+    "correctIndex": 1,
+    "explanation": "This computes the RBF kernel matrix K[i,j] = exp(-gamma * ||x_i - x_j||^2), used in kernel SVM, kernel PCA, and Gaussian processes."
+  },
+  {
+    "id": "ml_229",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the reparameterization trick in VAEs?",
+    "options": [
+      "A way to speed up training",
+      "Expressing the latent variable as z = mu + sigma * epsilon (epsilon ~ N(0,1)) to enable gradient backpropagation through the sampling step",
+      "A data augmentation technique",
+      "A regularization method"
+    ],
+    "correctIndex": 1,
+    "explanation": "Since we cannot backpropagate through random sampling, the reparameterization trick moves the randomness to an input epsilon, making z a deterministic function of parameters."
+  },
+  {
+    "id": "ml_230",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following are challenges in training GANs? (Select all that apply)",
+    "options": [
+      "Mode collapse",
+      "Training instability",
+      "Vanishing gradients for the generator",
+      "Difficulty evaluating generation quality"
+    ],
+    "correctIndices": [0, 1, 2, 3],
+    "explanation": "GANs suffer from mode collapse, unstable training dynamics, vanishing gradients (if discriminator is too good), and lack of standardized evaluation metrics."
+  },
+  {
+    "id": "ml_231",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of dropout in neural networks?",
+    "options": [
+      "To speed up training by removing layers",
+      "To randomly deactivate neurons during training, acting as regularization by preventing co-adaptation",
+      "To permanently remove unimportant neurons",
+      "To reduce the learning rate"
+    ],
+    "correctIndex": 1,
+    "explanation": "Dropout randomly sets neurons to zero during training with probability p, preventing neurons from co-adapting. At inference, all neurons are active with scaled weights."
+  },
+  {
+    "id": "ml_232",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef scaled_dot_product_attention(Q, K, V):\n    d_k = Q.shape[-1]\n    scores = Q @ K.T / np.sqrt(d_k)\n    weights = np.exp(scores) / np.exp(scores).sum(axis=-1, keepdims=True)\n    return weights @ V",
+    "options": [
+      "Multi-head attention",
+      "Scaled dot-product attention as used in Transformers",
+      "Cross-attention only",
+      "Additive attention"
+    ],
+    "correctIndex": 1,
+    "explanation": "This implements scaled dot-product attention: score = QK^T / sqrt(d_k), softmax to get weights, then weighted sum of V. The scaling prevents dot products from growing too large."
+  },
+  {
+    "id": "ml_233",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between XGBoost and traditional gradient boosting?",
+    "options": [
+      "XGBoost is identical to gradient boosting",
+      "XGBoost adds L1/L2 regularization, uses second-order gradients, handles missing values, and supports parallel tree construction",
+      "XGBoost only works with neural networks",
+      "XGBoost cannot handle categorical features"
+    ],
+    "correctIndex": 1,
+    "explanation": "XGBoost improves on gradient boosting with built-in regularization, second-order Taylor approximation of the loss, native missing value handling, and parallel computation."
+  },
+  {
+    "id": "ml_234",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "In a CNN, max pooling reduces spatial dimensions while retaining the most prominent features.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Max pooling selects the maximum value in each pooling window, reducing spatial size while preserving the strongest activated features."
+  },
+  {
+    "id": "ml_235",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is Bayesian optimization for hyperparameter tuning?",
+    "options": [
+      "Exhaustive grid search with Bayesian priors",
+      "A sequential optimization strategy that builds a probabilistic surrogate model to intelligently select the next hyperparameters to try",
+      "Random search with Bayesian filtering",
+      "A neural network-based search"
+    ],
+    "correctIndex": 1,
+    "explanation": "Bayesian optimization uses a surrogate model (often Gaussian Process) to model the objective function, using acquisition functions to balance exploration and exploitation of the hyperparameter space."
+  },
+  {
+    "id": "ml_236",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code compute?",
+    "codeSnippet": "import numpy as np\ndef gini_impurity(y):\n    classes, counts = np.unique(y, return_counts=True)\n    probs = counts / len(y)\n    return 1 - np.sum(probs ** 2)\n\ndef information_gain(y, y_left, y_right):\n    p = len(y_left) / len(y)\n    return gini_impurity(y) - (p * gini_impurity(y_left) + (1-p) * gini_impurity(y_right))",
+    "options": [
+      "Entropy and mutual information",
+      "Gini impurity and information gain for decision tree splitting",
+      "Variance reduction for regression trees",
+      "Classification accuracy improvement"
+    ],
+    "correctIndex": 1,
+    "explanation": "gini_impurity computes 1 - sum(p_i^2). information_gain computes the reduction in Gini impurity after splitting, used to select the best split in decision trees."
+  },
+  {
+    "id": "ml_237",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the concept of 'data leakage' and why is it dangerous?",
+    "options": [
+      "Data being stolen by hackers",
+      "Information from the test set or future data inadvertently influencing the training process, leading to overly optimistic performance estimates",
+      "Data being lost during preprocessing",
+      "Features having too many missing values"
+    ],
+    "correctIndex": 1,
+    "explanation": "Data leakage occurs when information that wouldn't be available at prediction time is used during training, creating unrealistically good results that fail in production."
+  },
+  {
+    "id": "ml_238",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following are advantages of Transformer models over RNNs? (Select all that apply)",
+    "options": [
+      "Better parallelization during training",
+      "Ability to attend to any position regardless of distance",
+      "Lower memory usage",
+      "Faster convergence on sequential data"
+    ],
+    "correctIndices": [0, 1],
+    "explanation": "Transformers parallelize well (no sequential dependency) and handle long-range dependencies via attention. They typically use more memory and may not always converge faster."
+  },
+  {
+    "id": "ml_239",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between teacher forcing and free running in sequence models?",
+    "options": [
+      "Teacher forcing uses a pre-trained model",
+      "Teacher forcing feeds ground truth as input during training; free running uses the model's own predictions",
+      "Free running is always more accurate",
+      "Teacher forcing only works with attention"
+    ],
+    "correctIndex": 1,
+    "explanation": "Teacher forcing accelerates training by using true previous tokens as input, but can cause exposure bias since the model never sees its own errors during training."
+  },
+  {
+    "id": "ml_240",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef batch_normalization(X, gamma, beta, eps=1e-5):\n    mu = np.mean(X, axis=0)\n    var = np.var(X, axis=0)\n    X_norm = (X - mu) / np.sqrt(var + eps)\n    return gamma * X_norm + beta",
+    "options": [
+      "Layer normalization",
+      "Batch normalization: normalizes across the batch dimension then scales and shifts",
+      "Instance normalization",
+      "Group normalization"
+    ],
+    "correctIndex": 1,
+    "explanation": "Batch normalization computes mean/variance across the batch (axis=0), normalizes, then applies learnable scale (gamma) and shift (beta) parameters."
+  },
+  {
+    "id": "ml_241",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of the temperature parameter in softmax?",
+    "options": [
+      "To control hardware temperature",
+      "To control the sharpness of the probability distribution: high temperature gives more uniform outputs, low temperature gives sharper outputs",
+      "To speed up training",
+      "To set the learning rate"
+    ],
+    "correctIndex": 1,
+    "explanation": "Temperature T modifies softmax as exp(z_i/T)/sum(exp(z_j/T)). T>1 softens distributions (more exploration), T<1 sharpens them (more confidence)."
+  },
+  {
+    "id": "ml_242",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "Gradient clipping prevents exploding gradients by capping the gradient norm before updating weights.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Gradient clipping rescales gradients when their norm exceeds a threshold, preventing extremely large updates that destabilize training."
+  },
+  {
+    "id": "ml_243",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is knowledge distillation?",
+    "options": [
+      "Removing knowledge from a model",
+      "Training a smaller student model to mimic the outputs (soft targets) of a larger teacher model",
+      "Combining multiple datasets",
+      "Feature extraction from images"
+    ],
+    "correctIndex": 1,
+    "explanation": "Knowledge distillation transfers knowledge from a large model (teacher) to a smaller model (student) by training the student on the teacher's soft probability outputs."
+  },
+  {
+    "id": "ml_244",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef q_learning_update(Q, state, action, reward, next_state, alpha=0.1, gamma=0.99):\n    best_next = np.max(Q[next_state])\n    Q[state, action] += alpha * (reward + gamma * best_next - Q[state, action])\n    return Q",
+    "options": [
+      "SARSA update rule",
+      "Q-learning temporal difference update (off-policy)",
+      "Monte Carlo update",
+      "Policy gradient update"
+    ],
+    "correctIndex": 1,
+    "explanation": "Q-learning updates Q(s,a) toward r + gamma * max_a' Q(s',a'). It's off-policy because it uses the max over next actions regardless of the actual policy."
+  },
+  {
+    "id": "ml_245",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between depthwise separable convolution and standard convolution?",
+    "options": [
+      "They produce different feature maps",
+      "Depthwise separable applies a single filter per channel then combines with 1x1 pointwise conv, greatly reducing parameters",
+      "Standard convolution is more memory efficient",
+      "Depthwise separable only works with grayscale images"
+    ],
+    "correctIndex": 1,
+    "explanation": "Depthwise separable convolution splits a standard conv into depthwise (per-channel spatial filtering) and pointwise (1x1 cross-channel mixing), reducing computation significantly."
+  },
+  {
+    "id": "ml_246",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following are types of data leakage? (Select all that apply)",
+    "options": [
+      "Target leakage (features derived from the target)",
+      "Train-test contamination (scaling before splitting)",
+      "Temporal leakage (using future data to predict the past)",
+      "Using too many features"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "Target leakage, train-test contamination, and temporal leakage are all forms of data leakage. Using many features is a modeling choice, not leakage."
+  },
+  {
+    "id": "ml_247",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the Wasserstein distance (Earth Mover's Distance) used for in GANs?",
+    "options": [
+      "Measuring classification accuracy",
+      "Providing a smoother loss signal for training GANs by measuring the cost of transforming one distribution into another",
+      "Computing feature importance",
+      "Measuring model complexity"
+    ],
+    "correctIndex": 1,
+    "explanation": "Wasserstein distance measures the minimum cost to transform one distribution into another. WGAN uses it as a loss function, providing meaningful gradients even when distributions don't overlap."
+  },
+  {
+    "id": "ml_248",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code demonstrate?",
+    "codeSnippet": "import numpy as np\ndef xavier_init(fan_in, fan_out):\n    limit = np.sqrt(6.0 / (fan_in + fan_out))\n    return np.random.uniform(-limit, limit, (fan_in, fan_out))\n\ndef he_init(fan_in, fan_out):\n    std = np.sqrt(2.0 / fan_in)\n    return np.random.randn(fan_in, fan_out) * std",
+    "options": [
+      "Random initialization strategies",
+      "Xavier (for sigmoid/tanh) and He (for ReLU) weight initialization strategies",
+      "Regularization techniques",
+      "Data normalization methods"
+    ],
+    "correctIndex": 1,
+    "explanation": "Xavier init (Glorot) scales weights by 1/sqrt(fan_in+fan_out) for tanh/sigmoid. He init scales by sqrt(2/fan_in) for ReLU. Proper initialization prevents vanishing/exploding gradients."
+  },
+  {
+    "id": "ml_249",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between self-attention and cross-attention?",
+    "options": [
+      "Self-attention is faster",
+      "Self-attention computes attention within a single sequence; cross-attention computes attention between two different sequences",
+      "Cross-attention is used in encoders; self-attention in decoders",
+      "There is no functional difference"
+    ],
+    "correctIndex": 1,
+    "explanation": "Self-attention computes Q, K, V from the same sequence (encoder self-attention). Cross-attention uses Q from one sequence (decoder) and K, V from another (encoder output)."
+  },
+  {
+    "id": "ml_250",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "The No Free Lunch theorem states that no single machine learning algorithm performs best on all possible problems.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. The No Free Lunch theorem proves that averaged over all possible problems, no algorithm outperforms any other. Algorithm choice must be problem-specific."
+  },
+  {
+    "id": "ml_251",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of label smoothing in training neural networks?",
+    "options": [
+      "To make labels continuous instead of discrete",
+      "To prevent the model from becoming overconfident by replacing hard targets with soft targets",
+      "To remove mislabeled data",
+      "To balance class distributions"
+    ],
+    "correctIndex": 1,
+    "explanation": "Label smoothing replaces hard labels (0 or 1) with soft labels (e.g., 0.1 and 0.9), preventing overconfidence and improving calibration and generalization."
+  },
+  {
+    "id": "ml_252",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef cosine_annealing_lr(epoch, max_epochs, lr_max, lr_min=0):\n    return lr_min + 0.5 * (lr_max - lr_min) * (1 + np.cos(np.pi * epoch / max_epochs))\n\n# Usage: for each epoch, get the current learning rate\nlrs = [cosine_annealing_lr(e, 100, 0.01) for e in range(100)]",
+    "options": [
+      "A constant learning rate schedule",
+      "Cosine annealing learning rate schedule that smoothly decreases from max to min",
+      "A step decay learning rate schedule",
+      "A warm-up learning rate schedule"
+    ],
+    "correctIndex": 1,
+    "explanation": "Cosine annealing smoothly decreases the learning rate following a cosine curve from lr_max to lr_min, allowing fine-grained convergence near training end."
+  },
+  {
+    "id": "ml_253",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is contrastive learning?",
+    "options": [
+      "A supervised learning technique using labeled pairs",
+      "A self-supervised approach that learns representations by pulling similar pairs closer and pushing dissimilar pairs apart in embedding space",
+      "A type of GAN training",
+      "A regularization method"
+    ],
+    "correctIndex": 1,
+    "explanation": "Contrastive learning learns by comparing pairs of examples: positive pairs (similar) are pulled together and negative pairs (dissimilar) are pushed apart in the representation space."
+  },
+  {
+    "id": "ml_254",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following are MLOps practices? (Select all that apply)",
+    "options": [
+      "Model versioning and registry",
+      "Automated model retraining pipelines",
+      "Model monitoring and drift detection",
+      "Writing the model from scratch each time"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "MLOps includes model versioning, automated pipelines, and monitoring/drift detection. Writing from scratch is the opposite of good MLOps practices."
+  },
+  {
+    "id": "ml_255",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the Gaussian Process in Bayesian ML?",
+    "options": [
+      "A clustering algorithm",
+      "A non-parametric probabilistic model that defines a distribution over functions, characterized by a mean function and covariance kernel",
+      "A preprocessing technique",
+      "A type of neural network"
+    ],
+    "correctIndex": 1,
+    "explanation": "A Gaussian Process defines a prior over functions. Given observations, it provides a posterior distribution with uncertainty estimates. Widely used in Bayesian optimization."
+  },
+  {
+    "id": "ml_256",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef l1_regularization_gradient(w, lambda_reg):\n    return lambda_reg * np.sign(w)\n\ndef l2_regularization_gradient(w, lambda_reg):\n    return lambda_reg * w\n\ndef elastic_net_gradient(w, lambda_reg, l1_ratio=0.5):\n    return l1_ratio * l1_regularization_gradient(w, lambda_reg) + \\\n           (1 - l1_ratio) * l2_regularization_gradient(w, lambda_reg)",
+    "options": [
+      "Three different loss functions",
+      "Gradient terms for L1, L2, and Elastic Net regularization",
+      "Feature normalization methods",
+      "Weight initialization schemes"
+    ],
+    "correctIndex": 1,
+    "explanation": "L1 gradient is lambda*sign(w) (sparse), L2 is lambda*w (shrinkage), and Elastic Net combines both. These are added to the loss gradient during optimization."
+  },
+  {
+    "id": "ml_257",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of the attention mask in Transformer decoders?",
+    "options": [
+      "To focus on important features",
+      "To prevent the decoder from attending to future positions during autoregressive generation",
+      "To mask out padding tokens only",
+      "To select which heads to use"
+    ],
+    "correctIndex": 1,
+    "explanation": "The causal attention mask in the decoder sets future positions to -infinity before softmax, ensuring predictions for position i only depend on positions < i."
+  },
+  {
+    "id": "ml_258",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "Transfer learning involves using a pre-trained model's learned features on a new but related task, often fine-tuning only the last few layers.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Transfer learning leverages features learned on large datasets (like ImageNet) and adapts them to new tasks, typically by freezing early layers and fine-tuning later ones."
+  },
+  {
+    "id": "ml_259",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef spectral_clustering(W, k):\n    D = np.diag(W.sum(axis=1))\n    L = D - W  # Laplacian\n    eigenvalues, eigenvectors = np.linalg.eigh(L)\n    # Take the k smallest non-trivial eigenvectors\n    features = eigenvectors[:, 1:k+1]\n    # Normalize rows\n    features = features / np.linalg.norm(features, axis=1, keepdims=True)\n    # Apply KMeans to the eigenvector features\n    from sklearn.cluster import KMeans\n    return KMeans(n_clusters=k).fit_predict(features)",
+    "options": [
+      "PCA-based clustering",
+      "Spectral clustering using the graph Laplacian and eigen-decomposition",
+      "K-Means clustering",
+      "Hierarchical clustering"
+    ],
+    "correctIndex": 1,
+    "explanation": "Spectral clustering computes the graph Laplacian L=D-W, finds its smallest eigenvectors (spectral embedding), and applies K-Means in the embedded space."
+  },
+  {
+    "id": "ml_260",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is concept drift in machine learning?",
+    "options": [
+      "When the model architecture changes",
+      "When the statistical properties of the target variable change over time, degrading model performance",
+      "When features are added or removed",
+      "When the training data grows too large"
+    ],
+    "correctIndex": 1,
+    "explanation": "Concept drift occurs when the data distribution changes over time (e.g., customer behavior shifts), causing a model trained on old data to perform poorly on new data."
+  },
+  {
+    "id": "ml_261",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following are components of the XGBoost objective function? (Select all that apply)",
+    "options": [
+      "Training loss term",
+      "L1 regularization on leaf weights",
+      "L2 regularization on leaf weights",
+      "Penalty for the number of leaves"
+    ],
+    "correctIndices": [0, 1, 2, 3],
+    "explanation": "XGBoost's objective includes the loss function, L1 (alpha) and L2 (lambda) regularization on leaf weights, and a gamma penalty for each additional leaf."
+  },
+  {
+    "id": "ml_262",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between encoder-only, decoder-only, and encoder-decoder Transformer architectures?",
+    "options": [
+      "They all perform the same tasks",
+      "Encoder-only (BERT) is for understanding, decoder-only (GPT) for generation, encoder-decoder (T5) for seq-to-seq tasks",
+      "Encoder-only is newer and better",
+      "Decoder-only cannot handle long sequences"
+    ],
+    "correctIndex": 1,
+    "explanation": "Encoder-only models excel at understanding tasks (classification, NER). Decoder-only models are for autoregressive generation. Encoder-decoder handles sequence-to-sequence tasks."
+  },
+  {
+    "id": "ml_263",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef multihead_attention(Q, K, V, num_heads=8):\n    d_model = Q.shape[-1]\n    d_k = d_model // num_heads\n    # Split into heads\n    Q_split = Q.reshape(-1, num_heads, d_k)\n    K_split = K.reshape(-1, num_heads, d_k)\n    V_split = V.reshape(-1, num_heads, d_k)\n    # Scaled dot-product per head\n    scores = np.einsum('nhd,mhd->hnm', Q_split, K_split) / np.sqrt(d_k)\n    weights = np.exp(scores) / np.exp(scores).sum(axis=-1, keepdims=True)\n    output = np.einsum('hnm,mhd->nhd', weights, V_split)\n    return output.reshape(-1, d_model)",
+    "options": [
+      "Single-head attention",
+      "Multi-head attention splitting Q, K, V across heads and computing parallel attention",
+      "Cross-attention mechanism",
+      "Additive attention mechanism"
+    ],
+    "correctIndex": 1,
+    "explanation": "This implements multi-head attention: splits Q, K, V into multiple heads, computes scaled dot-product attention independently per head, then concatenates results."
+  },
+  {
+    "id": "ml_264",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of layer normalization compared to batch normalization?",
+    "options": [
+      "They are identical",
+      "Layer norm normalizes across features for each sample; batch norm across samples for each feature. Layer norm works better with variable-length sequences.",
+      "Batch norm is always better",
+      "Layer norm is only for CNNs"
+    ],
+    "correctIndex": 1,
+    "explanation": "Layer normalization normalizes across the feature dimension per sample, making it independent of batch size. It's preferred in Transformers and RNNs where batch norm is problematic."
+  },
+  {
+    "id": "ml_265",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "Feature importance from a Random Forest can sometimes be misleading for correlated features, as importance gets distributed among them.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. When features are correlated, the tree may randomly choose between them, splitting the importance. Permutation importance can also be affected by correlation."
+  },
+  {
+    "id": "ml_266",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the objective of the Proximal Policy Optimization (PPO) algorithm?",
+    "options": [
+      "To find the optimal Q-values",
+      "To update the policy while constraining the update size using a clipped surrogate objective for stable training",
+      "To learn a model of the environment",
+      "To compute exact policy gradients"
+    ],
+    "correctIndex": 1,
+    "explanation": "PPO uses a clipped surrogate objective that prevents large policy updates, providing more stable training than vanilla policy gradient methods while maintaining simplicity."
+  },
+  {
+    "id": "ml_267",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef layer_normalization(X, gamma, beta, eps=1e-5):\n    mu = np.mean(X, axis=-1, keepdims=True)\n    var = np.var(X, axis=-1, keepdims=True)\n    X_norm = (X - mu) / np.sqrt(var + eps)\n    return gamma * X_norm + beta",
+    "options": [
+      "Batch normalization",
+      "Layer normalization: normalizes across the feature dimension per sample",
+      "Instance normalization",
+      "Weight normalization"
+    ],
+    "correctIndex": 1,
+    "explanation": "Layer normalization computes mean and variance across the last axis (features) per sample, unlike batch norm which normalizes across the batch axis."
+  },
+  {
+    "id": "ml_268",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the Lottery Ticket Hypothesis?",
+    "options": [
+      "All neural networks converge to the same solution",
+      "Dense networks contain sparse subnetworks (winning tickets) that can achieve comparable performance when trained in isolation",
+      "Larger models always perform better",
+      "Random initialization doesn't matter"
+    ],
+    "correctIndex": 1,
+    "explanation": "The Lottery Ticket Hypothesis states that randomly initialized dense networks contain sparse subnetworks that, when trained from their original initialization, match full network performance."
+  },
+  {
+    "id": "ml_269",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following are methods for model interpretability? (Select all that apply)",
+    "options": [
+      "SHAP values",
+      "LIME",
+      "Attention weight visualization",
+      "Increasing model size"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "SHAP, LIME, and attention visualization are interpretability methods. Increasing model size typically reduces interpretability."
+  },
+  {
+    "id": "ml_270",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef conv2d(input_img, kernel, stride=1, padding=0):\n    if padding > 0:\n        input_img = np.pad(input_img, padding, mode='constant')\n    h, w = input_img.shape\n    kh, kw = kernel.shape\n    out_h = (h - kh) // stride + 1\n    out_w = (w - kw) // stride + 1\n    output = np.zeros((out_h, out_w))\n    for i in range(out_h):\n        for j in range(out_w):\n            output[i, j] = np.sum(\n                input_img[i*stride:i*stride+kh, j*stride:j*stride+kw] * kernel\n            )\n    return output",
+    "options": [
+      "A max pooling operation",
+      "A 2D convolution operation from scratch",
+      "A matrix multiplication",
+      "An image resizing function"
+    ],
+    "correctIndex": 1,
+    "explanation": "This implements 2D convolution: sliding a kernel over the input, computing element-wise multiplication and sum at each position. Supports stride and padding."
+  },
+  {
+    "id": "ml_271",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between online learning and batch learning?",
+    "options": [
+      "Online learning requires internet",
+      "Online learning updates the model incrementally with each new sample; batch learning retrains on the entire dataset",
+      "Batch learning is always more accurate",
+      "They produce identical models"
+    ],
+    "correctIndex": 1,
+    "explanation": "Online learning updates parameters with each new data point, suitable for streaming data. Batch learning processes the entire dataset at once, requiring retraining for updates."
+  },
+  {
+    "id": "ml_272",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "In neural networks, the universal approximation theorem states that a single hidden layer network can approximate any continuous function to arbitrary precision, given enough neurons.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. The universal approximation theorem proves that a feedforward network with one hidden layer and non-linear activation can approximate any continuous function, though it may need impractically many neurons."
+  },
+  {
+    "id": "ml_273",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between transposed convolution and upsampling followed by convolution?",
+    "options": [
+      "They are identical operations",
+      "Transposed convolution learns the upsampling filters; upsampling+conv uses fixed upsampling followed by learned convolution",
+      "Upsampling is always better",
+      "Transposed convolution reduces spatial dimensions"
+    ],
+    "correctIndex": 1,
+    "explanation": "Transposed convolution (deconv) learns to upsample through learnable filters but can produce checkerboard artifacts. Upsampling+conv separates the steps, often producing smoother results."
+  },
+  {
+    "id": "ml_274",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What optimization technique does this code implement?",
+    "codeSnippet": "import numpy as np\ndef sgd_with_momentum(w, dw, v, lr=0.01, momentum=0.9):\n    v = momentum * v - lr * dw\n    w += v\n    return w, v",
+    "options": [
+      "Vanilla SGD",
+      "SGD with momentum: uses exponentially weighted average of past gradients",
+      "Adam optimizer",
+      "Nesterov momentum"
+    ],
+    "correctIndex": 1,
+    "explanation": "SGD with momentum accumulates a velocity vector v that acts as an exponentially weighted moving average of gradients, helping accelerate convergence and dampen oscillations."
+  },
+  {
+    "id": "ml_275",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is adversarial robustness in machine learning?",
+    "options": [
+      "The ability of a model to handle large datasets",
+      "The ability of a model to maintain correct predictions when inputs are intentionally perturbed by small, imperceptible changes",
+      "The speed of model inference",
+      "The ability to handle missing data"
+    ],
+    "correctIndex": 1,
+    "explanation": "Adversarial robustness measures a model's resistance to adversarial examples: inputs with small, carefully crafted perturbations designed to cause misclassification."
+  },
+  {
+    "id": "ml_276",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following are common CNN architectures? (Select all that apply)",
+    "options": [
+      "VGG",
+      "ResNet",
+      "Inception (GoogLeNet)",
+      "BERT"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "VGG, ResNet, and Inception are CNN architectures for computer vision. BERT is a Transformer-based model for NLP."
+  },
+  {
+    "id": "ml_277",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the bias-variance decomposition of the expected prediction error?",
+    "options": [
+      "Error = Bias only",
+      "Expected Error = Bias^2 + Variance + Irreducible Noise",
+      "Error = Variance + Noise",
+      "Error = Bias + Variance"
+    ],
+    "correctIndex": 1,
+    "explanation": "The expected prediction error decomposes into Bias^2 (systematic error from wrong assumptions), Variance (sensitivity to training data), and irreducible noise."
+  },
+  {
+    "id": "ml_278",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef nesterov_momentum(w, dw_fn, v, lr=0.01, momentum=0.9):\n    # Look ahead\n    w_ahead = w + momentum * v\n    # Compute gradient at look-ahead position\n    dw = dw_fn(w_ahead)\n    # Update velocity and weights\n    v = momentum * v - lr * dw\n    w += v\n    return w, v",
+    "options": [
+      "Standard SGD with momentum",
+      "Nesterov Accelerated Gradient (NAG): computes gradient at the look-ahead position",
+      "Adam optimizer",
+      "RMSprop optimizer"
+    ],
+    "correctIndex": 1,
+    "explanation": "Nesterov momentum first looks ahead by applying the current velocity, computes the gradient at that future position, then updates. This anticipatory behavior often improves convergence."
+  },
+  {
+    "id": "ml_279",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the key idea behind the Mixture of Experts (MoE) architecture?",
+    "options": [
+      "All experts process every input",
+      "A gating network routes each input to a subset of specialized expert networks, enabling efficient scaling",
+      "Experts vote on the output",
+      "MoE uses random expert selection"
+    ],
+    "correctIndex": 1,
+    "explanation": "MoE uses a gating network to activate only a few experts per input, allowing models to have many parameters while keeping compute efficient since only a subset processes each example."
+  },
+  {
+    "id": "ml_280",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "Permutation feature importance is more reliable than impurity-based importance for correlated features.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Permutation importance measures the actual impact on model performance when a feature is shuffled, while impurity-based importance can split importance among correlated features arbitrarily."
+  },
+  {
+    "id": "ml_281",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef dropout(X, drop_rate=0.5, training=True):\n    if not training:\n        return X\n    mask = np.random.binomial(1, 1 - drop_rate, X.shape)\n    return X * mask / (1 - drop_rate)  # inverted dropout",
+    "options": [
+      "Standard dropout without scaling",
+      "Inverted dropout: randomly zeros neurons and scales remaining activations to maintain expected values",
+      "Batch normalization",
+      "Data augmentation"
+    ],
+    "correctIndex": 1,
+    "explanation": "Inverted dropout divides by (1-drop_rate) during training so that no scaling is needed at inference time. This is the modern standard implementation."
+  },
+  {
+    "id": "ml_282",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is catastrophic forgetting in neural networks?",
+    "options": [
+      "When a model randomly loses its parameters",
+      "When training on new tasks causes the model to forget previously learned tasks",
+      "When the model runs out of memory",
+      "When gradients become zero"
+    ],
+    "correctIndex": 1,
+    "explanation": "Catastrophic forgetting occurs when a neural network, trained sequentially on multiple tasks, overwrites weights important for earlier tasks while learning new ones."
+  },
+  {
+    "id": "ml_283",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following techniques help with catastrophic forgetting? (Select all that apply)",
+    "options": [
+      "Elastic Weight Consolidation (EWC)",
+      "Replay buffers (storing examples from old tasks)",
+      "Progressive neural networks",
+      "Increasing batch size"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "EWC penalizes changes to important weights, replay buffers maintain old task data, and progressive networks add new capacity. Batch size alone doesn't address forgetting."
+  },
+  {
+    "id": "ml_284",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the relationship between the kernel function and feature mapping in SVMs?",
+    "options": [
+      "The kernel replaces feature mapping entirely",
+      "The kernel K(x,y) = phi(x) . phi(y) computes inner products in the transformed space without explicitly computing the transformation phi",
+      "Kernel functions only work with linear SVMs",
+      "Feature mapping is always more efficient"
+    ],
+    "correctIndex": 1,
+    "explanation": "The kernel trick computes dot products in high-dimensional feature space without explicitly computing the transformation, enabling non-linear SVMs with manageable computation."
+  },
+  {
+    "id": "ml_285",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef gaussian_process_predict(X_train, y_train, X_test, kernel, sigma_n=0.1):\n    K = kernel(X_train, X_train) + sigma_n**2 * np.eye(len(X_train))\n    K_s = kernel(X_train, X_test)\n    K_ss = kernel(X_test, X_test)\n    K_inv = np.linalg.inv(K)\n    mu = K_s.T @ K_inv @ y_train\n    cov = K_ss - K_s.T @ K_inv @ K_s\n    return mu, cov",
+    "options": [
+      "Linear regression prediction",
+      "Gaussian Process regression prediction with mean and covariance (uncertainty)",
+      "Kernel PCA",
+      "SVM prediction"
+    ],
+    "correctIndex": 1,
+    "explanation": "This implements GP regression prediction. mu gives the posterior mean, and cov gives the posterior covariance (uncertainty). The noise term sigma_n regularizes the kernel matrix."
+  },
+  {
+    "id": "ml_286",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of weight decay in optimization?",
+    "options": [
+      "To increase model capacity",
+      "To gradually reduce weights toward zero during training, equivalent to L2 regularization in standard SGD",
+      "To speed up convergence",
+      "To increase the learning rate"
+    ],
+    "correctIndex": 1,
+    "explanation": "Weight decay subtracts a fraction of the weight from itself at each step: w = w - lr*grad - lr*lambda*w. For standard SGD, this equals L2 regularization."
+  },
+  {
+    "id": "ml_287",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "In deep learning, the choice of activation function affects the gradient flow and can determine whether a network can be effectively trained.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Sigmoid/tanh can cause vanishing gradients; ReLU enables better gradient flow but can suffer from 'dying ReLU'. Modern choices like GELU and Swish further improve training."
+  },
+  {
+    "id": "ml_288",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between model distillation and model pruning?",
+    "options": [
+      "They are identical techniques",
+      "Distillation trains a smaller model to mimic a larger one; pruning removes unimportant weights/neurons from an existing model",
+      "Pruning always produces better results",
+      "Distillation only works with CNNs"
+    ],
+    "correctIndex": 1,
+    "explanation": "Distillation creates a new small model learning from a large teacher. Pruning reduces an existing model by removing connections or neurons with small weights."
+  },
+  {
+    "id": "ml_289",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef gumbel_softmax(logits, temperature=1.0):\n    gumbel_noise = -np.log(-np.log(np.random.uniform(0, 1, logits.shape) + 1e-20) + 1e-20)\n    y = logits + gumbel_noise\n    return np.exp(y/temperature) / np.exp(y/temperature).sum()",
+    "options": [
+      "Standard softmax",
+      "Gumbel-Softmax: a differentiable approximation to sampling from a categorical distribution",
+      "Sparsemax",
+      "Temperature-scaled softmax"
+    ],
+    "correctIndex": 1,
+    "explanation": "Gumbel-Softmax adds Gumbel noise and applies temperature-scaled softmax, providing a differentiable relaxation of discrete sampling, enabling gradient-based optimization."
+  },
+  {
+    "id": "ml_290",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is federated learning?",
+    "options": [
+      "Training on a single centralized server",
+      "A distributed approach where models are trained locally on edge devices with only model updates shared, preserving data privacy",
+      "Training with data from federal databases",
+      "A type of transfer learning"
+    ],
+    "correctIndex": 1,
+    "explanation": "Federated learning trains models across distributed devices, sending only model updates (not raw data) to a central server, preserving user privacy."
+  },
+  {
+    "id": "ml_291",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following are advanced optimization techniques? (Select all that apply)",
+    "options": [
+      "Adam (Adaptive Moment Estimation)",
+      "Learning rate warmup",
+      "Gradient accumulation",
+      "Data shuffling"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "Adam, LR warmup, and gradient accumulation are optimization techniques. Data shuffling is a data preparation step, not an optimization technique."
+  },
+  {
+    "id": "ml_292",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of the Frechet Inception Distance (FID) score?",
+    "options": [
+      "Measuring classification accuracy",
+      "Evaluating the quality and diversity of generated images by comparing feature distributions of real and generated images",
+      "Computing model compression ratio",
+      "Measuring training speed"
+    ],
+    "correctIndex": 1,
+    "explanation": "FID computes the distance between feature distributions (extracted by Inception network) of real and generated images. Lower FID indicates better quality and diversity."
+  },
+  {
+    "id": "ml_293",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code demonstrate?",
+    "codeSnippet": "import numpy as np\ndef kl_divergence(p, q):\n    \"\"\"KL(p || q)\"\"\"\n    p = np.clip(p, 1e-10, 1)\n    q = np.clip(q, 1e-10, 1)\n    return np.sum(p * np.log(p / q))\n\np = np.array([0.4, 0.3, 0.3])\nq = np.array([0.33, 0.33, 0.34])\nprint(f'KL(p||q) = {kl_divergence(p, q):.4f}')\nprint(f'KL(q||p) = {kl_divergence(q, p):.4f}')",
+    "options": [
+      "Symmetric distance between distributions",
+      "KL divergence: an asymmetric measure of how one distribution differs from another",
+      "Jensen-Shannon divergence",
+      "Cross-entropy computation"
+    ],
+    "correctIndex": 1,
+    "explanation": "KL divergence measures how distribution p differs from q. It's asymmetric: KL(p||q) != KL(q||p). Used in VAEs, information theory, and probabilistic models."
+  },
+  {
+    "id": "ml_294",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of Monte Carlo Tree Search (MCTS) in reinforcement learning?",
+    "options": [
+      "To train neural networks faster",
+      "To plan ahead by simulating possible future action sequences and evaluating outcomes using random rollouts",
+      "To compute exact value functions",
+      "To replace gradient descent"
+    ],
+    "correctIndex": 1,
+    "explanation": "MCTS builds a search tree by selecting, expanding, simulating (rollout), and backpropagating results. It was key in AlphaGo for evaluating Go board positions."
+  },
+  {
+    "id": "ml_295",
+    "skill": "Machine Learning",
+    "type": "true_false",
+    "difficulty": "hard",
+    "question": "Weight tying in neural networks (sharing weights between encoder and decoder embeddings) can reduce model size without significantly hurting performance.",
+    "options": ["True", "False"],
+    "correctIndex": 0,
+    "explanation": "True. Weight tying shares the embedding matrix between input and output layers, significantly reducing parameters. It's widely used in language models and often improves regularization."
+  },
+  {
+    "id": "ml_296",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef focal_loss(y_true, y_pred, gamma=2.0, alpha=0.25):\n    y_pred = np.clip(y_pred, 1e-7, 1 - 1e-7)\n    p_t = y_true * y_pred + (1 - y_true) * (1 - y_pred)\n    alpha_t = y_true * alpha + (1 - y_true) * (1 - alpha)\n    loss = -alpha_t * (1 - p_t)**gamma * np.log(p_t)\n    return np.mean(loss)",
+    "options": [
+      "Binary cross-entropy loss",
+      "Focal loss: down-weights easy examples and focuses on hard-to-classify samples",
+      "Hinge loss",
+      "Triplet loss"
+    ],
+    "correctIndex": 1,
+    "explanation": "Focal loss adds a modulating factor (1-p_t)^gamma that reduces loss for well-classified examples, focusing training on hard examples. Crucial for imbalanced detection tasks."
+  },
+  {
+    "id": "ml_297",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the difference between quantization and pruning for model compression?",
+    "options": [
+      "They are the same",
+      "Quantization reduces the precision of weights (e.g., float32 to int8); pruning removes unnecessary weights entirely",
+      "Pruning always gives better compression",
+      "Quantization only works with CNNs"
+    ],
+    "correctIndex": 1,
+    "explanation": "Quantization reduces numerical precision (e.g., 32-bit to 8-bit), reducing memory and enabling faster inference. Pruning sets small weights to zero, creating sparse models."
+  },
+  {
+    "id": "ml_298",
+    "skill": "Machine Learning",
+    "type": "multiple_select",
+    "difficulty": "hard",
+    "question": "Which of the following are types of model monitoring in production? (Select all that apply)",
+    "options": [
+      "Data drift detection",
+      "Concept drift detection",
+      "Model performance degradation tracking",
+      "Running training more frequently"
+    ],
+    "correctIndices": [0, 1, 2],
+    "explanation": "Data drift, concept drift, and performance monitoring are key MLOps monitoring activities. Running training more frequently is a mitigation strategy, not monitoring."
+  },
+  {
+    "id": "ml_299",
+    "skill": "Machine Learning",
+    "type": "coding",
+    "difficulty": "hard",
+    "question": "What does this code implement?",
+    "codeSnippet": "import numpy as np\ndef compute_shap_marginal(model, X, feature_idx, num_samples=100):\n    n, d = X.shape\n    shap_values = np.zeros(n)\n    for i in range(n):\n        for _ in range(num_samples):\n            # Random reference\n            ref = X[np.random.randint(n)]\n            x_with = X[i].copy()\n            x_without = X[i].copy()\n            # Random subset of other features\n            mask = np.random.binomial(1, 0.5, d).astype(bool)\n            mask[feature_idx] = True\n            x_with[~mask] = ref[~mask]\n            mask[feature_idx] = False\n            x_without[~mask] = ref[~mask]\n            shap_values[i] += model.predict([x_with])[0] - model.predict([x_without])[0]\n    return shap_values / num_samples",
+    "options": [
+      "Feature importance using permutation",
+      "An approximation of SHAP values using marginal contribution sampling",
+      "LIME explanation",
+      "Partial dependence plot data"
+    ],
+    "correctIndex": 1,
+    "explanation": "This approximates SHAP values by sampling random coalitions and computing the marginal contribution of the feature, averaging over random reference points and feature subsets."
+  },
+  {
+    "id": "ml_300",
+    "skill": "Machine Learning",
+    "type": "mcq",
+    "difficulty": "hard",
+    "question": "What is the purpose of LoRA (Low-Rank Adaptation) in fine-tuning large models?",
+    "options": [
+      "To train models from scratch more efficiently",
+      "To adapt large pre-trained models by learning low-rank decomposition matrices instead of updating all parameters, drastically reducing trainable parameters",
+      "To compress models for deployment",
+      "To increase model accuracy on all tasks"
+    ],
+    "correctIndex": 1,
+    "explanation": "LoRA freezes pre-trained weights and injects trainable low-rank decomposition matrices (A and B) into attention layers. This reduces trainable parameters by orders of magnitude while maintaining performance."
+  }
+]

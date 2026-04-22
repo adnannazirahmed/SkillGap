@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillGap Analyzer - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, sans-serif; color: #1e293b; min-height: 100vh; display: flex; }
+
+    /* Left Panel - Hero */
+    .hero-panel { flex: 1; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%); color: #fff; display: flex; flex-direction: column; justify-content: space-between; padding: 40px; position: relative; overflow: hidden; }
+    .hero-panel::after { content: ''; position: absolute; right: -100px; top: -100px; width: 400px; height: 400px; background: rgba(255,255,255,0.03); border-radius: 50%; }
+    .hero-panel::before { content: ''; position: absolute; left: -50px; bottom: -50px; width: 300px; height: 300px; background: rgba(255,255,255,0.02); border-radius: 50%; }
+
+    .hero-logo { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; z-index: 1; }
+    .hero-logo svg { width: 32px; height: 32px; }
+
+    .hero-content { z-index: 1; max-width: 480px; }
+    .hero-content h1 { font-size: 40px; font-weight: 700; line-height: 1.2; margin-bottom: 16px; }
+    .hero-content h1 span { color: #a5b4fc; }
+    .hero-content p { font-size: 16px; opacity: 0.7; line-height: 1.6; }
+
+    .hero-testimonial { z-index: 1; background: rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+    .hero-testimonial .quote { font-size: 14px; font-style: italic; line-height: 1.6; opacity: 0.9; margin-bottom: 12px; }
+    .hero-testimonial .author { display: flex; align-items: center; gap: 10px; }
+    .hero-testimonial .author-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .hero-testimonial .author-name { font-size: 13px; font-weight: 600; }
+    .hero-testimonial .author-role { font-size: 11px; opacity: 0.6; }
+
+    /* Right Panel - Auth */
+    .auth-panel { width: 480px; background: #fff; display: flex; flex-direction: column; justify-content: center; padding: 48px; overflow-y: auto; }
+
+    .auth-header h2 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    .auth-header p { font-size: 14px; color: #64748b; margin-bottom: 28px; }
+
+    /* Social buttons */
+    .social-row { display: flex; gap: 12px; margin-bottom: 24px; }
+    .btn-social { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px; font-size: 13px; font-weight: 500; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; cursor: pointer; transition: all 0.15s; color: #334155; }
+    .btn-social:hover { background: #f8fafc; border-color: #c7d2fe; }
+    .btn-social svg { width: 18px; height: 18px; }
+
+    .divider { display: flex; align-items: center; margin: 0 0 24px; font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; }
+    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #e2e8f0; }
+    .divider::before { margin-right: 16px; } .divider::after { margin-left: 16px; }
+
+    /* Forms */
+    .form { display: none; } .form.visible { display: block; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; color: #334155; }
+    .form-group label a { color: #4f46e5; text-decoration: none; text-transform: none; letter-spacing: 0; font-weight: 500; }
+    .form-group label a:hover { text-decoration: underline; }
+    input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; font-family: inherit; background: #fff; transition: all 0.15s; }
+    input:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+    input::placeholder { color: #cbd5e1; }
+    .input-wrapper { position: relative; }
+    .input-wrapper .toggle-pw { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #94a3b8; font-size: 16px; }
+
+    .form-footer { display: flex; align-items: center; gap: 8px; margin: 16px 0; }
+    .form-footer input[type="checkbox"] { accent-color: #4f46e5; }
+    .form-footer label { font-size: 13px; color: #64748b; cursor: pointer; }
+
+    .btn { display: block; width: 100%; padding: 12px; font-size: 14px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: all 0.15s; text-align: center; }
+    .btn-primary { background: #1e293b; color: #fff; }
+    .btn-primary:hover { background: #0f172a; }
+
+    .switch-text { text-align: center; margin-top: 24px; font-size: 13px; color: #64748b; }
+    .switch-text a { color: #4f46e5; font-weight: 600; text-decoration: none; cursor: pointer; }
+    .switch-text a:hover { text-decoration: underline; }
+
+    .terms { font-size: 11px; color: #94a3b8; margin-top: 12px; text-align: center; }
+    .terms a { color: #4f46e5; text-decoration: none; }
+
+    /* Password strength */
+    .pw-strength { display: flex; gap: 4px; margin-top: 6px; }
+    .pw-bar { flex: 1; height: 3px; background: #e2e8f0; border-radius: 2px; transition: background 0.2s; }
+    .pw-label { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+
+    /* Alerts */
+    .error { display: none; font-size: 13px; color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
+    .error.visible { display: block; }
+
+    /* Auth footer */
+    .auth-footer { display: flex; justify-content: center; gap: 24px; margin-top: 32px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .auth-footer a { color: #94a3b8; text-decoration: none; }
+    .auth-footer a:hover { color: #4f46e5; }
+
+    /* Popup */
+    .popup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    .popup-overlay.visible { display: flex; }
+    .popup { background: #fff; border-radius: 16px; padding: 48px 36px; text-align: center; max-width: 380px; width: 90%; animation: popIn 0.3s ease; }
+    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .popup .check { width: 60px; height: 60px; background: #f0fdf4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .popup .check svg { width: 30px; height: 30px; color: #16a34a; }
+    .popup h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .popup p { font-size: 14px; color: #64748b; }
+
+    @media (max-width: 900px) { .hero-panel { display: none; } .auth-panel { width: 100%; } }
+  </style>
+</head>
+<body>
+
+<!-- Left: Hero -->
+<div class="hero-panel">
+  <div class="hero-logo">
+    <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="white" stroke-width="2"/><path d="M10 16l4 4 8-8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    SkillGap
+  </div>
+
+  <div class="hero-content">
+    <h1>Bridging <span>ambition</span> and reality.</h1>
+    <p>Join the next generation of career excellence. Discover opportunities tailored to your unique skill set.</p>
+  </div>
+
+  <div class="hero-testimonial">
+    <div class="quote">"SkillGap changed how I approached my career. The platform didn't just find me a job; it mapped my future."</div>
+    <div class="author">
+      <div class="author-avatar">ER</div>
+      <div>
+        <div class="author-name">Elena Rodriguez</div>
+        <div class="author-role">Class of 2025, Data Science</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Right: Auth Forms -->
+<div class="auth-panel">
+
+  <!-- Sign In Form -->
+  <div class="form visible" id="signinForm">
+    <div class="auth-header">
+      <h2>Sign in to Excellence</h2>
+      <p>Welcome back. Enter your credentials to continue.</p>
+    </div>
+
+    <div class="social-row">
+      <button class="btn-social" onclick="handleSocial('Google')">
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Google
+      </button>
+      <button class="btn-social" onclick="handleSocial('LinkedIn')">
+        <svg viewBox="0 0 24 24"><path fill="#0A66C2" d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.3 6.5a1.78 1.78 0 0 1-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0 0 13 14.19V19h-3v-9h2.9v1.3a3.11 3.11 0 0 1 2.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
+        LinkedIn
+      </button>
+    </div>
+
+    <div class="divider">Or with Email</div>
+
+    <div class="error" id="signinError"></div>
+
+    <div class="form-group">
+      <label for="signinEmail">Email Address</label>
+      <input type="email" id="signinEmail" placeholder="name@university.edu">
+    </div>
+    <div class="form-group">
+      <label for="signinPassword">Password <a href="#">Forgot?</a></label>
+      <div class="input-wrapper">
+        <input type="password" id="signinPassword" placeholder="••••••••">
+        <span class="toggle-pw" onclick="togglePw('signinPassword', this)">👁</span>
+      </div>
+    </div>
+
+    <div class="form-footer">
+      <input type="checkbox" id="remember">
+      <label for="remember">Stay signed in for 30 days</label>
+    </div>
+
+    <button class="btn btn-primary" onclick="handleSignIn()">Sign In to Dashboard</button>
+
+    <div class="switch-text">New to SkillGap? <a onclick="showForm('signup')">Create an account</a></div>
+  </div>
+
+  <!-- Sign Up Form -->
+  <div class="form" id="signupForm">
+    <div class="auth-header">
+      <h2>Create your account</h2>
+      <p>Start your career intelligence journey today.</p>
+    </div>
+
+    <div class="error" id="signupError"></div>
+
+    <div class="form-group">
+      <label for="signupName">Full Name</label>
+      <input type="text" id="signupName" placeholder="John Doe">
+    </div>
+    <div class="form-group">
+      <label for="signupEmail">Email Address</label>
+      <input type="email" id="signupEmail" placeholder="name@university.edu">
+    </div>
+    <div class="form-group">
+      <label for="signupPassword">Password</label>
+      <input type="password" id="signupPassword" placeholder="At least 8 characters" oninput="checkStrength()">
+      <div class="pw-strength"><div class="pw-bar" id="pw1"></div><div class="pw-bar" id="pw2"></div><div class="pw-bar" id="pw3"></div><div class="pw-bar" id="pw4"></div></div>
+      <div class="pw-label" id="pwLabel"></div>
+    </div>
+    <div class="form-group">
+      <label for="signupConfirm">Confirm Password</label>
+      <input type="password" id="signupConfirm" placeholder="Re-enter your password">
+    </div>
+
+    <button class="btn btn-primary" onclick="handleSignUp()">Create Account</button>
+
+    <div class="terms">By signing up, you agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</div>
+
+    <div class="switch-text">Already have an account? <a onclick="showForm('signin')">Sign in</a></div>
+  </div>
+
+  <div class="auth-footer">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#">Support</a>
+  </div>
+</div>
+
+<!-- Success Popup -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup">
+    <div class="check">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h2>Account Created!</h2>
+    <p>Redirecting to your dashboard...</p>
+  </div>
+</div>
+
+<script>
+const AUTH_STORAGE_KEY = 'sgaCurrentUser';
+const LEGACY_USERS_STORAGE_KEY = 'sgaUsers';
+
+function parseStoredJson(raw, fallback) {
+  if (!raw) return fallback;
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed == null ? fallback : parsed;
+  } catch (_) {
+    return fallback;
+  }
+}
+
+function normalizeEmail(email) {
+  return (email || '').trim().toLowerCase();
+}
+
+function getCurrentSessionUser() {
+  return parseStoredJson(localStorage.getItem(AUTH_STORAGE_KEY), null) ||
+    parseStoredJson(sessionStorage.getItem(AUTH_STORAGE_KEY), null);
+}
+
+function clearCurrentSessionUser() {
+  localStorage.removeItem(AUTH_STORAGE_KEY);
+  sessionStorage.removeItem(AUTH_STORAGE_KEY);
+}
+
+function persistCurrentSessionUser(user, remember, token) {
+  clearCurrentSessionUser();
+  const storage = remember ? localStorage : sessionStorage;
+  storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+  if (token) {
+    const tokenStorage = remember ? localStorage : sessionStorage;
+    tokenStorage.setItem('sgaAuthToken', token);
+  }
+}
+
+function clearAuthToken() {
+  localStorage.removeItem('sgaAuthToken');
+  sessionStorage.removeItem('sgaAuthToken');
+}
+
+function getLegacyStoredUsers() {
+  return parseStoredJson(localStorage.getItem(LEGACY_USERS_STORAGE_KEY), {});
+}
+
+function saveLegacyStoredUsers(users) {
+  localStorage.setItem(LEGACY_USERS_STORAGE_KEY, JSON.stringify(users));
+}
+
+async function requestJson(url, options) {
+  const response = await fetch(url, options || {});
+  let data = {};
+  try {
+    data = await response.json();
+  } catch (_) {
+    data = {};
+  }
+
+  if (!response.ok) {
+    const error = new Error(data.error || 'Request failed.');
+    error.status = response.status;
+    error.data = data;
+    throw error;
+  }
+
+  return data;
+}
+
+async function saveLegacyProfileExtras(email, legacyUser) {
+  const hasProfileExtras = !!(
+    legacyUser.title ||
+    legacyUser.bio ||
+    legacyUser.location ||
+    (legacyUser.social && (legacyUser.social.linkedin || legacyUser.social.github || legacyUser.social.portfolio))
+  );
+
+  if (!hasProfileExtras) return;
+
+  await requestJson('/api/profile', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId: email,
+      email: email,
+      name: legacyUser.name || '',
+      title: legacyUser.title,
+      bio: legacyUser.bio,
+      location: legacyUser.location,
+      social: legacyUser.social
+    })
+  });
+}
+
+async function migrateLegacyUser(email, password) {
+  const users = getLegacyStoredUsers();
+  const matchedKey = Object.keys(users).find(function(key) {
+    return normalizeEmail(key) === email;
+  });
+  const matchedUser = matchedKey ? users[matchedKey] : null;
+
+  if (!matchedUser || matchedUser.password !== password) {
+    return null;
+  }
+
+  try {
+    await requestJson('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: matchedUser.name || email.split('@')[0],
+        email: email,
+        password: password
+      })
+    });
+  } catch (err) {
+    if (err.status !== 409) {
+      throw err;
+    }
+  }
+
+  await saveLegacyProfileExtras(email, matchedUser);
+
+  const loginData = await requestJson('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, password: password })
+  });
+
+  delete users[matchedKey];
+  if (matchedKey !== email) delete users[email];
+  saveLegacyStoredUsers(users);
+  return loginData;
+}
+
+function redirectToDashboard() {
+  window.location.href = 'index.html';
+}
+
+const existingSessionUser = getCurrentSessionUser();
+if (existingSessionUser && existingSessionUser.email) {
+  redirectToDashboard();
+} else if (existingSessionUser) {
+  clearCurrentSessionUser();
+}
+
+function showForm(form) {
+  document.querySelectorAll('.form').forEach(f => f.classList.remove('visible'));
+  document.querySelectorAll('.error').forEach(e => e.classList.remove('visible'));
+  if (form === 'signin') document.getElementById('signinForm').classList.add('visible');
+  else document.getElementById('signupForm').classList.add('visible');
+}
+
+function showError(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.classList.add('visible'); }
+
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
+async function handleSignIn() {
+  const email = normalizeEmail(document.getElementById('signinEmail').value);
+  const password = document.getElementById('signinPassword').value;
+  const remember = document.getElementById('remember').checked;
+  document.getElementById('signinError').classList.remove('visible');
+
+  if (!email) { showError('signinError', 'Please enter your email.'); return; }
+  if (!password) { showError('signinError', 'Please enter your password.'); return; }
+  if (!email.includes('@')) { showError('signinError', 'Please enter a valid email.'); return; }
+
+  try {
+    const authData = await requestJson('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password })
+    });
+    persistCurrentSessionUser(authData.user, remember, authData.token);
+    redirectToDashboard();
+    return;
+  } catch (err) {
+    if (err.status === 401) {
+      try {
+        const migrated = await migrateLegacyUser(email, password);
+        if (migrated && migrated.user) {
+          persistCurrentSessionUser(migrated.user, remember, migrated.token);
+          redirectToDashboard();
+          return;
+        }
+      } catch (migrationErr) {
+        console.error('Legacy account migration failed:', migrationErr);
+        showError('signinError', migrationErr.message || 'Failed to sign in.');
+        return;
+      }
+    }
+
+    showError('signinError', err.message || 'Failed to sign in.');
+  }
+}
+
+async function handleSignUp() {
+  const name = document.getElementById('signupName').value.trim();
+  const email = normalizeEmail(document.getElementById('signupEmail').value);
+  const password = document.getElementById('signupPassword').value;
+  const confirm = document.getElementById('signupConfirm').value;
+  document.getElementById('signupError').classList.remove('visible');
+
+  if (!name) { showError('signupError', 'Please enter your name.'); return; }
+  if (!email || !email.includes('@')) { showError('signupError', 'Please enter a valid email.'); return; }
+  if (password.length < 8) { showError('signupError', 'Password must be at least 8 characters.'); return; }
+  if (password !== confirm) { showError('signupError', 'Passwords do not match.'); return; }
+
+  try {
+    const authData = await requestJson('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        password: password
+      })
+    });
+    persistCurrentSessionUser(authData.user, true, authData.token);
+  } catch (err) {
+    clearCurrentSessionUser();
+    showError('signupError', err.message || 'Failed to create your profile. Please try again.');
+    return;
+  }
+  document.getElementById('popupOverlay').classList.add('visible');
+  setTimeout(function() { redirectToDashboard(); }, 2000);
+}
+
+async function handleSocial(provider) {
+  try {
+    const authData = await requestJson('/api/auth/social', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider: provider })
+    });
+    persistCurrentSessionUser(authData.user, true, authData.token);
+    redirectToDashboard();
+  } catch (err) {
+    showError('signinError', err.message || 'Failed to complete social sign-in.');
+  }
+}
+
+function checkStrength() {
+  const pw = document.getElementById('signupPassword').value;
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const colors = ['#e2e8f0', '#ef4444', '#f59e0b', '#22c55e', '#16a34a'];
+  const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+  for (let i = 1; i <= 4; i++) document.getElementById('pw' + i).style.background = i <= score ? colors[score] : '#e2e8f0';
+  document.getElementById('pwLabel').textContent = pw.length > 0 ? labels[score] : '';
+}
+
+['signinEmail', 'signinPassword'].forEach(function(id) {
+  document.getElementById(id).addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleSignIn();
+  });
+});
+
+['signupName', 'signupEmail', 'signupPassword', 'signupConfirm'].forEach(function(id) {
+  document.getElementById(id).addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleSignUp();
+  });
+});
+</script>
+
+</body>
+</html>

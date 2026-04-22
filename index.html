@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillGap Analyzer - Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ══════════ Sidebar ══════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h1>Skill<span>Gap</span></h1>
+    <p>Career Intelligence</p>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#" class="nav-item" data-page="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </a>
+    <a href="#" class="nav-item" data-page="jobs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Jobs
+    </a>
+    <a href="#" class="nav-item" data-page="skills">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Skills Lab
+    </a>
+    <a href="#" class="nav-item" data-page="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </a>
+    <a href="#" class="nav-item" data-page="assessment">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Assessment
+    </a>
+    <a href="#" class="nav-item" data-page="roadmap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      Roadmap
+    </a>
+    <a href="#" class="nav-item" data-page="coaching">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Peer Coaching
+    </a>
+    <a href="#" class="nav-item" data-page="analyzer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Analyzer
+    </a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="nav-item" onclick="logout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </div>
+  </div>
+</aside>
+
+<!-- ══════════ Top Bar ══════════ -->
+<header class="topbar">
+  <div class="search-box">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Search opportunities, skills, resources...">
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <div class="notif-dot"></div>
+    </div>
+    <div class="topbar-icon" onclick="toggleDarkMode()" id="darkModeToggle" title="Toggle dark mode">
+      <svg id="darkModeIconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="darkModeIconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </div>
+    <div class="user-pill">
+      <div class="user-info">
+        <div class="name" id="topUserName"></div>
+        <div class="role" id="topUserRole">Scholar</div>
+      </div>
+      <div class="avatar" id="topAvatar"></div>
+    </div>
+    <button class="btn-signout" onclick="logout()">Sign Out</button>
+  </div>
+</header>
+
+<!-- ══════════ Main Content ══════════ -->
+<main class="main">
+
+<!-- ┌──────────────────────────────────────────┐ -->
+<!-- │           PAGE: HOME / DASHBOARD          │ -->
+<!-- └──────────────────────────────────────────┘ -->
+<div class="page-view" id="page-home">
+
+  <!-- Welcome Banner -->
+  <div class="welcome-banner">
+    <h2 id="welcomeMsg">Welcome back!</h2>
+    <p>You've made significant progress this week. There are new opportunities tailored specifically to your skill profile.</p>
+    <div class="welcome-actions">
+      <span class="wa-btn primary" onclick="navigateTo('analyzer')">Start Skill Analysis</span>
+      <span class="wa-btn secondary" onclick="navigateTo('jobs')">Browse Opportunities</span>
+    </div>
+    <div class="banner-stat">
+      <div>
+        <div class="stat-label">New Jobs</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="stat-num" id="newJobsCount">12</div>
+          <span class="stat-link" onclick="navigateTo('jobs')">View Openings →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 1: Milestone + Skill Matrix -->
+  <div class="dash-grid">
+    <div class="card">
+      <div class="card-header">
+        <h3>Next Milestone</h3>
+        <span class="badge badge-indigo milestone-level" id="milestoneLevel">Level 4</span>
+      </div>
+      <div class="milestone-title" id="milestoneTitle">Skill Portfolio Completion</div>
+      <div style="display:flex;align-items:baseline;gap:8px;">
+        <div class="milestone-pct" id="milestonePct">75%</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="milestoneProgressFill" style="width:75%"></div></div>
+      <div class="milestone-hint" id="milestoneHint">Complete <strong>2 more skill assessments</strong> to unlock the <strong>Elite Analyst</strong> badge and gain priority job matching.</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Your Skill Matrix</h3>
+        <span class="card-link" onclick="navigateTo('skills')">View All</span>
+      </div>
+      <div id="skillMatrix"></div>
+    </div>
+  </div>
+
+  <!-- Row 2: Skills You Have + Trending -->
+  <div class="dash-grid">
+    <div class="card">
+      <div class="card-header">
+        <h3>Skills You Have</h3>
+        <span class="card-link" onclick="editSkillsPrompt()">Edit</span>
+      </div>
+      <div class="skill-chips" id="userSkillChips"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Trending Skills</h3>
+        <span class="card-link" onclick="navigateTo('skills')">Explore →</span>
+      </div>
+      <div id="trendingList"></div>
+    </div>
+  </div>
+
+  <!-- Row 3: Recent Job Matches + Latest News -->
+  <div class="dash-grid">
+    <div class="card">
+      <div class="card-header">
+        <h3>Recent Job Matches</h3>
+        <span class="card-link" onclick="navigateTo('jobs')">View All</span>
+      </div>
+      <div id="jobList"></div>
+    </div>
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="card-header" style="padding:24px 24px 0;">
+        <h3>Latest Tech & Career News</h3>
+        <span class="card-link" style="cursor:pointer;" onclick="loadNewsArticles()">Refresh</span>
+      </div>
+      <div id="newsGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:16px 24px 24px;">
+        <div class="news-card" style="grid-column:1/-1;text-align:center;padding:40px;">
+          <p style="color:#94a3b8;">Loading latest articles...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Benchmarks (populated dynamically by JS) -->
+  <div class="dash-grid-3" id="recentBenchmarks">
+    <!-- JS will populate benchmark cards here. Template for reference:
+    <div class="card" style="text-align:center;">
+      <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">{timeAgo}</div>
+      <div style="width:48px;height:48px;border-radius:12px;background:#eef2ff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;">
+        {svgIcon}
+      </div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:4px;">{benchmarkName}</div>
+      <div style="font-size:12px;color:#94a3b8;">Percentile</div>
+      <div style="font-size:16px;font-weight:700;color:#4f46e5;">Top {percentile}%</div>
+    </div>
+    -->
+  </div>
+
+  <div class="footer">
+    <div class="footer-status"><div class="status-dot"></div> Systems Operational</div>
+    <div class="footer-links"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Support</a></div>
+    <div>&copy; 2026 SkillGap Analyzer. All rights reserved.</div>
+  </div>
+</div>
+
+
+<!-- ┌──────────────────────────────────────────┐ -->
+<!-- │              PAGE: JOBS                    │ -->
+<!-- └──────────────────────────────────────────┘ -->
+<div class="page-view jobs-page" id="page-jobs">
+
+  <!-- Search Bar -->
+  <div class="jobs-search-bar">
+    <div class="jobs-search-input-wrap">
+      <span class="jobs-search-icon">🔍</span>
+      <input type="text" id="jobSearchInput" placeholder="Search jobs by title, company, skill..." class="jobs-search-input">
+    </div>
+    <select id="jobCategoryFilter" class="jobs-filter-select">
+      <option value="">All Categories</option>
+      <option value="Software Engineering">Software Engineering</option>
+      <option value="Data Science">Data Science</option>
+      <option value="Data and Analytics">Data & Analytics</option>
+      <option value="Engineering">Engineering</option>
+      <option value="Design and UX">Design & UX</option>
+      <option value="IT">IT</option>
+      <option value="Product">Product</option>
+      <option value="Project Management">Project Management</option>
+      <option value="Marketing">Marketing</option>
+      <option value="Finance">Finance</option>
+    </select>
+    <select id="jobLevelFilter" class="jobs-filter-select">
+      <option value="">All Levels</option>
+      <option value="Internship">Internship</option>
+      <option value="Entry Level">Entry Level</option>
+      <option value="Mid Level">Mid Level</option>
+      <option value="Senior Level">Senior Level</option>
+    </select>
+    <button class="btn btn-primary" onclick="searchJobs(1)" style="padding:10px 24px;">Search</button>
+  </div>
+
+  <!-- Results Summary -->
+  <div class="jobs-results-summary" id="jobsResultsSummary">
+    <span id="jobsCount">Loading jobs...</span>
+    <span id="jobsSource" class="jobs-source-badge"></span>
+  </div>
+
+  <div class="jobs-layout">
+    <!-- Filters Sidebar -->
+    <div class="filters">
+      <h3>Quick Filters <span onclick="clearJobFilters()" style="cursor:pointer;">Clear all</span></h3>
+      <div class="filter-group">
+        <label>Location</label>
+        <input type="text" id="jobLocationFilter" placeholder="e.g. New York, Remote..." class="jobs-location-input">
+      </div>
+      <div class="filter-group">
+        <label>Popular Searches</label>
+        <div class="filter-tags" id="popularSearchTags">
+          <span class="filter-tag" onclick="quickSearch('Python')">Python</span>
+          <span class="filter-tag" onclick="quickSearch('Data Scientist')">Data Scientist</span>
+          <span class="filter-tag" onclick="quickSearch('Machine Learning')">ML Engineer</span>
+          <span class="filter-tag" onclick="quickSearch('Frontend')">Frontend</span>
+          <span class="filter-tag" onclick="quickSearch('Backend')">Backend</span>
+          <span class="filter-tag" onclick="quickSearch('Cloud')">Cloud</span>
+          <span class="filter-tag" onclick="quickSearch('DevOps')">DevOps</span>
+          <span class="filter-tag" onclick="quickSearch('Cybersecurity')">Security</span>
+        </div>
+      </div>
+      <div class="filter-group" style="margin-top:24px; padding-top:16px; border-top:1px solid #e2e8f0;">
+        <label>Based on Your Skills</label>
+        <div class="filter-tags" id="skillBasedTags">
+          <!-- Populated by JS from assessment scores -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Listings -->
+    <div class="jobs-section">
+      <div id="jobListings">
+        <div class="jobs-loading">
+          <div class="spinner" style="display:inline-block;width:32px;height:32px;border:3px solid #e2e8f0;border-top-color:#4f46e5;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+          <p style="margin-top:12px;color:#94a3b8;">Loading real-time job listings...</p>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="jobs-pagination" id="jobsPagination" style="display:none;">
+        <button class="btn btn-secondary" id="jobsPrevBtn" onclick="loadJobPage(-1)">← Previous</button>
+        <span id="jobsPageInfo" style="font-size:13px;color:#64748b;"></span>
+        <button class="btn btn-secondary" id="jobsNextBtn" onclick="loadJobPage(1)">Next →</button>
+      </div>
+
+      <!-- Search Across Platforms – Inline -->
+      <div class="platform-search-section">
+        <h3 class="platform-search-title">Search Across All Platforms</h3>
+        <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;">Find jobs on LinkedIn, Indeed, Glassdoor & more — all from one place</p>
+
+        <div class="platform-search-bar">
+          <input type="text" id="platformSearchQuery" placeholder="Job title, skill, or keyword..." class="jobs-search-input" style="padding-left:14px;flex:1;">
+          <input type="text" id="platformSearchLocation" placeholder="Location (optional)" class="jobs-search-input" style="padding-left:14px;width:200px;">
+        </div>
+
+        <div class="platform-grid" id="platformGrid">
+          <div class="platform-card" onclick="searchOnPlatform('google')">
+            <div class="platform-card-icon">
+              <span style="color:#4285F4;">G</span><span style="color:#EA4335;">o</span><span style="color:#FBBC05;">o</span><span style="color:#4285F4;">g</span><span style="color:#34A853;">l</span><span style="color:#EA4335;">e</span>
+            </div>
+            <div class="platform-card-name">Google Jobs</div>
+            <div class="platform-card-desc">Aggregates LinkedIn, Indeed, Glassdoor & 100+ sites</div>
+            <div class="platform-card-btn">Search →</div>
+          </div>
+
+          <div class="platform-card" onclick="searchOnPlatform('linkedin')">
+            <div class="platform-card-icon">💼</div>
+            <div class="platform-card-name">LinkedIn</div>
+            <div class="platform-card-desc">500M+ professionals, top employer network</div>
+            <div class="platform-card-btn">Search →</div>
+          </div>
+
+          <div class="platform-card" onclick="searchOnPlatform('indeed')">
+            <div class="platform-card-icon">🔵</div>
+            <div class="platform-card-name">Indeed</div>
+            <div class="platform-card-desc">World's #1 job site, salary data & reviews</div>
+            <div class="platform-card-btn">Search →</div>
+          </div>
+
+          <div class="platform-card" onclick="searchOnPlatform('glassdoor')">
+            <div class="platform-card-icon">🟢</div>
+            <div class="platform-card-name">Glassdoor</div>
+            <div class="platform-card-desc">Company reviews, salary reports & interviews</div>
+            <div class="platform-card-btn">Search →</div>
+          </div>
+
+          <div class="platform-card" onclick="searchOnPlatform('wellfound')">
+            <div class="platform-card-icon">🚀</div>
+            <div class="platform-card-name">Wellfound</div>
+            <div class="platform-card-desc">Startup jobs with equity & salary transparency</div>
+            <div class="platform-card-btn">Search →</div>
+          </div>
+
+          <div class="platform-card" onclick="searchOnPlatform('remotive')">
+            <div class="platform-card-icon">🌍</div>
+            <div class="platform-card-name">Remotive</div>
+            <div class="platform-card-desc">Curated remote jobs in tech</div>
+            <div class="platform-card-btn">Search →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-links"><a href="#">Privacy Policy</a><a href="#">Terms</a><a href="#">Support</a></div>
+    <div>&copy; 2026 SkillGap Analyzer</div>
+  </div>
+</div>
+
+
+<!-- ┌──────────────────────────────────────────┐ -->
+<!-- │            PAGE: SKILLS LAB                │ -->
+<!-- └──────────────────────────────────────────┘ -->
+<div class="page-view" id="page-skills">
+
+  <div class="page-header">
+    <h1>Skills Lab Intelligence</h1>
+    <p>Quantify your potential. Use our adaptive engine to map your professional trajectory and identify technical gaps.</p>
+  </div>
+
+  <div class="skills-layout">
+    <div class="cta-card">
+      <div class="cta-label">Skills Lab</div>
+      <h2>Ready for your next milestone?</h2>
+      <p>Our AI-driven assessment evaluates your practical knowledge and problem-solving velocity.</p>
+      <div class="cta-features">
+        <div class="cta-feature">⏱ 15-minute estimate</div>
+        <div class="cta-feature">📈 Adaptive Difficulty</div>
+      </div>
+      <button class="cta-btn" onclick="navigateTo('assessment')">Start Skill Assessment →</button>
+      <button class="cta-btn" style="background:rgba(255,255,255,0.15);margin-top:8px;" onclick="navigateTo('analyzer')">Resume Gap Analyzer →</button>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Your Skill Matrix</h3>
+        <span style="font-size:12px;color:#94a3b8;">Proficiency mapping across core domains</span>
+      </div>
+      <div id="skillsLabMatrix"></div>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-label">Top Strength</div>
+      <div class="stat-skill" id="slTopStrengthName">Data Ethics</div>
+      <div><span class="stat-score" id="slTopStrengthScore">4.9</span><span class="stat-max" id="slTopStrengthMax"> / 5.0</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Growth Area</div>
+      <div class="stat-skill" id="slGrowthName">SQL Optimization</div>
+      <div><span class="stat-score" id="slGrowthScore">3.2</span><span class="stat-max" id="slGrowthMax"> / 5.0</span></div>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-label">Assessments Taken</div>
+      <div class="stat-skill" id="slTotalAssessments">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Average Score</div>
+      <div class="stat-skill" id="slAvgScore">-</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Skills Covered</div>
+      <div class="stat-skill" id="slSkillsCovered">0 / 10</div>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+    <div>
+      <div class="insight-title" id="slInsightTitle">SkillGap Insight</div>
+      <div class="insight-text" id="slInsightText">Your SQL optimization skills are the only thing holding you back from a <strong>Level 5</strong> rating. We recommend the <em>Advanced Query Tuning</em> learning path.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <div class="card-header"><h3>Available Skills</h3></div>
+    <div id="slAvailableSkills" class="skill-selector-grid">
+      <p style="color:#94a3b8;font-size:13px;">Loading...</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:16px;font-weight:600;margin-top:32px;margin-bottom:4px;">Recent Benchmarks</h3>
+  <div class="benchmarks" id="slBenchmarks">
+    <p style="color:#94a3b8;font-size:13px;">Complete assessments to see your benchmarks here.</p>
+  </div>
+
+  <div class="footer"><div>&copy; 2026 SkillGap Analyzer</div></div>
+</div>
+
+
+<!-- ┌──────────────────────────────────────────┐ -->
+<!-- │             PAGE: PROFILE                  │ -->
+<!-- └──────────────────────────────────────────┘ -->
+<div class="page-view" id="page-profile">
+
+  <div class="profile-header">
+    <div class="profile-left">
+      <div class="profile-avatar">
+        <span id="profileInitials"></span>
+        <div class="edit-badge" onclick="profileEditBasics()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></div>
+      </div>
+      <div class="profile-info">
+        <h1 id="profileName"></h1>
+        <div class="subtitle" id="profileTitle">Aspiring Data Professional</div>
+        <div class="bio" id="profileBio">Driven professional with a focus on data analytics and machine learning. Passionate about bridging the gap between academic theory and scalable production solutions.</div>
+        <div class="profile-meta">
+          <span class="profile-meta-item" id="profileLocation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Worcester, MA</span>
+          <span class="profile-meta-item" id="profileEmail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg></span>
+          <div class="profile-social" id="profileSocial"></div>
+        </div>
+      </div>
+    </div>
+    <div class="strength-card">
+      <div class="strength-label">Profile Strength</div>
+      <div class="strength-pct" id="profileStrengthPct">84%</div>
+      <div class="strength-sub">Resume Scanned</div>
+      <div class="strength-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="35" fill="none" stroke="#e2e8f0" stroke-width="6"/>
+          <circle id="profileStrengthRing" cx="40" cy="40" r="35" fill="none" stroke="#4f46e5" stroke-width="6" stroke-dasharray="220" stroke-dashoffset="35" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="strength-hint" id="profileStrengthHint">Your profile is highly optimized. Add a portfolio link to reach 100%.</div>
+      <button class="strength-btn">Improve Match Score</button>
+    </div>
+  </div>
+
+  <div id="profileOnboarding"></div>
+
+  <div class="profile-grid">
+    <div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header"><h3>Core Competencies</h3></div>
+        <div class="skill-chips" id="profileSkills">
+          <span class="skill-chip add-skill">+ Add Skill</span>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header"><h3>Assessment Scores</h3><span class="card-link" onclick="navigateTo('assessment')">Take Test</span></div>
+        <div id="profileAssessments" class="assessment-scores-list">
+          <p style="color:#94a3b8;font-size:13px;">No assessments yet. Take a skill test to see your scores here.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Documents</h3><span class="card-link" onclick="profileExplainDocumentUploads()">+ Upload</span></div>
+        <div id="profileDocuments">
+          <div class="doc-item"><div class="doc-icon pdf">📄</div><div><div class="doc-name">Resume_Final_2026.pdf</div><div class="doc-meta">Updated 2 days ago • 1.2MB</div></div><div class="doc-dl">⬇</div></div>
+          <div class="doc-item"><div class="doc-icon docx">📝</div><div><div class="doc-name">Cover_Letter.docx</div><div class="doc-meta">Updated 1 week ago • 450KB</div></div><div class="doc-dl">⬇</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header"><h3>Experience</h3><span class="card-link" onclick="profileAddExperience()">+</span></div>
+        <div id="profileExperience">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Education</h3></div>
+        <div id="profileEducation">
+        <div class="edu-item">
+          <div class="edu-icon">🎓</div>
+          <div>
+            <div class="edu-school">Clark University</div>
+            <div class="edu-degree">M.S. in Data Analytics</div>
+            <div class="edu-dates">2024 — 2026 (Expected) <span class="gpa-badge">GPA: 3.9/4.0</span></div>
+            <div class="edu-courses"><strong>Relevant Coursework</strong>Machine Learning, Data Mining, Statistical Methods, Database Systems, Big Data Analytics</div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">&copy; 2026 SkillGap Analyzer. All rights reserved.</div>
+</div>
+
+
+<!-- ┌──────────────────────────────────────────┐ -->
+<!-- │            PAGE: ANALYZER                  │ -->
+<!-- └──────────────────────────────────────────┘ -->
+<div class="page-view analyzer-page" id="page-analyzer">
+
+  <div class="steps">
+    <div class="step active" id="az-step1-ind">1. Your Skills</div>
+    <div class="step" id="az-step2-ind">2. Target Role</div>
+    <div class="step" id="az-step3-ind">3. AI Analysis</div>
+  </div>
+
+  <!-- Step 1: Skills Input -->
+  <div class="section visible" id="az-step1">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;">Your Current Skills</h2>
+    <p style="color:#64748b;font-size:13px;margin-bottom:20px;">We'll auto-load your assessed skills. You can also upload a resume or add more manually.</p>
+
+    <!-- Auto-loaded skills from assessments/profile -->
+    <div class="card" style="margin-bottom:16px;">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Skills from Your Profile & Assessments</h3>
+      <div id="azAutoSkills" class="skill-tags" style="min-height:40px;">
+        <span style="color:#94a3b8;font-size:13px;">Loading your skills...</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Upload your resume for additional skills</label>
+      <div class="upload-area" id="uploadArea">
+        <div class="icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        </div>
+        <p id="uploadText">Click to upload PDF, DOCX, or TXT</p>
+        <p style="font-size:11px;color:#94a3b8;margin-top:4px;">AI will extract skills automatically</p>
+        <input type="file" id="resumeFile" accept=".pdf,.docx,.doc,.txt" style="display:none;">
+      </div>
+      <div id="azResumeSkills" style="display:none;margin-top:12px;">
+        <h4 style="font-size:13px;font-weight:600;color:#4f46e5;margin-bottom:8px;">📄 Skills extracted from resume:</h4>
+        <div id="azResumeSkillTags" class="skill-tags"></div>
+      </div>
+    </div>
+
+    <div class="or-divider">or add skills manually</div>
+    <div class="form-group">
+      <label for="manualSkills">Additional skills (comma-separated)</label>
+      <textarea id="manualSkills" placeholder="e.g. Pandas, Tableau, Docker, Git, REST APIs"></textarea>
+    </div>
+    <div class="actions"><div></div><button class="btn btn-primary" onclick="analyzerGoToStep(2)">Next →</button></div>
+  </div>
+
+  <!-- Step 2: Target Role -->
+  <div class="section" id="az-step2">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;">Target Role & Region</h2>
+    <p style="color:#64748b;font-size:13px;margin-bottom:20px;">Select the role you're aiming for. Our AI will analyze the gap.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="targetRole">Target job role</label>
+        <select id="targetRole">
+          <option value="">Select a role...</option>
+          <option value="Data Analyst">Data Analyst</option>
+          <option value="Data Scientist">Data Scientist</option>
+          <option value="Software Engineer">Software Engineer</option>
+          <option value="Product Manager">Product Manager</option>
+          <option value="UX Designer">UX Designer</option>
+          <option value="Cloud Engineer">Cloud Engineer</option>
+          <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
+          <option value="Machine Learning Engineer">ML Engineer</option>
+          <option value="Full Stack Developer">Full Stack Developer</option>
+          <option value="DevOps Engineer">DevOps Engineer</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="region">Region</label>
+        <select id="region">
+          <option value="">Select a region...</option>
+          <option value="US National">United States (National)</option>
+          <option value="US Northeast">US - Northeast</option>
+          <option value="US West Coast">US - West Coast</option>
+          <option value="US South">US - South</option>
+          <option value="US Midwest">US - Midwest</option>
+          <option value="Remote">Remote / Global</option>
+          <option value="Europe">Europe</option>
+          <option value="India">India</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Skills summary before analysis -->
+    <div class="card" id="azSkillsSummary" style="margin-top:12px;">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;">Skills being analyzed</h3>
+      <div id="azAllSkillsList" class="skill-tags"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="analyzerGoToStep(1)">← Back</button>
+      <button class="btn btn-primary" id="azAnalyzeBtn" onclick="runAnalysis()">🤖 Analyze with AI →</button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="section" id="az-loading">
+    <div class="loading" style="text-align:center;padding:60px 0;">
+      <div class="spinner"></div>
+      <p style="margin-top:16px;color:#1e293b;font-size:16px;font-weight:600;">AI is analyzing your skill gap...</p>
+      <p style="margin-top:8px;color:#64748b;font-size:13px;" id="azLoadingMsg">Comparing your skills against market demand for this role</p>
+    </div>
+  </div>
+
+  <!-- Step 3: AI Results -->
+  <div class="section" id="az-step3">
+    <div class="results-header" style="margin-bottom:20px;">
+      <h2>Skill Gap Report</h2>
+      <p id="resultsSubtitle" style="color:#64748b;font-size:13px;"></p>
+    </div>
+
+    <!-- Top Stats Row -->
+    <div class="score-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      <div class="score-card"><div class="score-value" id="matchScore">--</div><div class="score-label">Match Score</div></div>
+      <div class="score-card"><div class="score-value" id="gapCount">--</div><div class="score-label">Skills to Develop</div></div>
+      <div class="score-card"><div class="score-value" id="azCompetitiveness">--</div><div class="score-label">Competitiveness</div></div>
+      <div class="score-card"><div class="score-value" id="azSalary" style="font-size:14px;">--</div><div class="score-label">Salary Range</div></div>
+    </div>
+
+    <!-- AI Summary -->
+    <div class="card" id="azSummaryCard" style="margin-bottom:16px;border-left:4px solid #4f46e5;">
+      <p id="azSummaryText" style="font-size:14px;color:#334155;line-height:1.6;"></p>
+    </div>
+
+    <!-- Matched vs Missing -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+      <div class="card">
+        <h3 style="color:#16a34a;">✅ Skills You Have</h3>
+        <div id="matchedSkills" class="skill-tags" style="margin-top:12px;"></div>
+      </div>
+      <div class="card">
+        <h3 style="color:#ef4444;">❌ Skills You Need</h3>
+        <div id="missingSkills" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- Gap Ranking -->
+    <div class="card" style="margin-bottom:16px;">
+      <h3>Skill Gap Priority Ranking</h3>
+      <div id="gapBars" style="margin-top:12px;"></div>
+    </div>
+
+    <!-- Learning Path -->
+    <div class="card" style="margin-bottom:16px;">
+      <h3>🎯 Personalized Learning Path</h3>
+      <div id="azLearningPath" style="margin-top:12px;"></div>
+    </div>
+
+    <!-- Assessment Suggestions -->
+    <div class="card" id="azAssessCard" style="margin-bottom:16px;background:#f0f0ff;">
+      <h3>📝 Recommended Assessments</h3>
+      <p style="font-size:12px;color:#64748b;margin-bottom:12px;">Take these assessments to verify and improve your skill scores</p>
+      <div id="azAssessmentSuggestions" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="analyzerGoToStep(1)">← Start Over</button>
+      <button class="btn btn-primary" onclick="exportAnalysisReport()">📄 Export Report</button>
+    </div>
+  </div>
+
+  <div class="footer">&copy; 2026 SkillGap Analyzer</div>
+</div>
+
+
+<!-- ┌──────────────────────────────────────────┐ -->
+<!-- │          PAGE: SKILL ASSESSMENT            │ -->
+<!-- └──────────────────────────────────────────┘ -->
+<div class="page-view" id="page-assessment">
+
+  <!-- Screen 1: Skill Selector -->
+  <div id="assess-select">
+    <div class="page-header">
+      <h1>Skill Assessment</h1>
+      <p>Choose a skill to test your knowledge. You'll answer 12 adaptive questions that get harder or easier based on your performance. Get graded out of 10.</p>
+    </div>
+    <div class="skill-selector-grid" id="skillSelectorGrid">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- Screen 2: Quiz -->
+  <div id="assess-quiz" style="display:none;">
+    <div class="quiz-header">
+      <div class="quiz-meta">
+        <span class="quiz-skill-badge" id="quizSkillName"></span>
+        <span class="quiz-difficulty-badge" id="quizDifficulty">Difficulty: 5</span>
+      </div>
+      <div class="quiz-timer" id="quizTimer">
+        <svg width="40" height="40" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="17" fill="none" stroke="#e2e8f0" stroke-width="3"/>
+          <circle cx="20" cy="20" r="17" fill="none" stroke="#4f46e5" stroke-width="3" id="timerCircle"
+            stroke-dasharray="106.8" stroke-dashoffset="0" stroke-linecap="round"
+            transform="rotate(-90 20 20)" style="transition: stroke-dashoffset 1s linear;"/>
+        </svg>
+        <span id="timerText">30</span>
+      </div>
+      <div class="quiz-progress">
+        <div class="quiz-progress-text">Question <span id="quizQNum">1</span> of <span id="quizQTotal">12</span></div>
+        <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressFill" style="width:10%"></div></div>
+      </div>
+    </div>
+
+    <div class="quiz-card" id="quizCard">
+      <div class="quiz-question" id="quizQuestion"></div>
+      <pre class="code-snippet" id="quizCode" style="display:none;"></pre>
+      <div class="quiz-options" id="quizOptions">
+        <!-- Filled by JS -->
+      </div>
+      <div class="quiz-actions">
+        <button class="btn btn-primary quiz-submit-btn" id="quizSubmitBtn" onclick="submitAssessmentAnswer()" disabled>Submit Answer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Feedback -->
+  <div id="assess-feedback" style="display:none;">
+    <div class="feedback-card" id="feedbackCard">
+      <div class="feedback-icon" id="feedbackIcon"></div>
+      <h3 id="feedbackTitle"></h3>
+      <div class="feedback-answers">
+        <div id="feedbackYourAnswer"></div>
+        <div id="feedbackCorrectAnswer"></div>
+      </div>
+      <p class="feedback-explanation" id="feedbackExplanation"></p>
+      <div class="feedback-theta">
+        <span>Ability Estimate:</span>
+        <strong id="feedbackTheta"></strong>
+      </div>
+      <button class="btn btn-primary" id="feedbackNextBtn" onclick="loadNextAssessmentQuestion()">Next Question →</button>
+    </div>
+  </div>
+
+  <!-- Screen 4: Results -->
+  <div id="assess-results" style="display:none;">
+    <div class="results-page">
+      <h2>Assessment Complete</h2>
+      <p class="results-subtitle" id="assessResultSkill"></p>
+
+      <div class="score-gauge-container">
+        <svg class="score-gauge" viewBox="0 0 200 200" id="scoreGaugeSvg">
+          <circle cx="100" cy="100" r="85" fill="none" stroke="#e2e8f0" stroke-width="12"/>
+          <circle cx="100" cy="100" r="85" fill="none" stroke="#4f46e5" stroke-width="12" stroke-linecap="round" stroke-dasharray="534" stroke-dashoffset="534" id="scoreGaugeCircle" transform="rotate(-90 100 100)"/>
+          <text x="100" y="92" text-anchor="middle" font-size="48" font-weight="700" fill="#1e293b" id="scoreGaugeText">--</text>
+          <text x="100" y="115" text-anchor="middle" font-size="14" fill="#94a3b8">out of 10</text>
+        </svg>
+      </div>
+
+      <div class="results-meta-row">
+        <div class="results-meta-card">
+          <div class="results-meta-label">Skill Level</div>
+          <div class="results-meta-value" id="assessSkillLevel">--</div>
+        </div>
+        <div class="results-meta-card">
+          <div class="results-meta-label">Accuracy</div>
+          <div class="results-meta-value" id="assessAccuracy">--</div>
+        </div>
+        <div class="results-meta-card">
+          <div class="results-meta-label">Confidence</div>
+          <div class="results-meta-value" id="assessConfidence">--</div>
+        </div>
+        <div class="results-meta-card">
+          <div class="results-meta-label">Duration</div>
+          <div class="results-meta-value" id="assessDuration">--</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:24px;">
+        <h3 style="margin-bottom:12px;">Ability Trajectory</h3>
+        <canvas id="thetaChart" height="200"></canvas>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3 style="margin-bottom:12px;">Question Breakdown</h3>
+        <div id="assessBreakdown"></div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3 style="margin-bottom:12px;">Recommendations</h3>
+        <ul id="assessRecommendations" style="padding-left:20px;"></ul>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3 style="margin-bottom:12px;">Past Attempts</h3>
+        <div id="assessHistory">
+          <p style="color:#94a3b8;font-size:14px;">Loading history...</p>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:24px;">
+        <button class="btn btn-secondary" onclick="showAssessmentSelect()">← Choose Another Skill</button>
+        <button class="btn btn-primary" onclick="retakeAssessment()">Retake Assessment</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">&copy; 2026 SkillGap Analyzer</div>
+</div>
+
+<!-- ══════════ Roadmap Page ══════════ -->
+<div class="page-view" id="page-roadmap">
+
+  <!-- Roadmap Header -->
+  <div class="roadmap-header">
+    <div>
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:4px;">Skill Roadmap</h2>
+      <p style="color:#64748b;font-size:13px;">Choose a learning path and track your progress through each milestone.</p>
+    </div>
+    <div class="roadmap-skill-picker">
+      <label style="font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;">Select Skill</label>
+      <select id="roadmapSkillSelect" onchange="loadRoadmap(this.value)">
+        <option value="">Choose a skill...</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Current Masterclass Banner -->
+  <div class="roadmap-banner" id="roadmapBanner" style="display:none;">
+    <div class="roadmap-banner-left">
+      <span class="roadmap-banner-tag">CURRENT MASTERCLASS</span>
+      <h3 id="roadmapBannerTitle">Python Developer</h3>
+      <div class="roadmap-progress-bar">
+        <div class="roadmap-progress-fill" id="roadmapProgressFill" style="width:0%"></div>
+      </div>
+      <a class="roadmap-continue-btn" id="roadmapContinueBtn" onclick="scrollToCurrentNode()">
+        Continue Learning <span>→</span>
+      </a>
+    </div>
+    <div class="roadmap-banner-pct" id="roadmapBannerPct">0%</div>
+  </div>
+
+  <!-- Vertical Timeline Roadmap -->
+  <div class="roadmap-timeline" id="roadmapTimeline" style="display:none;">
+    <!-- SVG gradient definition -->
+    <svg width="0" height="0" style="position:absolute;">
+      <defs>
+        <linearGradient id="roadmapGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#4f46e5"/>
+          <stop offset="100%" stop-color="#e2e8f0"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <!-- Rows injected by JS -->
+  </div>
+
+  <!-- Empty State -->
+  <div class="roadmap-empty" id="roadmapEmpty">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+    <h3>Choose a skill to see your roadmap</h3>
+    <p>Each roadmap has 8-12 milestones from basics to mastery. Complete assessments to unlock stages.</p>
+  </div>
+
+  <div class="footer">&copy; 2026 SkillGap Analyzer</div>
+</div>
+
+<!-- ══════════ Peer Coaching Page ══════════ -->
+<div class="page-view" id="page-coaching">
+
+  <!-- Header -->
+  <div class="pc-header">
+    <div>
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:4px;">Peer Coaching</h2>
+      <p style="color:#64748b;font-size:13px;">Learn from verified high scorers or coach others in your strongest skills.</p>
+    </div>
+    <div class="pc-header-actions">
+      <button class="btn btn-secondary" id="pcMySessionsBtn" onclick="showPCSection('sessions')">My Sessions <span class="pc-badge" id="pcSessionCount" style="display:none;">0</span></button>
+      <button class="btn btn-primary" id="pcBecomeCoachBtn" onclick="showPCSection('become-coach')">Become a Coach</button>
+    </div>
+  </div>
+
+  <!-- Eligibility Banner -->
+  <div class="pc-eligibility-banner" id="pcEligibilityBanner" style="display:none;">
+    <div class="pc-elig-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+    <div class="pc-elig-text">
+      <strong id="pcEligTitle">You're eligible to coach!</strong>
+      <span id="pcEligSub">You scored 8+ in <span id="pcEligSkills">Python, SQL</span>. Help others improve.</span>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="showPCSection('become-coach')">Set Up Profile</button>
+  </div>
+
+  <!-- Recommendation Banner (for learners) -->
+  <div class="pc-recommend-banner" id="pcRecommendBanner" style="display:none;">
+    <div class="pc-rec-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div class="pc-rec-text">
+      <strong>Need help?</strong>
+      <span>You scored below 5 in <span id="pcWeakSkills">—</span>. Book a verified peer coach for a quick session.</span>
+    </div>
+  </div>
+
+  <!-- Tab Nav -->
+  <div class="pc-tabs">
+    <button class="pc-tab active" data-pc-tab="discover" onclick="switchPCTab('discover')">Discover Coaches</button>
+    <button class="pc-tab" data-pc-tab="sessions" onclick="switchPCTab('sessions')">My Sessions</button>
+    <button class="pc-tab" data-pc-tab="become-coach" onclick="switchPCTab('become-coach')">Become a Coach</button>
+  </div>
+
+  <!-- ── Tab: Discover Coaches ── -->
+  <div class="pc-tab-content active" id="pcTabDiscover">
+    <!-- Filter Bar -->
+    <div class="pc-filter-bar">
+      <select id="pcSkillFilter" onchange="loadCoaches()">
+        <option value="">All Skills</option>
+        <option value="Python">Python</option>
+        <option value="SQL">SQL</option>
+        <option value="JavaScript">JavaScript</option>
+        <option value="React">React</option>
+        <option value="Machine Learning">Machine Learning</option>
+        <option value="Data Analysis">Data Analysis</option>
+        <option value="Statistics">Statistics</option>
+        <option value="Excel">Excel</option>
+        <option value="Cloud Computing">Cloud Computing</option>
+        <option value="Cybersecurity">Cybersecurity</option>
+      </select>
+      <select id="pcSortFilter" onchange="loadCoaches()">
+        <option value="match">Best Match</option>
+        <option value="rating">Highest Rated</option>
+        <option value="score">Highest Score</option>
+        <option value="recent">Most Recent</option>
+      </select>
+    </div>
+
+    <!-- Coach Cards Grid -->
+    <div class="pc-coaches-grid" id="pcCoachesGrid">
+      <div class="pc-empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <h3>No coaches available yet</h3>
+        <p>Be the first to become a verified peer coach!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tab: My Sessions ── -->
+  <div class="pc-tab-content" id="pcTabSessions">
+    <div class="pc-sessions-list" id="pcSessionsList">
+      <div class="pc-empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <h3>No sessions yet</h3>
+        <p>Book a coaching session or start coaching others to see your sessions here.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tab: Become a Coach ── -->
+  <div class="pc-tab-content" id="pcTabBecomeCoach">
+    <div class="pc-coach-setup">
+      <div class="pc-setup-card">
+        <div class="pc-setup-header">
+          <div class="pc-setup-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2"><path d="M12 15l-2-2m0 0l2-2m-2 2h12m-6 4v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v1"/></svg>
+          </div>
+          <div>
+            <h3 style="font-size:18px;font-weight:700;">Coach Profile Setup</h3>
+            <p style="color:#64748b;font-size:13px;">Share your expertise with peers who need help.</p>
+          </div>
+        </div>
+
+        <!-- Verified Skills (auto-detected) -->
+        <div class="pc-setup-section">
+          <label class="pc-label">Your Verified Skills (Score 8+)</label>
+          <div class="pc-verified-skills" id="pcVerifiedSkills">
+            <p style="color:#94a3b8;font-size:13px;">Loading verified skills...</p>
+          </div>
+        </div>
+
+        <!-- Select which skills to coach -->
+        <div class="pc-setup-section">
+          <label class="pc-label">Skills You Want to Coach</label>
+          <div class="pc-coach-skill-checks" id="pcCoachSkillChecks">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Headline -->
+        <div class="pc-setup-section">
+          <label class="pc-label" for="pcHeadline">Headline</label>
+          <input type="text" id="pcHeadline" placeholder="e.g. Python expert with 2+ years experience" class="pc-input" maxlength="80">
+        </div>
+
+        <!-- Bio -->
+        <div class="pc-setup-section">
+          <label class="pc-label" for="pcBio">Short Bio</label>
+          <textarea id="pcBio" placeholder="Tell learners about your background, teaching style, and what you can help with..." class="pc-textarea" rows="3" maxlength="300"></textarea>
+        </div>
+
+        <!-- Session Lengths -->
+        <div class="pc-setup-section">
+          <label class="pc-label">Session Lengths Offered</label>
+          <div class="pc-session-lengths">
+            <label class="pc-check-label"><input type="checkbox" value="15" checked> 15 min</label>
+            <label class="pc-check-label"><input type="checkbox" value="20" checked> 20 min</label>
+            <label class="pc-check-label"><input type="checkbox" value="30"> 30 min</label>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="btn btn-primary" onclick="saveCoachProfile()" style="width:100%;margin-top:12px;">Save Coach Profile</button>
+        <p id="pcSetupMsg" style="font-size:12px;color:#16a34a;margin-top:8px;display:none;"></p>
+      </div>
+
+      <!-- How it works -->
+      <div class="pc-how-it-works">
+        <h4>How Peer Coaching Works</h4>
+        <div class="pc-step"><span class="pc-step-num">1</span><div><strong>Score 8+ on an assessment</strong><p>Your skill is automatically verified.</p></div></div>
+        <div class="pc-step"><span class="pc-step-num">2</span><div><strong>Set up your coach profile</strong><p>Choose skills, add a bio, set availability.</p></div></div>
+        <div class="pc-step"><span class="pc-step-num">3</span><div><strong>Accept booking requests</strong><p>Learners find you and request a session.</p></div></div>
+        <div class="pc-step"><span class="pc-step-num">4</span><div><strong>Help a peer, earn trust</strong><p>After the session, both sides rate & review.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Modal -->
+  <div class="pc-modal-overlay" id="pcBookingModal" style="display:none;" onclick="closePCModal(event)" role="dialog" aria-labelledby="pcBookingTitle" aria-modal="true">
+    <div class="pc-modal" onclick="event.stopPropagation()">
+      <button class="pc-modal-close" onclick="closePCModal()" aria-label="Close booking modal">&times;</button>
+      <h3 id="pcBookingTitle" style="font-size:18px;font-weight:700;margin-bottom:4px;">Book a Session</h3>
+      <p style="color:#64748b;font-size:13px;margin-bottom:16px;">with <strong id="pcBookCoachName">Coach Name</strong></p>
+
+      <div class="pc-setup-section">
+        <label class="pc-label" for="pcBookSkill">Skill</label>
+        <select id="pcBookSkill" class="pc-input"></select>
+      </div>
+      <div class="pc-setup-section">
+        <label class="pc-label" for="pcBookDuration">Session Length</label>
+        <select id="pcBookDuration" class="pc-input"></select>
+      </div>
+      <div class="pc-setup-section">
+        <label class="pc-label" for="pcBookTime">Preferred Date & Time</label>
+        <input type="datetime-local" id="pcBookTime" class="pc-input">
+      </div>
+      <div class="pc-setup-section">
+        <label class="pc-label" for="pcBookGoal">What do you need help with?</label>
+        <textarea id="pcBookGoal" class="pc-textarea" rows="2" placeholder="Describe what you'd like to learn or review..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="submitBooking()" style="width:100%;margin-top:8px;">Send Booking Request</button>
+      <p id="pcBookMsg" style="font-size:12px;margin-top:8px;display:none;"></p>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div class="pc-modal-overlay" id="pcReviewModal" style="display:none;" onclick="closePCReviewModal(event)" role="dialog" aria-labelledby="pcReviewTitle" aria-modal="true">
+    <div class="pc-modal" onclick="event.stopPropagation()">
+      <button class="pc-modal-close" onclick="closePCReviewModal()" aria-label="Close review modal">&times;</button>
+      <h3 id="pcReviewTitle" style="font-size:18px;font-weight:700;margin-bottom:4px;">Rate This Session</h3>
+      <p style="color:#64748b;font-size:13px;margin-bottom:16px;" id="pcReviewSubtitle">How was your session?</p>
+
+      <div class="pc-setup-section">
+        <label class="pc-label" id="pcRatingLabel">Rating</label>
+        <div class="pc-star-rating" id="pcStarRating" role="radiogroup" aria-labelledby="pcRatingLabel">
+          <span class="pc-star" data-val="1">&#9733;</span>
+          <span class="pc-star" data-val="2">&#9733;</span>
+          <span class="pc-star" data-val="3">&#9733;</span>
+          <span class="pc-star" data-val="4">&#9733;</span>
+          <span class="pc-star" data-val="5">&#9733;</span>
+        </div>
+      </div>
+      <div class="pc-setup-section">
+        <label class="pc-label" for="pcReviewFeedback">Feedback</label>
+        <textarea id="pcReviewFeedback" class="pc-textarea" rows="2" placeholder="What went well? What could improve?"></textarea>
+      </div>
+      <div class="pc-setup-section">
+        <label class="pc-check-label"><input type="checkbox" id="pcReviewRecommend" checked> I would recommend this coach</label>
+      </div>
+      <button class="btn btn-primary" onclick="submitReview()" style="width:100%;margin-top:8px;">Submit Review</button>
+      <div style="text-align:center;margin-top:12px;">
+        <a href="#" onclick="navigateTo('assessment');closePCReviewModal();return false;" style="font-size:13px;color:#4f46e5;font-weight:600;">Retake Assessment to Track Improvement →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">&copy; 2026 SkillGap Analyzer</div>
+</div>
+
+</main>
+
+<!-- Job Detail Modal Overlay -->
+<div class="job-modal-overlay" id="jobModalOverlay" onclick="closeJobModal(event)">
+  <div class="job-modal" onclick="event.stopPropagation()">
+    <button class="job-modal-close" onclick="closeJobModal()">&times;</button>
+    <div class="job-modal-header">
+      <div class="job-modal-icon" id="jobModalIcon">💼</div>
+      <div>
+        <h2 class="job-modal-title" id="jobModalTitle">Job Title</h2>
+        <p class="job-modal-company" id="jobModalCompany">Company • Location</p>
+      </div>
+    </div>
+    <div class="job-modal-tags" id="jobModalTags"></div>
+    <div class="job-modal-meta" id="jobModalMeta"></div>
+    <div class="job-modal-body">
+      <h3>Search this role on:</h3>
+      <div class="job-modal-platforms" id="jobModalPlatforms"></div>
+    </div>
+    <div class="job-modal-actions">
+      <a href="#" id="jobModalApplyLink" target="_blank" rel="noopener" class="btn btn-primary">View Original Listing →</a>
+      <button class="btn btn-secondary" onclick="closeJobModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+node_modules/
+.env
+.DS_Store
+*.log
+
+# Runtime data files
+data/
+data-auth-test/
+uploads/
+assessment-history.json
+peer-coaches.json
+peer-session-bookings.json
+peer-session-reviews.json
+profiles.json
+users.json
+
+# Editor / tooling
+.claude/
+DEPLOYMENT.md
