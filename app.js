@@ -3810,11 +3810,15 @@ function loadChatMessages() {
     .then(function(data) {
       var container = document.getElementById('chatMessages');
       if (!container) return;
+      if (data.error) {
+        container.innerHTML = '<div class="chat-empty" style="color:#dc2626;">' + data.error + '</div>';
+        return;
+      }
       if (!data.messages || data.messages.length === 0) {
         container.innerHTML = '<div class="chat-empty">No messages yet. Say hello!</div>';
         return;
       }
-      var myId = (user.email || '').toLowerCase().replace(/[@.]/g, '_');
+      var myId = (user.email || '').toLowerCase().trim();
       var html = data.messages.map(function(m) {
         var isMine = m.senderId === myId;
         var time = new Date(m.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });

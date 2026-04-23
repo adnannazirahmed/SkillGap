@@ -3014,7 +3014,7 @@ app.get('/api/peer-coaching/analytics', async (req, res) => {
 app.get('/api/chat/:bookingId', requireAuth, async (req, res) => {
   try {
     const { bookingId } = req.params;
-    const userId = normalizeEmailAddress(req.user.email);
+    const userId = req.authenticatedUserId;
     const booking = await db.getBookingById(bookingId);
     if (!booking) return res.status(404).json({ error: 'Booking not found' });
     if (booking.coachUserId !== userId && booking.learnerUserId !== userId) {
@@ -3031,7 +3031,7 @@ app.get('/api/chat/:bookingId', requireAuth, async (req, res) => {
 app.post('/api/chat/:bookingId', requireAuth, async (req, res) => {
   try {
     const { bookingId } = req.params;
-    const userId = normalizeEmailAddress(req.user.email);
+    const userId = req.authenticatedUserId;
     const { content } = req.body;
     if (!content || !content.trim()) return res.status(400).json({ error: 'Message cannot be empty' });
     const booking = await db.getBookingById(bookingId);
