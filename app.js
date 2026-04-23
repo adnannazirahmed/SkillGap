@@ -2848,7 +2848,187 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Navigate to home by default
   navigateTo('home');
+
+  // Load notifications and auto-refresh every 30s
+  loadNotifications();
+  setInterval(loadNotifications, 30000);
+
+  // Close notif panel when clicking outside
+  document.addEventListener('click', function(e) {
+    var panel = document.getElementById('notifPanel');
+    var btn = document.getElementById('notifBtn');
+    if (panel && panel.style.display !== 'none' && !panel.contains(e.target) && btn && !btn.contains(e.target)) {
+      panel.style.display = 'none';
+    }
+  });
 });
+
+// ══════════════════════════════════════
+// ── Notifications
+// ══════════════════════════════════════
+
+var _notifPanelOpen = false;
+
+function toggleNotifPanel() {
+  var panel = document.getElementById('notifPanel');
+  if (!panel) return;
+  _notifPanelOpen = panel.style.display === 'none' || panel.style.display === '';
+  panel.style.display = _notifPanelOpen ? 'block' : 'none';
+  if (_notifPanelOpen) loadNotifications();
+}
+
+function loadNotifications() {
+  var user = getActiveUser() || {};
+  if (!user.email) return;
+
+  fetch('/api/peer-coaching/bookings?userId=' + encodeURIComponent(user.email))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var bookings = (data && data.bookings) ? data.bookings : [];
+      var seen = getSeenNotifs();
+      var items = [];
+
+      bookings.forEach(function(b) {
+        var notifId, iconClass, emoji, title, sub, action, ts;
+        ts = b.updatedAt || b.createdAt || '';
+        var timeStr = ts ? timeAgo(ts) : '';
+
+        if (b.role === 'coach' && b.status === 'pending') {
+          // Someone booked you as a coach
+          notifId = 'booking-pending-' + b.id;
+          iconClass = 'booking';
+          emoji = '📅';
+          title = 'New session request';
+          sub = (b.learnerName || 'A student') + ' wants a ' + b.duration + 'min ' + escHtml(b.skill) + ' session';
+          action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
+        } else if (b.role === 'learner' && b.status === 'confirmed') {
+          // Your booking was accepted
+          notifId = 'booking-confirmed-' + b.id;
+          iconClass = 'accepted';
+          emoji = '✅';
+          title = 'Session confirmed!';
+          sub = (b.coachName || 'Your coach') + ' accepted your ' + escHtml(b.skill) + ' session request';
+          action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
+        } else if (b.role === 'learner' && b.status === 'cancelled') {
+          notifId = 'booking-cancelled-' + b.id;
+          iconClass = 'declined';
+          emoji = '❌';
+          title = 'Session declined';
+          sub = (b.coachName || 'Your coach') + ' declined your ' + escHtml(b.skill) + ' request';
+          action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
+        } else if (b.status === 'completed' && b.role === 'learner' && !b.hasReview) {
+          notifId = 'booking-review-' + b.id;
+          iconClass = 'completed';
+          emoji = '⭐';
+          title = 'Rate your session';
+          sub = 'How was your ' + escHtml(b.skill) + ' session with ' + (b.coachName || 'your coach') + '?';
+          action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
+        } else {
+          return;
+        }
+
+        if (notifId) {
+          items.push({
+            id: notifId,
+            iconClass: iconClass,
+            emoji: emoji,
+            title: title,
+            sub: sub,
+            time: timeStr,
+            unread: !seen[notifId],
+            action: action
+          });
+        }
+      });
+
+      renderNotifications(items);
+    })
+    .catch(function() {
+      var list = document.getElementById('notifList');
+      if (list) list.innerHTML = '<div class="notif-empty">Could not load notifications.</div>';
+    });
+}
+
+function renderNotifications(items) {
+  var list = document.getElementById('notifList');
+  var dot = document.getElementById('notifDot');
+  var countEl = document.getElementById('notifCount');
+  if (!list) return;
+
+  var unreadCount = items.filter(function(n) { return n.unread; }).length;
+
+  if (items.length === 0) {
+    list.innerHTML = '<div class="notif-empty">You\'re all caught up! 🎉</div>';
+  } else {
+    list.innerHTML = items.map(function(n, idx) {
+      return '<div class="notif-item' + (n.unread ? ' unread' : '') + '" onclick="handleNotifClick(' + idx + ')" data-notif-id="' + n.id + '">' +
+        '<div class="notif-icon ' + n.iconClass + '">' + n.emoji + '</div>' +
+        '<div class="notif-body">' +
+          '<div class="notif-body-title">' + n.title + '</div>' +
+          '<div class="notif-body-sub">' + n.sub + '</div>' +
+          (n.time ? '<div class="notif-body-time">' + n.time + '</div>' : '') +
+        '</div>' +
+        (n.unread ? '<div class="notif-unread-dot"></div>' : '') +
+      '</div>';
+    }).join('');
+
+    // Store actions for click handling
+    window._notifActions = items.map(function(n) { return { id: n.id, action: n.action }; });
+  }
+
+  // Update badge
+  if (unreadCount > 0) {
+    if (dot) dot.style.display = 'none';
+    if (countEl) { countEl.textContent = unreadCount > 9 ? '9+' : unreadCount; countEl.style.display = 'flex'; }
+  } else {
+    if (dot) dot.style.display = 'none';
+    if (countEl) countEl.style.display = 'none';
+  }
+}
+
+function handleNotifClick(idx) {
+  var actions = window._notifActions || [];
+  var notif = actions[idx];
+  if (!notif) return;
+  markNotifSeen(notif.id);
+  // Re-render to remove unread state
+  var el = document.querySelector('[data-notif-id="' + notif.id + '"]');
+  if (el) { el.classList.remove('unread'); var dot = el.querySelector('.notif-unread-dot'); if (dot) dot.remove(); }
+  document.getElementById('notifPanel').style.display = 'none';
+  if (notif.action) notif.action();
+}
+
+function markAllNotifsRead() {
+  var all = document.querySelectorAll('.notif-item[data-notif-id]');
+  all.forEach(function(el) {
+    markNotifSeen(el.getAttribute('data-notif-id'));
+    el.classList.remove('unread');
+    var dot = el.querySelector('.notif-unread-dot');
+    if (dot) dot.remove();
+  });
+  var countEl = document.getElementById('notifCount');
+  var dotEl = document.getElementById('notifDot');
+  if (countEl) countEl.style.display = 'none';
+  if (dotEl) dotEl.style.display = 'none';
+}
+
+function getSeenNotifs() {
+  try { return JSON.parse(localStorage.getItem('sgaSeenNotifs') || '{}'); } catch(e) { return {}; }
+}
+
+function markNotifSeen(id) {
+  var seen = getSeenNotifs();
+  seen[id] = Date.now();
+  localStorage.setItem('sgaSeenNotifs', JSON.stringify(seen));
+}
+
+function timeAgo(isoStr) {
+  var diff = (Date.now() - new Date(isoStr).getTime()) / 1000;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  return Math.floor(diff / 86400) + 'd ago';
+}
 
 // ══════════════════════════════════════
 // ── Roadmap Module

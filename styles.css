@@ -39,7 +39,52 @@ a { text-decoration: none; color: inherit; }
 .topbar-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s; position: relative; }
 .topbar-icon:hover { background: #f1f5f9; }
 .topbar-icon svg { width: 20px; height: 20px; color: #64748b; }
-.notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 2px solid #fff; }
+.notif-dot { position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 2px solid #fff; }
+.notif-count { position: absolute; top: 2px; right: 2px; min-width: 16px; height: 16px; background: #ef4444; border-radius: 8px; border: 2px solid #fff; font-size: 9px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; padding: 0 3px; }
+
+/* ── Notification Panel ── */
+.notif-btn { position: relative; }
+.notif-panel { position: absolute; top: 56px; right: 80px; width: 360px; background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 8px 40px rgba(0,0,0,0.14); z-index: 200; overflow: hidden; animation: notifIn 0.18s ease; }
+@keyframes notifIn { from { opacity: 0; transform: translateY(-8px) scale(0.97); } to { opacity: 1; transform: none; } }
+.notif-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 12px; border-bottom: 1px solid #f1f5f9; }
+.notif-panel-title { font-size: 14px; font-weight: 700; color: #1e293b; }
+.notif-mark-all { font-size: 12px; color: #4f46e5; background: none; border: none; cursor: pointer; font-weight: 500; padding: 0; }
+.notif-mark-all:hover { text-decoration: underline; }
+.notif-list { max-height: 380px; overflow-y: auto; }
+.notif-empty { padding: 36px 20px; text-align: center; color: #94a3b8; font-size: 13px; }
+.notif-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px; border-bottom: 1px solid #f8fafc; cursor: pointer; transition: background 0.12s; }
+.notif-item:last-child { border-bottom: none; }
+.notif-item:hover { background: #f8fafc; }
+.notif-item.unread { background: #fafafe; }
+.notif-item.unread:hover { background: #f1f5ff; }
+.notif-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.notif-icon.booking { background: #eef2ff; }
+.notif-icon.accepted { background: #f0fdf4; }
+.notif-icon.declined { background: #fef2f2; }
+.notif-icon.chat { background: #f0f9ff; }
+.notif-icon.completed { background: #fefce8; }
+.notif-body { flex: 1; min-width: 0; }
+.notif-body-title { font-size: 13px; font-weight: 600; color: #1e293b; margin-bottom: 2px; line-height: 1.4; }
+.notif-body-sub { font-size: 12px; color: #64748b; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.notif-body-time { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+.notif-unread-dot { width: 8px; height: 8px; border-radius: 50%; background: #4f46e5; flex-shrink: 0; margin-top: 5px; }
+
+/* Dark mode notifications */
+body.dark-mode .notif-dot { border-color: #1e293b; }
+body.dark-mode .notif-count { border-color: #1e293b; }
+body.dark-mode .notif-panel { background: #1e293b; border-color: #334155; box-shadow: 0 8px 40px rgba(0,0,0,0.4); }
+body.dark-mode .notif-panel-header { border-color: #334155; }
+body.dark-mode .notif-panel-title { color: #e2e8f0; }
+body.dark-mode .notif-item { border-color: #334155; }
+body.dark-mode .notif-item:hover { background: #0f172a; }
+body.dark-mode .notif-item.unread { background: rgba(79,70,229,0.08); }
+body.dark-mode .notif-item.unread:hover { background: rgba(79,70,229,0.14); }
+body.dark-mode .notif-body-title { color: #e2e8f0; }
+body.dark-mode .notif-icon.booking { background: rgba(79,70,229,0.15); }
+body.dark-mode .notif-icon.accepted { background: rgba(22,163,74,0.15); }
+body.dark-mode .notif-icon.declined { background: rgba(220,38,38,0.15); }
+body.dark-mode .notif-icon.chat { background: rgba(14,165,233,0.15); }
+body.dark-mode .notif-icon.completed { background: rgba(234,179,8,0.15); }
 .user-pill { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 4px 8px; border-radius: 8px; transition: background 0.15s; }
 .user-pill:hover { background: #f1f5f9; }
 .user-info { text-align: right; }
