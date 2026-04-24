@@ -1558,7 +1558,7 @@ function getDefaultProfile(userId) {
     name: '',
     title: 'Aspiring Data Professional',
     bio: '',
-    location: 'Worcester, MA',
+    location: '',
     skills: [],
     experience: [],
     education: [],
@@ -1688,7 +1688,7 @@ app.post('/api/auth/signup', authLimiter, async (req, res) => {
     const profile = await upsertUserProfile(newUser, {
       title: 'Aspiring SkillGap Scholar',
       bio: 'New SkillGap member focused on building verified skills and career readiness.',
-      location: 'Worcester, MA'
+      location: ''
     });
 
     const sessionUser = buildSessionUser({ ...newUser, name: profile.name });
@@ -1765,7 +1765,7 @@ app.post('/api/auth/social', authLimiter, async (req, res) => {
     const profile = await upsertUserProfile(userRecord, {
       title: displayProvider + ' Scholar',
       bio: 'Signed in with ' + displayProvider + ' and ready to build verified skills.',
-      location: 'Worcester, MA'
+      location: ''
     });
 
     const token = generateAuthToken(email);
@@ -3122,16 +3122,18 @@ app.post('/api/profile/upload-resume', requireAuth, documentUpload.single('resum
     profile.documents = [...(profile.documents || []), doc];
     profile.updatedAt = new Date().toISOString();
 
-    // AI: extract both education and experience in one call
+    // AI: extract education, experience, and skills in one call
     let extractedEducation = [];
     let extractedExperience = [];
+    let extractedSkills = [];
     if (resumeText.trim().length > 0 && GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
       try {
-        const prompt = `Extract all education and work/internship experience from this resume.
+        const prompt = `Extract education, work/internship experience, and professional skills from this resume.
 Return ONLY a valid JSON object with no other text, markdown, or code fences:
 {
   "education": [{"school":"...","degree":"...","dates":"e.g. 2020 - 2024","gpa":"","courses":""}],
-  "experience": [{"title":"...","company":"...","dates":"e.g. 2022 - 2023","description":"...","tags":"comma-separated skills"}]
+  "experience": [{"title":"...","company":"...","dates":"e.g. 2022 - 2023","description":"...","tags":"comma-separated skills"}],
+  "skills": ["Python", "SQL", "Machine Learning"]
 }
 If a field is unknown leave it as an empty string. Include all roles, internships, and projects.
 
@@ -3153,6 +3155,9 @@ ${resumeText.slice(0, 5000)}`;
             }
             if (parsed && Array.isArray(parsed.experience)) {
               extractedExperience = parsed.experience.filter(e => e && e.title && e.company);
+            }
+            if (parsed && Array.isArray(parsed.skills)) {
+              extractedSkills = parsed.skills.filter(s => typeof s === 'string' && s.trim());
             }
           }
         }
@@ -3177,8 +3182,17 @@ ${resumeText.slice(0, 5000)}`;
       });
     });
 
+    // Merge extracted skills into profile (deduplicated, case-insensitive)
+    const existingSkillNames = new Set(profile.skills.map(s => (typeof s === 'string' ? s : s.name || '').toLowerCase()));
+    extractedSkills.forEach(skillName => {
+      if (!existingSkillNames.has(skillName.toLowerCase())) {
+        profile.skills.push({ name: skillName, mastery: null });
+        existingSkillNames.add(skillName.toLowerCase());
+      }
+    });
+
     await db.upsertProfile(userId, profile);
-    res.json({ success: true, document: doc, extractedEducation, extractedExperience });
+    res.json({ success: true, document: doc, extractedEducation, extractedExperience, extractedSkills });
   } catch (err) {
     console.error('Resume upload error:', err.message);
     res.status(500).json({ error: 'Failed to upload resume: ' + err.message });

@@ -2476,7 +2476,7 @@ async function initProfile() {
     email: email,
     title: 'Aspiring Data Professional',
     bio: '',
-    location: 'Worcester, MA',
+    location: '',
     skills: [],
     experience: [],
     education: [],
@@ -2525,6 +2525,9 @@ async function initProfile() {
     var locSvgs = locationEl.querySelectorAll('svg');
     var locSvgHtml = locSvgs.length > 0 ? locSvgs[0].outerHTML : '';
     locationEl.innerHTML = locSvgHtml + ' ' + (profileData.location || 'Add your location');
+    locationEl.style.cursor = 'pointer';
+    locationEl.title = 'Click to edit location';
+    locationEl.onclick = function() { profileEditBasics(); };
   }
 
   renderProfileSocialLinks(profileData.social || {});
@@ -2560,21 +2563,23 @@ async function initProfile() {
 
   var skillChipsEl = document.getElementById('profileSkills');
   if (skillChipsEl) {
-    var orderedSkills = [];
+    var orderedSkills = []; // [{name, mastery, idx}]
     var seenSkills = {};
+    var rawSkills = Array.isArray(profileData.skills) ? profileData.skills : [];
 
-    (Array.isArray(profileData.skills) ? profileData.skills : []).forEach(function(skill) {
-      var name = typeof skill === 'string' ? skill : skill && skill.name;
+    rawSkills.forEach(function(skill, idx) {
+      var name = typeof skill === 'string' ? skill : (skill && skill.name);
+      var mastery = typeof skill === 'object' && skill ? (skill.mastery || null) : null;
       if (name && !seenSkills[name.toLowerCase()]) {
         seenSkills[name.toLowerCase()] = true;
-        orderedSkills.push(name);
+        orderedSkills.push({ name: name, mastery: mastery, idx: idx });
       }
     });
 
     Object.keys(scoreMap).forEach(function(skillName) {
       if (!seenSkills[skillName.toLowerCase()]) {
         seenSkills[skillName.toLowerCase()] = true;
-        orderedSkills.push(skillName);
+        orderedSkills.push({ name: skillName, mastery: null, idx: -1 });
       }
     });
 
@@ -2586,11 +2591,13 @@ async function initProfile() {
         'profileAddSkill()'
       );
     } else {
-      skillChipsEl.innerHTML = orderedSkills.map(function(skillName) {
-        var scoreInfo = scoreMap[skillName];
-        return '<span class="skill-chip">' + escapeHtml(skillName) +
-          (scoreInfo ? ' <strong>' + scoreInfo.score + '/10</strong>' : '') +
-        '</span>';
+      skillChipsEl.innerHTML = orderedSkills.map(function(sk, i) {
+        var scoreInfo = scoreMap[sk.name];
+        var displayScore = scoreInfo ? scoreInfo.score : sk.mastery;
+        var scoreHtml = displayScore ? ' <strong>' + displayScore + '/10</strong>' : '';
+        var editBtn = sk.idx >= 0 ? '<span class="chip-ctrl" onclick="profileEditSkill(' + sk.idx + ')" title="Edit">✎</span>' : '';
+        var delBtn = sk.idx >= 0 ? '<span class="chip-ctrl chip-del" onclick="profileDeleteSkill(' + sk.idx + ')" title="Remove">×</span>' : '';
+        return '<span class="skill-chip">' + escapeHtml(sk.name) + scoreHtml + editBtn + delBtn + '</span>';
       }).join('') + '<span class="add-skill-btn" onclick="profileAddSkill()">+ Add Skill</span>';
     }
   }
@@ -2645,13 +2652,16 @@ async function initProfile() {
       docsEl.innerHTML = documents.map(function(doc) {
         var name = doc.name || 'Untitled';
         var icon = name.toLowerCase().endsWith('.pdf') ? '📄' : '📝';
+        var url = doc.url || '';
+        var viewBtn = url ? '<a class="doc-action-btn" href="' + escapeHtml(url) + '" target="_blank" rel="noopener">View</a>' : '';
+        var dlBtn = url ? '<a class="doc-action-btn doc-action-dl" href="' + escapeHtml(url) + '" download="' + escapeHtml(name) + '" target="_blank">⬇ Download</a>' : '';
         return '<div class="doc-item">' +
           '<div class="doc-icon">' + icon + '</div>' +
-          '<div>' +
+          '<div class="doc-info">' +
             '<div class="doc-name">' + escapeHtml(name) + '</div>' +
-            '<div class="doc-meta">' + escapeHtml(doc.meta || 'Saved to your profile') + '</div>' +
+            '<div class="doc-meta">' + escapeHtml(doc.uploadedAt ? doc.uploadedAt.slice(0, 10) : 'Saved to your profile') + '</div>' +
           '</div>' +
-          '<div class="doc-dl">⬇</div>' +
+          '<div class="doc-actions">' + viewBtn + dlBtn + '</div>' +
         '</div>';
       }).join('');
     }
@@ -2668,7 +2678,7 @@ async function initProfile() {
         'profileAddExperience()'
       );
     } else {
-      experienceEl.innerHTML = experience.map(function(exp) {
+      experienceEl.innerHTML = experience.map(function(exp, idx) {
         var tagsHtml = '';
         if (Array.isArray(exp.tags) && exp.tags.length > 0) {
           tagsHtml = '<div class="exp-tags">' + exp.tags.map(function(tag) {
@@ -2678,16 +2688,20 @@ async function initProfile() {
         return '<div class="exp-item">' +
           '<div class="exp-top">' +
             '<div class="exp-icon">💼</div>' +
-            '<div>' +
+            '<div style="flex:1">' +
               '<div class="exp-title">' + escapeHtml(exp.title || '') + '</div>' +
               '<div class="exp-company">' + escapeHtml(exp.company || '') + '</div>' +
               '<div class="exp-dates">' + escapeHtml(exp.dates || '') + '</div>' +
+            '</div>' +
+            '<div class="entry-actions">' +
+              '<button class="entry-edit-btn" onclick="profileEditExperience(' + idx + ')" title="Edit">✎</button>' +
+              '<button class="entry-del-btn" onclick="profileDeleteExperience(' + idx + ')" title="Delete">×</button>' +
             '</div>' +
           '</div>' +
           '<div class="exp-desc">' + escapeHtml(exp.description || '') + '</div>' +
           tagsHtml +
         '</div>';
-      }).join('');
+      }).join('') + '<div style="margin-top:12px"><button class="btn btn-secondary" style="font-size:13px;padding:6px 14px" onclick="profileAddExperience()">+ Add Experience</button></div>';
     }
   }
 
@@ -2702,19 +2716,23 @@ async function initProfile() {
         "navigateTo('analyzer')"
       );
     } else {
-      educationEl.innerHTML = education.map(function(edu) {
-        var coursesHtml = edu.courses ? '<div class="edu-courses"><strong>Relevant Coursework</strong>' + escapeHtml(edu.courses) + '</div>' : '';
+      educationEl.innerHTML = education.map(function(edu, idx) {
+        var coursesHtml = edu.courses ? '<div class="edu-courses"><strong>Relevant Coursework: </strong>' + escapeHtml(edu.courses) + '</div>' : '';
         var gpaHtml = edu.gpa ? ' <span class="gpa-badge">GPA: ' + escapeHtml(edu.gpa) + '</span>' : '';
         return '<div class="edu-item">' +
           '<div class="edu-icon">🎓</div>' +
-          '<div>' +
+          '<div style="flex:1">' +
             '<div class="edu-school">' + escapeHtml(edu.school || '') + '</div>' +
             '<div class="edu-degree">' + escapeHtml(edu.degree || '') + '</div>' +
             '<div class="edu-dates">' + escapeHtml(edu.dates || '') + gpaHtml + '</div>' +
             coursesHtml +
           '</div>' +
+          '<div class="entry-actions">' +
+            '<button class="entry-edit-btn" onclick="profileEditEducation(' + idx + ')" title="Edit">✎</button>' +
+            '<button class="entry-del-btn" onclick="profileDeleteEducation(' + idx + ')" title="Delete">×</button>' +
+          '</div>' +
         '</div>';
-      }).join('');
+      }).join('') + '<div style="margin-top:12px"><button class="btn btn-secondary" style="font-size:13px;padding:6px 14px" onclick="profileAddEducation()">+ Add Education</button></div>';
     }
   }
 
@@ -2788,8 +2806,9 @@ async function uploadResumeFile(file) {
     profileState.data = null; // force fresh fetch after upload
     var edu = data.extractedEducation || [];
     var exp = data.extractedExperience || [];
-    if (edu.length > 0 || exp.length > 0) {
-      showResumeExtractedPreview(edu, exp);
+    var skills = data.extractedSkills || [];
+    if (edu.length > 0 || exp.length > 0 || skills.length > 0) {
+      showResumeExtractedPreview(edu, exp, skills);
     } else {
       initProfile();
     }
@@ -2801,7 +2820,7 @@ async function uploadResumeFile(file) {
   }
 }
 
-function showResumeExtractedPreview(education, experience) {
+function showResumeExtractedPreview(education, experience, skills) {
   var html = '<p style="color:#64748b;font-size:13px;margin:0 0 16px;">The following was extracted from your resume and <strong>saved to your profile</strong>. You can edit any entry manually.</p>';
 
   if (education.length > 0) {
@@ -2825,6 +2844,13 @@ function showResumeExtractedPreview(education, experience) {
         (exp.description ? '<div class="edu-preview-meta">' + escapeHtml(exp.description.slice(0, 120)) + (exp.description.length > 120 ? '…' : '') + '</div>' : '') +
       '</div>';
     }).join('');
+  }
+
+  if (skills && skills.length > 0) {
+    html += '<div class="edu-preview-section-title" style="margin-top:16px;">Skills (' + skills.length + ')</div>';
+    html += '<div class="edu-preview-card"><div style="display:flex;flex-wrap:wrap;gap:6px">' +
+      skills.map(function(s) { return '<span class="skill-chip" style="font-size:12px;padding:3px 10px">' + escapeHtml(typeof s === 'string' ? s : s.name) + '</span>'; }).join('') +
+    '</div></div>';
   }
 
   openProfileFormModal({
@@ -2895,11 +2921,16 @@ function profileAddSkill() {
   openProfileFormModal({
     title: 'Add Skill',
     fields: [
-      { label: 'Skill Name', id: 'skill', value: '', placeholder: 'e.g., Python, Machine Learning, SQL' }
+      { label: 'Skill Name', id: 'skill', value: '', placeholder: 'e.g., Python, Machine Learning, SQL' },
+      { label: 'Mastery (1–10)', id: 'mastery', value: '', placeholder: 'e.g., 7  — leave blank if unsure' }
     ],
     onSave: async function(v) {
       var newSkill = (v.skill || '').trim();
       if (!newSkill) return;
+      var masteryVal = parseInt(v.mastery, 10);
+      if (v.mastery.trim() && (isNaN(masteryVal) || masteryVal < 1 || masteryVal > 10)) {
+        throw new Error('Mastery must be a number between 1 and 10');
+      }
       var profileData = await fetchProfileRecord();
       var skills = Array.isArray(profileData.skills) ? profileData.skills.slice() : [];
       var exists = skills.some(function(s) {
@@ -2907,11 +2938,51 @@ function profileAddSkill() {
         return n && n.toLowerCase() === newSkill.toLowerCase();
       });
       if (exists) { alert('That skill is already on your profile.'); return; }
-      skills.push(newSkill);
+      skills.push({ name: newSkill, mastery: v.mastery.trim() ? masteryVal : null });
       await saveProfilePatch({ skills: skills });
       initProfile();
     }
   });
+}
+
+// ── Profile: Edit Skill ──
+async function profileEditSkill(idx) {
+  var profileData = await fetchProfileRecord();
+  var skills = Array.isArray(profileData.skills) ? profileData.skills.slice() : [];
+  var skill = skills[idx];
+  if (!skill) return;
+  var currentName = typeof skill === 'string' ? skill : (skill.name || '');
+  var currentMastery = typeof skill === 'object' && skill ? (skill.mastery || '') : '';
+  openProfileFormModal({
+    title: 'Edit Skill',
+    fields: [
+      { label: 'Skill Name', id: 'skill', value: currentName, placeholder: 'e.g., Python' },
+      { label: 'Mastery (1–10)', id: 'mastery', value: currentMastery ? String(currentMastery) : '', placeholder: 'e.g., 7' }
+    ],
+    onSave: async function(v) {
+      var newName = (v.skill || '').trim();
+      if (!newName) return;
+      var masteryVal = parseInt(v.mastery, 10);
+      if (v.mastery.trim() && (isNaN(masteryVal) || masteryVal < 1 || masteryVal > 10)) {
+        throw new Error('Mastery must be a number between 1 and 10');
+      }
+      var fresh = await fetchProfileRecord();
+      var freshSkills = Array.isArray(fresh.skills) ? fresh.skills.slice() : [];
+      freshSkills[idx] = { name: newName, mastery: v.mastery.trim() ? masteryVal : null };
+      await saveProfilePatch({ skills: freshSkills });
+      initProfile();
+    }
+  });
+}
+
+// ── Profile: Delete Skill ──
+async function profileDeleteSkill(idx) {
+  if (!confirm('Remove this skill from your profile?')) return;
+  var profileData = await fetchProfileRecord();
+  var skills = Array.isArray(profileData.skills) ? profileData.skills.slice() : [];
+  skills.splice(idx, 1);
+  await saveProfilePatch({ skills: skills });
+  initProfile();
 }
 
 // ── Profile: Add Experience ──
@@ -2968,6 +3039,80 @@ function profileAddEducation() {
       initProfile();
     }
   });
+}
+
+// ── Profile: Edit/Delete Experience ──
+async function profileEditExperience(idx) {
+  var profileData = await fetchProfileRecord();
+  var experience = Array.isArray(profileData.experience) ? profileData.experience.slice() : [];
+  var exp = experience[idx];
+  if (!exp) return;
+  openProfileFormModal({
+    title: 'Edit Experience',
+    fields: [
+      { label: 'Job Title', id: 'title', value: exp.title || '', placeholder: 'e.g., Data Science Intern' },
+      { label: 'Company / Organization', id: 'company', value: exp.company || '', placeholder: 'e.g., Acme Corp' },
+      { label: 'Dates', id: 'dates', value: exp.dates || '', placeholder: 'e.g., Jun 2024 — Dec 2024' },
+      { type: 'textarea', label: 'Description', id: 'description', value: exp.description || '', placeholder: 'What did you build or achieve?' },
+      { label: 'Tags (comma-separated)', id: 'tags', value: Array.isArray(exp.tags) ? exp.tags.join(', ') : (exp.tags || ''), placeholder: 'Python, SQL, Tableau' }
+    ],
+    onSave: async function(v) {
+      if (!v.title.trim() || !v.company.trim()) throw new Error('Title and company are required');
+      var fresh = await fetchProfileRecord();
+      var freshExp = Array.isArray(fresh.experience) ? fresh.experience.slice() : [];
+      freshExp[idx] = {
+        title: v.title.trim(), company: v.company.trim(), dates: v.dates.trim(),
+        description: v.description.trim(),
+        tags: v.tags.split(',').map(function(t) { return t.trim(); }).filter(Boolean)
+      };
+      await saveProfilePatch({ experience: freshExp });
+      initProfile();
+    }
+  });
+}
+
+async function profileDeleteExperience(idx) {
+  if (!confirm('Remove this experience entry?')) return;
+  var profileData = await fetchProfileRecord();
+  var experience = Array.isArray(profileData.experience) ? profileData.experience.slice() : [];
+  experience.splice(idx, 1);
+  await saveProfilePatch({ experience: experience });
+  initProfile();
+}
+
+// ── Profile: Edit/Delete Education ──
+async function profileEditEducation(idx) {
+  var profileData = await fetchProfileRecord();
+  var education = Array.isArray(profileData.education) ? profileData.education.slice() : [];
+  var edu = education[idx];
+  if (!edu) return;
+  openProfileFormModal({
+    title: 'Edit Education',
+    fields: [
+      { label: 'School / University', id: 'school', value: edu.school || '', placeholder: 'e.g., MIT' },
+      { label: 'Degree & Field of Study', id: 'degree', value: edu.degree || '', placeholder: 'e.g., M.S. in Computer Science' },
+      { label: 'Dates', id: 'dates', value: edu.dates || '', placeholder: 'e.g., 2022 — 2024' },
+      { label: 'GPA (optional)', id: 'gpa', value: edu.gpa || '', placeholder: 'e.g., 3.8/4.0' },
+      { label: 'Relevant Courses (optional)', id: 'courses', value: edu.courses || '', placeholder: 'e.g., ML, Statistics, Databases' }
+    ],
+    onSave: async function(v) {
+      if (!v.school.trim() || !v.degree.trim()) throw new Error('School and degree are required');
+      var fresh = await fetchProfileRecord();
+      var freshEdu = Array.isArray(fresh.education) ? fresh.education.slice() : [];
+      freshEdu[idx] = { school: v.school.trim(), degree: v.degree.trim(), dates: v.dates.trim(), gpa: v.gpa.trim(), courses: v.courses.trim() };
+      await saveProfilePatch({ education: freshEdu });
+      initProfile();
+    }
+  });
+}
+
+async function profileDeleteEducation(idx) {
+  if (!confirm('Remove this education entry?')) return;
+  var profileData = await fetchProfileRecord();
+  var education = Array.isArray(profileData.education) ? profileData.education.slice() : [];
+  education.splice(idx, 1);
+  await saveProfilePatch({ education: education });
+  initProfile();
 }
 
 // ── Init Everything ──
