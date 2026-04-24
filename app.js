@@ -2549,6 +2549,13 @@ async function initProfile() {
     }
   }
 
+  var strengthSubEl = document.getElementById('profileStrengthSub');
+  if (strengthSubEl) {
+    var hasDocs = Array.isArray(profileData.documents) && profileData.documents.length > 0;
+    strengthSubEl.textContent = hasDocs ? 'Resume Scanned' : 'No Resume Yet';
+    strengthSubEl.style.color = hasDocs ? '' : '#94a3b8';
+  }
+
   renderProfileOnboarding(profileData, strengthData, scoreMap);
 
   var skillChipsEl = document.getElementById('profileSkills');
@@ -2721,33 +2728,30 @@ async function profileEditBasics() {
   try {
     var profileData = await fetchProfileRecord();
     var social = profileData.social || {};
-    var name = prompt('Full name:', profileData.name || currentUser.name || '');
-    if (name === null) return;
-    var title = prompt('Headline / title:', profileData.title || 'Aspiring Data Professional');
-    if (title === null) return;
-    var location = prompt('Location:', profileData.location || '');
-    if (location === null) return;
-    var bio = prompt('Short bio:', profileData.bio || '');
-    if (bio === null) return;
-    var github = prompt('GitHub URL (optional):', social.github || '');
-    if (github === null) return;
-    var portfolio = prompt('Portfolio URL (optional):', social.portfolio || '');
-    if (portfolio === null) return;
-
-    await saveProfilePatch({
-      name: name.trim() || currentUser.name || '',
-      title: title.trim() || 'Aspiring Data Professional',
-      location: location.trim() || '',
-      bio: bio.trim(),
-      social: {
-        github: github.trim(),
-        portfolio: portfolio.trim()
+    openProfileFormModal({
+      title: 'Edit Profile',
+      fields: [
+        { label: 'Full Name', id: 'name', value: profileData.name || currentUser.name || '', placeholder: 'Your full name' },
+        { label: 'Headline', id: 'title', value: profileData.title || '', placeholder: 'e.g., Data Scientist | ML Researcher' },
+        { label: 'Location', id: 'location', value: profileData.location || '', placeholder: 'e.g., Boston, MA' },
+        { type: 'textarea', label: 'Bio', id: 'bio', value: profileData.bio || '', placeholder: 'A short professional summary...' },
+        { label: 'GitHub URL', id: 'github', value: social.github || '', placeholder: 'https://github.com/username' },
+        { label: 'Portfolio URL', id: 'portfolio', value: social.portfolio || '', placeholder: 'https://yoursite.com' }
+      ],
+      onSave: async function(v) {
+        await saveProfilePatch({
+          name: v.name.trim() || currentUser.name || '',
+          title: v.title.trim() || 'Aspiring Data Professional',
+          location: v.location.trim(),
+          bio: v.bio.trim(),
+          social: { github: v.github.trim(), portfolio: v.portfolio.trim() }
+        });
+        initProfile();
       }
     });
-    initProfile();
   } catch (err) {
     console.error('profileEditBasics error:', err);
-    alert('Failed to save your profile details. Please try again.');
+    alert('Failed to load profile. Please try again.');
   }
 }
 
@@ -2755,60 +2759,138 @@ function profileExplainDocumentUploads() {
   alert('Document uploads are not wired into this MVP yet. For now, use the Analyzer page for resume-driven workflows and add proof links in your profile summary.');
 }
 
-// ── Profile: Add Skill via prompt ──
-async function profileAddSkill() {
-  var newSkill = prompt('Enter a new skill name:');
-  if (!newSkill || !newSkill.trim()) return;
-  newSkill = newSkill.trim();
+// ── Profile Form Modal ──
+var profileFormCallback = null;
 
-  try {
-    var profileData = await fetchProfileRecord();
-    var skills = Array.isArray(profileData.skills) ? profileData.skills.slice() : [];
-    var alreadyExists = skills.some(function(skill) {
-      var existingName = typeof skill === 'string' ? skill : skill && skill.name;
-      return existingName && existingName.toLowerCase() === newSkill.toLowerCase();
-    });
-
-    if (alreadyExists) {
-      alert('That skill is already on your profile.');
-      return;
+function openProfileFormModal(config) {
+  document.getElementById('profileFormTitle').textContent = config.title || 'Edit';
+  document.getElementById('profileFormBody').innerHTML = config.fields.map(function(f) {
+    var id = 'pfField_' + f.id;
+    var ph = escapeHtml(f.placeholder || '');
+    if (f.type === 'textarea') {
+      return '<div class="profile-form-group">' +
+        '<label class="profile-form-label">' + escapeHtml(f.label) + '</label>' +
+        '<textarea class="profile-form-input profile-form-textarea" id="' + id + '" placeholder="' + ph + '">' + escapeHtml(f.value || '') + '</textarea>' +
+        '</div>';
     }
+    return '<div class="profile-form-group">' +
+      '<label class="profile-form-label">' + escapeHtml(f.label) + '</label>' +
+      '<input class="profile-form-input" type="text" id="' + id + '" placeholder="' + ph + '" value="' + escapeHtml(f.value || '') + '">' +
+      '</div>';
+  }).join('');
+  profileFormCallback = config.onSave;
+  var modal = document.getElementById('profileFormModal');
+  modal.style.display = 'flex';
+  var firstInput = modal.querySelector('input, textarea');
+  if (firstInput) setTimeout(function() { firstInput.focus(); }, 50);
+}
 
-    skills.push(newSkill);
-    await saveProfilePatch({ skills: skills });
-    initProfile();
+function closeProfileFormModal(e) {
+  if (e && e.target !== document.getElementById('profileFormModal')) return;
+  document.getElementById('profileFormModal').style.display = 'none';
+  profileFormCallback = null;
+}
+
+async function submitProfileForm() {
+  if (!profileFormCallback) return;
+  var values = {};
+  document.querySelectorAll('#profileFormBody input, #profileFormBody textarea').forEach(function(el) {
+    values[el.id.replace('pfField_', '')] = el.value;
+  });
+  var saveBtn = document.getElementById('profileFormSave');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Saving...';
+  try {
+    await profileFormCallback(values);
+    document.getElementById('profileFormModal').style.display = 'none';
+    profileFormCallback = null;
   } catch (err) {
-    console.error('profileAddSkill error:', err);
-    alert('Failed to save that skill. Please try again.');
+    console.error('Profile form save error:', err);
+    alert('Failed to save. Please try again.');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Save';
   }
 }
 
-// ── Profile: Add Experience via prompt ──
-async function profileAddExperience() {
-  var title = prompt('Job Title:');
-  if (!title) return;
-  var company = prompt('Company:');
-  if (!company) return;
-  var dates = prompt('Dates (e.g., Jun 2024 — Dec 2024):');
-  var description = prompt('Description:');
-  var tags = prompt('Tags (comma-separated, optional):', '');
+// ── Profile: Add Skill ──
+function profileAddSkill() {
+  openProfileFormModal({
+    title: 'Add Skill',
+    fields: [
+      { label: 'Skill Name', id: 'skill', value: '', placeholder: 'e.g., Python, Machine Learning, SQL' }
+    ],
+    onSave: async function(v) {
+      var newSkill = (v.skill || '').trim();
+      if (!newSkill) return;
+      var profileData = await fetchProfileRecord();
+      var skills = Array.isArray(profileData.skills) ? profileData.skills.slice() : [];
+      var exists = skills.some(function(s) {
+        var n = typeof s === 'string' ? s : (s && s.name);
+        return n && n.toLowerCase() === newSkill.toLowerCase();
+      });
+      if (exists) { alert('That skill is already on your profile.'); return; }
+      skills.push(newSkill);
+      await saveProfilePatch({ skills: skills });
+      initProfile();
+    }
+  });
+}
 
-  try {
-    var profileData = await fetchProfileRecord();
-    var experience = Array.isArray(profileData.experience) ? profileData.experience.slice() : [];
-    experience.push({
-      title: title.trim(),
-      company: company.trim(),
-      dates: (dates || '').trim(),
-      description: (description || '').trim(),
-      tags: (tags || '').split(',').map(function(tag) { return tag.trim(); }).filter(Boolean)
-    });
-    await saveProfilePatch({ experience: experience });
-    initProfile();
-  } catch (err) {
-    console.error('profileAddExperience error:', err);
-    alert('Failed to save that experience entry. Please try again.');
-  }
+// ── Profile: Add Experience ──
+function profileAddExperience() {
+  openProfileFormModal({
+    title: 'Add Experience',
+    fields: [
+      { label: 'Job Title', id: 'title', value: '', placeholder: 'e.g., Data Science Intern' },
+      { label: 'Company / Organization', id: 'company', value: '', placeholder: 'e.g., Acme Corp' },
+      { label: 'Dates', id: 'dates', value: '', placeholder: 'e.g., Jun 2024 — Dec 2024' },
+      { type: 'textarea', label: 'Description', id: 'description', value: '', placeholder: 'What did you build or achieve?' },
+      { label: 'Tags (comma-separated)', id: 'tags', value: '', placeholder: 'Python, SQL, Tableau' }
+    ],
+    onSave: async function(v) {
+      if (!v.title.trim() || !v.company.trim()) throw new Error('Title and company are required');
+      var profileData = await fetchProfileRecord();
+      var experience = Array.isArray(profileData.experience) ? profileData.experience.slice() : [];
+      experience.push({
+        title: v.title.trim(),
+        company: v.company.trim(),
+        dates: v.dates.trim(),
+        description: v.description.trim(),
+        tags: v.tags.split(',').map(function(t) { return t.trim(); }).filter(Boolean)
+      });
+      await saveProfilePatch({ experience: experience });
+      initProfile();
+    }
+  });
+}
+
+// ── Profile: Add Education ──
+function profileAddEducation() {
+  openProfileFormModal({
+    title: 'Add Education',
+    fields: [
+      { label: 'School / University', id: 'school', value: '', placeholder: 'e.g., MIT' },
+      { label: 'Degree & Field of Study', id: 'degree', value: '', placeholder: 'e.g., M.S. in Computer Science' },
+      { label: 'Dates', id: 'dates', value: '', placeholder: 'e.g., 2022 — 2024' },
+      { label: 'GPA (optional)', id: 'gpa', value: '', placeholder: 'e.g., 3.8/4.0' },
+      { label: 'Relevant Courses (optional)', id: 'courses', value: '', placeholder: 'e.g., ML, Statistics, Databases' }
+    ],
+    onSave: async function(v) {
+      if (!v.school.trim() || !v.degree.trim()) throw new Error('School and degree are required');
+      var profileData = await fetchProfileRecord();
+      var education = Array.isArray(profileData.education) ? profileData.education.slice() : [];
+      education.push({
+        school: v.school.trim(),
+        degree: v.degree.trim(),
+        dates: v.dates.trim(),
+        gpa: v.gpa.trim(),
+        courses: v.courses.trim()
+      });
+      await saveProfilePatch({ education: education });
+      initProfile();
+    }
+  });
 }
 
 // ── Init Everything ──

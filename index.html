@@ -463,7 +463,7 @@
     <div class="strength-card">
       <div class="strength-label">Profile Strength</div>
       <div class="strength-pct" id="profileStrengthPct">84%</div>
-      <div class="strength-sub">Resume Scanned</div>
+      <div class="strength-sub" id="profileStrengthSub">Resume Scanned</div>
       <div class="strength-ring">
         <svg width="80" height="80" viewBox="0 0 80 80">
           <circle cx="40" cy="40" r="35" fill="none" stroke="#e2e8f0" stroke-width="6"/>
@@ -506,7 +506,7 @@
         </div>
       </div>
       <div class="card">
-        <div class="card-header"><h3>Education</h3></div>
+        <div class="card-header"><h3>Education</h3><span class="card-link" onclick="profileAddEducation()">+</span></div>
         <div id="profileEducation">
         <div class="edu-item">
           <div class="edu-icon">🎓</div>
@@ -1159,6 +1159,19 @@
     <div class="job-modal-actions">
       <a href="#" id="jobModalApplyLink" target="_blank" rel="noopener" class="btn btn-primary">View Original Listing →</a>
       <button class="btn btn-secondary" onclick="closeJobModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Form Modal -->
+<div class="pc-modal-overlay" id="profileFormModal" style="display:none;" onclick="closeProfileFormModal(event)" role="dialog" aria-modal="true">
+  <div class="pc-modal profile-form-modal" onclick="event.stopPropagation()">
+    <button class="pc-modal-close" onclick="closeProfileFormModal()" aria-label="Close">&times;</button>
+    <h3 id="profileFormTitle" style="font-size:18px;font-weight:700;margin:0 0 20px;">Edit</h3>
+    <div id="profileFormBody"></div>
+    <div class="profile-form-footer">
+      <button class="btn btn-secondary" onclick="closeProfileFormModal()">Cancel</button>
+      <button class="btn btn-primary" id="profileFormSave" onclick="submitProfileForm()">Save</button>
     </div>
   </div>
 </div>
