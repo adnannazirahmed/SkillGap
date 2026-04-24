@@ -3047,6 +3047,113 @@ app.post('/api/chat/:bookingId', requireAuth, async (req, res) => {
   }
 });
 
+// ── GET /api/chat/recent — latest message per booking for the current user ──
+app.get('/api/chat/recent', requireAuth, async (req, res) => {
+  try {
+    const userId = req.authenticatedUserId;
+    const [allBookings, coaches, profiles] = await Promise.all([
+      db.getAllBookings(), db.getAllCoaches(), db.getAllProfiles()
+    ]);
+    const userBookings = allBookings.filter(b => b.coachUserId === userId || b.learnerUserId === userId);
+    const items = [];
+    for (const booking of userBookings) {
+      const messages = await db.getChatMessages(booking.id);
+      if (messages.length === 0) continue;
+      const last = messages[messages.length - 1];
+      const isCoach = booking.coachUserId === userId;
+      const otherName = isCoach
+        ? (profiles[booking.learnerUserId]?.name || booking.learnerUserId)
+        : (coaches[booking.coachUserId]?.name || profiles[booking.coachUserId]?.name || booking.coachUserId);
+      items.push({
+        bookingId: booking.id,
+        skill: booking.skill,
+        lastMessageAt: last.createdAt,
+        lastSenderId: last.senderId,
+        preview: last.content.slice(0, 80),
+        otherPersonName: otherName
+      });
+    }
+    res.json({ items });
+  } catch (err) {
+    console.error('GET /api/chat/recent error:', err);
+    res.status(500).json({ error: 'Failed to fetch recent chats' });
+  }
+});
+
+// ── POST /api/profile/upload-resume — upload resume + AI-extract education ──
+app.post('/api/profile/upload-resume', requireAuth, documentUpload.single('resume'), async (req, res) => {
+  try {
+    const userId = req.authenticatedUserId;
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded. Supported formats: PDF, DOCX.' });
+
+    const file = req.file;
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (!['.pdf', '.docx', '.doc'].includes(ext)) {
+      return res.status(400).json({ error: 'Only PDF and DOCX files are supported.' });
+    }
+
+    // Extract raw text
+    let resumeText = '';
+    if (ext === '.pdf') {
+      try {
+        const pdfData = await pdfParse(file.buffer);
+        resumeText = pdfData.text || '';
+      } catch (e) { console.error('PDF parse error:', e.message); }
+    } else {
+      try {
+        const result = await mammoth.extractRawText({ buffer: file.buffer });
+        resumeText = result.value || '';
+      } catch (e) { console.error('DOCX parse error:', e.message); }
+    }
+
+    // Upload file to Supabase Storage
+    const docId = Date.now().toString(36);
+    const safeFilename = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 40) + ext;
+    const { filePath, publicUrl } = await db.uploadDocument(userId, docId, safeFilename, file.buffer, file.mimetype);
+    const doc = {
+      id: docId, name: file.originalname, filePath,
+      size: file.size, type: ext.slice(1), url: publicUrl,
+      uploadedAt: new Date().toISOString()
+    };
+
+    // Save document to profile
+    const rawProfile = await db.getProfile(userId);
+    const profile = normalizeProfile(rawProfile, userId);
+    profile.documents = [...(profile.documents || []), doc];
+    profile.updatedAt = new Date().toISOString();
+
+    // AI: extract education from resume text
+    let extractedEducation = [];
+    if (resumeText.trim().length > 0 && GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
+      try {
+        const prompt = `Extract all education entries from this resume. Return ONLY a valid JSON array with no other text. Each entry: {"school":"...","degree":"...","dates":"e.g. 2020 — 2024","gpa":"optional","courses":"optional comma-separated courses"}\n\nResume:\n${resumeText.slice(0, 4000)}`;
+        const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1, maxOutputTokens: 1024 } })
+        });
+        if (response.ok) {
+          const aiData = await response.json();
+          const text = aiData.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            const jsonStr = text.trim().replace(/```json?\n?/g, '').replace(/```/g, '').trim();
+            const parsed = JSON.parse(jsonStr);
+            if (Array.isArray(parsed)) {
+              extractedEducation = parsed.filter(e => e && e.school && e.degree);
+            }
+          }
+        }
+      } catch (e) { console.error('Education AI extraction error:', e.message); }
+    }
+
+    await db.upsertProfile(userId, profile);
+    res.json({ success: true, document: doc, extractedEducation });
+  } catch (err) {
+    console.error('Resume upload error:', err.message);
+    res.status(500).json({ error: 'Failed to upload resume: ' + err.message });
+  }
+});
+
 // ── Health Check (useful for Railway / Render) ──
 app.get('/api/health', (req, res) => {
   res.json({

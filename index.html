@@ -454,7 +454,7 @@
         <div class="subtitle" id="profileTitle">Aspiring Data Professional</div>
         <div class="bio" id="profileBio">Driven professional with a focus on data analytics and machine learning. Passionate about bridging the gap between academic theory and scalable production solutions.</div>
         <div class="profile-meta">
-          <span class="profile-meta-item" id="profileLocation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Worcester, MA</span>
+          <span class="profile-meta-item" id="profileLocation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Add your location</span>
           <span class="profile-meta-item" id="profileEmail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg></span>
           <div class="profile-social" id="profileSocial"></div>
         </div>
@@ -1159,6 +1159,18 @@
     <div class="job-modal-actions">
       <a href="#" id="jobModalApplyLink" target="_blank" rel="noopener" class="btn btn-primary">View Original Listing →</a>
       <button class="btn btn-secondary" onclick="closeJobModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Coach Profile Modal -->
+<div class="pc-modal-overlay" id="coachProfileModal" style="display:none;" onclick="closeCoachProfile(event)" role="dialog" aria-modal="true">
+  <div class="pc-modal coach-profile-modal" onclick="event.stopPropagation()">
+    <button class="pc-modal-close" onclick="closeCoachProfile()" aria-label="Close">&times;</button>
+    <div id="coachProfileBody"></div>
+    <div class="profile-form-footer">
+      <button class="btn btn-secondary" onclick="closeCoachProfile()">Close</button>
+      <button class="btn btn-primary" id="coachProfileBookBtn" onclick="">Book Session</button>
     </div>
   </div>
 </div>

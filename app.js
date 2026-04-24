@@ -2756,7 +2756,74 @@ async function profileEditBasics() {
 }
 
 function profileExplainDocumentUploads() {
-  alert('Document uploads are not wired into this MVP yet. For now, use the Analyzer page for resume-driven workflows and add proof links in your profile summary.');
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.pdf,.docx,.doc';
+  input.style.display = 'none';
+  document.body.appendChild(input);
+  input.addEventListener('change', function() {
+    var file = input.files[0];
+    document.body.removeChild(input);
+    if (file) uploadResumeFile(file);
+  });
+  input.click();
+}
+
+async function uploadResumeFile(file) {
+  var user = getActiveUser() || {};
+  if (!user.email) { alert('Please sign in first.'); return; }
+  var uploadLink = document.querySelector('#page-profile .card-link[onclick="profileExplainDocumentUploads()"]');
+  if (uploadLink) { uploadLink.textContent = 'Uploading...'; uploadLink.style.pointerEvents = 'none'; }
+  try {
+    var formData = new FormData();
+    formData.append('resume', file);
+    var token = localStorage.getItem('sgaAuthToken') || '';
+    var resp = await fetch('/api/profile/upload-resume', {
+      method: 'POST',
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+      body: formData
+    });
+    var data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Upload failed');
+    if (data.extractedEducation && data.extractedEducation.length > 0) {
+      showEducationPreview(data.extractedEducation);
+    } else {
+      initProfile();
+    }
+  } catch (err) {
+    console.error('Resume upload error:', err);
+    alert('Upload failed: ' + err.message);
+  } finally {
+    if (uploadLink) { uploadLink.textContent = '+ Upload'; uploadLink.style.pointerEvents = ''; }
+  }
+}
+
+function showEducationPreview(entries) {
+  var previewHtml = '<p style="color:#64748b;font-size:13px;margin:0 0 16px;">Found ' + entries.length + ' education ' + (entries.length === 1 ? 'entry' : 'entries') + ' in your resume. Save to your profile?</p>' +
+    entries.map(function(edu) {
+      return '<div class="edu-preview-card">' +
+        '<div class="edu-preview-school">' + escapeHtml(edu.school || '') + '</div>' +
+        '<div class="edu-preview-degree">' + escapeHtml(edu.degree || '') + (edu.dates ? ' <span class="edu-preview-dates">• ' + escapeHtml(edu.dates) + '</span>' : '') + '</div>' +
+        (edu.gpa ? '<div class="edu-preview-meta">GPA: ' + escapeHtml(edu.gpa) + '</div>' : '') +
+        (edu.courses ? '<div class="edu-preview-meta">' + escapeHtml(edu.courses) + '</div>' : '') +
+      '</div>';
+    }).join('');
+  openProfileFormModal({
+    title: 'Education Found in Resume',
+    fields: [],
+    onSave: async function() {
+      var profileData = await fetchProfileRecord();
+      var education = Array.isArray(profileData.education) ? profileData.education.slice() : [];
+      entries.forEach(function(edu) {
+        var exists = education.some(function(e) { return e.school === edu.school && e.degree === edu.degree; });
+        if (!exists) education.push(edu);
+      });
+      await saveProfilePatch({ education: education });
+      initProfile();
+    }
+  });
+  document.getElementById('profileFormBody').innerHTML = previewHtml;
+  document.getElementById('profileFormSave').textContent = 'Save to Profile';
 }
 
 // ── Profile Form Modal ──
@@ -2967,73 +3034,80 @@ function toggleNotifPanel() {
 function loadNotifications() {
   var user = getActiveUser() || {};
   if (!user.email) return;
+  var token = localStorage.getItem('sgaAuthToken') || '';
+  var authHeaders = token ? { 'Authorization': 'Bearer ' + token } : {};
 
-  fetch('/api/peer-coaching/bookings?userId=' + encodeURIComponent(user.email))
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var bookings = (data && data.bookings) ? data.bookings : [];
-      var seen = getSeenNotifs();
-      var items = [];
+  Promise.all([
+    fetch('/api/peer-coaching/bookings?userId=' + encodeURIComponent(user.email)).then(function(r) { return r.json(); }),
+    fetch('/api/chat/recent', { headers: authHeaders }).then(function(r) { return r.json(); }).catch(function() { return { items: [] }; })
+  ]).then(function(results) {
+    var bookingsData = results[0];
+    var chatData = results[1];
+    var bookings = (bookingsData && bookingsData.bookings) ? bookingsData.bookings : [];
+    var chatItems = (chatData && chatData.items) ? chatData.items : [];
+    var seen = getSeenNotifs();
+    var chatLastRead = JSON.parse(localStorage.getItem('sgaChatLastRead') || '{}');
+    var myId = (user.email || '').toLowerCase().trim();
+    var items = [];
 
-      bookings.forEach(function(b) {
-        var notifId, iconClass, emoji, title, sub, action, ts;
-        ts = b.updatedAt || b.createdAt || '';
-        var timeStr = ts ? timeAgo(ts) : '';
+    bookings.forEach(function(b) {
+      var notifId, iconClass, emoji, title, sub, action, ts;
+      ts = b.updatedAt || b.createdAt || '';
+      var timeStr = ts ? timeAgo(ts) : '';
 
-        if (b.role === 'coach' && b.status === 'pending') {
-          // Someone booked you as a coach
-          notifId = 'booking-pending-' + b.id;
-          iconClass = 'booking';
-          emoji = '📅';
-          title = 'New session request';
-          sub = (b.learnerName || 'A student') + ' wants a ' + b.duration + 'min ' + escHtml(b.skill) + ' session';
-          action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
-        } else if (b.role === 'learner' && b.status === 'confirmed') {
-          // Your booking was accepted
-          notifId = 'booking-confirmed-' + b.id;
-          iconClass = 'accepted';
-          emoji = '✅';
-          title = 'Session confirmed!';
-          sub = (b.coachName || 'Your coach') + ' accepted your ' + escHtml(b.skill) + ' session request';
-          action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
-        } else if (b.role === 'learner' && b.status === 'cancelled') {
-          notifId = 'booking-cancelled-' + b.id;
-          iconClass = 'declined';
-          emoji = '❌';
-          title = 'Session declined';
-          sub = (b.coachName || 'Your coach') + ' declined your ' + escHtml(b.skill) + ' request';
-          action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
-        } else if (b.status === 'completed' && b.role === 'learner' && !b.hasReview) {
-          notifId = 'booking-review-' + b.id;
-          iconClass = 'completed';
-          emoji = '⭐';
-          title = 'Rate your session';
-          sub = 'How was your ' + escHtml(b.skill) + ' session with ' + (b.coachName || 'your coach') + '?';
-          action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
-        } else {
-          return;
-        }
+      if (b.role === 'coach' && b.status === 'pending') {
+        notifId = 'booking-pending-' + b.id;
+        iconClass = 'booking'; emoji = '📅';
+        title = 'New session request';
+        sub = (b.learnerName || 'A student') + ' wants a ' + b.duration + 'min ' + escHtml(b.skill) + ' session';
+        action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
+      } else if (b.role === 'learner' && b.status === 'confirmed') {
+        notifId = 'booking-confirmed-' + b.id;
+        iconClass = 'accepted'; emoji = '✅';
+        title = 'Session confirmed!';
+        sub = (b.coachName || 'Your coach') + ' accepted your ' + escHtml(b.skill) + ' session request';
+        action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
+      } else if (b.role === 'learner' && b.status === 'cancelled') {
+        notifId = 'booking-cancelled-' + b.id;
+        iconClass = 'declined'; emoji = '❌';
+        title = 'Session declined';
+        sub = (b.coachName || 'Your coach') + ' declined your ' + escHtml(b.skill) + ' request';
+        action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
+      } else if (b.status === 'completed' && b.role === 'learner' && !b.hasReview) {
+        notifId = 'booking-review-' + b.id;
+        iconClass = 'completed'; emoji = '⭐';
+        title = 'Rate your session';
+        sub = 'How was your ' + escHtml(b.skill) + ' session with ' + (b.coachName || 'your coach') + '?';
+        action = function() { navigateTo('coaching'); switchPCTab('sessions'); };
+      } else { return; }
 
-        if (notifId) {
-          items.push({
-            id: notifId,
-            iconClass: iconClass,
-            emoji: emoji,
-            title: title,
-            sub: sub,
-            time: timeStr,
-            unread: !seen[notifId],
-            action: action
-          });
-        }
-      });
-
-      renderNotifications(items);
-    })
-    .catch(function() {
-      var list = document.getElementById('notifList');
-      if (list) list.innerHTML = '<div class="notif-empty">Could not load notifications.</div>';
+      if (notifId) {
+        items.push({ id: notifId, iconClass: iconClass, emoji: emoji, title: title, sub: sub, time: timeStr, unread: !seen[notifId], action: action });
+      }
     });
+
+    chatItems.forEach(function(c) {
+      if ((c.lastSenderId || '').toLowerCase().trim() === myId) return;
+      var lastRead = chatLastRead[c.bookingId] || null;
+      if (lastRead && new Date(c.lastMessageAt) <= new Date(lastRead)) return;
+      var notifId = 'chat-' + c.bookingId;
+      var bId = c.bookingId, oName = c.otherPersonName;
+      items.push({
+        id: notifId,
+        iconClass: 'chat', emoji: '💬',
+        title: 'Message from ' + escHtml(oName || 'your session partner'),
+        sub: escHtml(c.preview || ''),
+        time: c.lastMessageAt ? timeAgo(c.lastMessageAt) : '',
+        unread: !seen[notifId],
+        action: function() { navigateTo('coaching'); setTimeout(function() { openChatModal(bId, oName); }, 200); }
+      });
+    });
+
+    renderNotifications(items);
+  }).catch(function() {
+    var list = document.getElementById('notifList');
+    if (list) list.innerHTML = '<div class="notif-empty">Could not load notifications.</div>';
+  });
 }
 
 function renderNotifications(items) {
@@ -3713,7 +3787,11 @@ function getPCCoachEmptyState(title, text) {
   return '<div class="pc-empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><h3>' + title + '</h3><p>' + text + '</p></div>';
 }
 
+var _pcCoachDataMap = {};
+
 function renderPCCoachCard(coach) {
+  _pcCoachDataMap[coach.userId] = coach;
+
   var skillTags = coach.verifiedSkills.map(function(v) {
     return '<span class="pc-coach-skill-tag">' + v.skill + ' <span class="pc-coach-skill-score">' + v.score + '/10</span></span>';
   }).join('');
@@ -3726,6 +3804,7 @@ function renderPCCoachCard(coach) {
     stars += ' <span style="font-size:11px;color:#64748b;">' + coach.avgRating + '</span>';
   }
 
+  var safeId = coach.userId.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
   return '<div class="pc-coach-card">' +
     '<div class="pc-coach-top">' +
       '<div class="pc-coach-avatar">' + coach.avatar + '</div>' +
@@ -3743,9 +3822,55 @@ function renderPCCoachCard(coach) {
       '<div class="pc-coach-stat">' + coach.sessionLengths.map(function(l) { return l + 'min'; }).join(', ') + '</div>' +
     '</div>' +
     '<div class="pc-coach-actions">' +
-      '<button class="btn btn-primary" onclick="openBookingModal(\'' + coach.userId.replace(/'/g, "\\'") + '\')">Book Session</button>' +
+      '<button class="btn btn-secondary" onclick="openCoachProfile(\'' + safeId + '\')">View Profile</button>' +
+      '<button class="btn btn-primary" onclick="openBookingModal(\'' + safeId + '\')">Book Session</button>' +
     '</div>' +
   '</div>';
+}
+
+function openCoachProfile(userId) {
+  var coach = _pcCoachDataMap[userId];
+  if (!coach) return;
+
+  var stars = '';
+  if (coach.avgRating > 0) {
+    for (var i = 1; i <= 5; i++) {
+      stars += '<span style="color:' + (i <= Math.round(coach.avgRating) ? '#f59e0b' : '#cbd5e1') + ';font-size:16px;">&#9733;</span>';
+    }
+    stars = '<div class="cp-rating">' + stars + ' <span class="cp-rating-num">' + coach.avgRating + ' (' + coach.reviewCount + ' reviews)</span></div>';
+  }
+
+  var skillBadges = coach.verifiedSkills.map(function(v) {
+    return '<div class="cp-skill-badge"><span class="cp-skill-name">' + escHtml(v.skill) + '</span><span class="cp-skill-score">' + v.score + '/10</span></div>';
+  }).join('');
+
+  var html =
+    '<div class="cp-header">' +
+      '<div class="cp-avatar">' + coach.avatar + '</div>' +
+      '<div class="cp-info">' +
+        '<div class="cp-name">' + escHtml(coach.name) + '</div>' +
+        '<div class="cp-headline">' + escHtml(coach.headline || 'Verified peer coach') + '</div>' +
+        '<div class="cp-verified"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Verified Coach</div>' +
+      '</div>' +
+    '</div>' +
+    (coach.bio ? '<p class="cp-bio">' + escHtml(coach.bio) + '</p>' : '') +
+    '<div class="cp-section-title">Skills & Scores</div>' +
+    '<div class="cp-skills">' + skillBadges + '</div>' +
+    (stars || '') +
+    '<div class="cp-meta-row">' +
+      '<div class="cp-meta-item"><span class="cp-meta-val">' + coach.sessionCount + '</span><span class="cp-meta-lbl">Sessions</span></div>' +
+      '<div class="cp-meta-item"><span class="cp-meta-val">' + coach.sessionLengths.map(function(l) { return l + 'min'; }).join(', ') + '</span><span class="cp-meta-lbl">Durations</span></div>' +
+    '</div>';
+
+  document.getElementById('coachProfileBody').innerHTML = html;
+  var safeId = userId.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  document.getElementById('coachProfileBookBtn').setAttribute('onclick', "closeCoachProfile(); openBookingModal('" + safeId + "')");
+  document.getElementById('coachProfileModal').style.display = 'flex';
+}
+
+function closeCoachProfile(e) {
+  if (e && e.target !== document.getElementById('coachProfileModal')) return;
+  document.getElementById('coachProfileModal').style.display = 'none';
 }
 
 function renderPCCoachCards(coaches) {
@@ -4058,6 +4183,10 @@ function openChatModal(bookingId, otherPersonName) {
   document.getElementById('chatModalTitle').textContent = 'Chat with ' + otherPersonName;
   document.getElementById('chatModalSub').textContent = 'Messages are saved to your session';
   document.getElementById('pcChatModal').style.display = 'flex';
+  // Mark as read so notifications clear
+  var lastRead = JSON.parse(localStorage.getItem('sgaChatLastRead') || '{}');
+  lastRead[bookingId] = new Date().toISOString();
+  localStorage.setItem('sgaChatLastRead', JSON.stringify(lastRead));
   loadChatMessages();
   chatPollInterval = setInterval(loadChatMessages, 5000);
 }

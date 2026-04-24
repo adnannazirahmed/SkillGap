@@ -1067,6 +1067,31 @@ body.dark-mode .quit-modal p { color: #94a3b8; }
 .profile-form-input:focus { outline: none; border-color: #4f46e5; }
 .profile-form-textarea { min-height: 90px; resize: vertical; }
 .profile-form-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0; }
+/* Education preview (resume upload) */
+.edu-preview-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; margin-bottom: 10px; }
+.edu-preview-school { font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 3px; }
+.edu-preview-degree { font-size: 13px; color: #475569; }
+.edu-preview-dates { color: #94a3b8; }
+.edu-preview-meta { font-size: 12px; color: #94a3b8; margin-top: 3px; }
+/* Coach profile modal */
+.coach-profile-modal { max-width: 480px; }
+.cp-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+.cp-avatar { width: 64px; height: 64px; border-radius: 16px; background: #4f46e5; color: #fff; font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.cp-name { font-size: 20px; font-weight: 700; color: #1e293b; }
+.cp-headline { font-size: 13px; color: #64748b; margin: 3px 0; }
+.cp-verified { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #16a34a; font-weight: 600; background: #f0fdf4; padding: 3px 8px; border-radius: 20px; }
+.cp-bio { font-size: 14px; color: #475569; line-height: 1.6; margin: 0 0 18px; }
+.cp-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #94a3b8; margin-bottom: 10px; }
+.cp-skills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.cp-skill-badge { display: flex; align-items: center; gap: 6px; background: #eef2ff; border-radius: 8px; padding: 6px 12px; }
+.cp-skill-name { font-size: 13px; font-weight: 600; color: #4f46e5; }
+.cp-skill-score { font-size: 12px; color: #6366f1; background: #c7d2fe; border-radius: 4px; padding: 1px 6px; }
+.cp-rating { margin-bottom: 16px; }
+.cp-rating-num { font-size: 13px; color: #64748b; vertical-align: middle; }
+.cp-meta-row { display: flex; gap: 20px; padding: 14px 0 4px; border-top: 1px solid #e2e8f0; }
+.cp-meta-item { display: flex; flex-direction: column; }
+.cp-meta-val { font-size: 16px; font-weight: 700; color: #1e293b; }
+.cp-meta-lbl { font-size: 11px; color: #94a3b8; }
 .chat-modal { max-width: 480px; padding: 0; display: flex; flex-direction: column; height: 520px; overflow: hidden; }
 .chat-modal-header { display: flex; align-items: center; gap: 12px; padding: 20px 28px 16px; border-bottom: 1px solid #e2e8f0; flex-shrink: 0; }
 .chat-modal .pc-modal-close { top: 16px; right: 16px; }
@@ -1433,6 +1458,14 @@ body.dark-mode .profile-form-input { background: #0f172a; border-color: #334155;
 body.dark-mode .profile-form-input:focus { border-color: #818cf8; }
 body.dark-mode .profile-form-label { color: #94a3b8; }
 body.dark-mode .profile-form-footer { border-color: #334155; }
+body.dark-mode .edu-preview-card { background: #0f172a; border-color: #334155; }
+body.dark-mode .edu-preview-school { color: #e2e8f0; }
+body.dark-mode .edu-preview-degree { color: #94a3b8; }
+body.dark-mode .cp-name { color: #e2e8f0; }
+body.dark-mode .cp-bio { color: #94a3b8; }
+body.dark-mode .cp-skill-badge { background: rgba(79,70,229,0.15); }
+body.dark-mode .cp-meta-val { color: #e2e8f0; }
+body.dark-mode .cp-meta-row { border-color: #334155; }
 body.dark-mode .pc-star { color: #475569; }
 body.dark-mode .pc-star.active { color: #f59e0b; }
 body.dark-mode .pc-empty-state h3 { color: #94a3b8; }
