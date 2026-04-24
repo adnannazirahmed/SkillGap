@@ -3080,7 +3080,7 @@ app.get('/api/chat/recent', requireAuth, async (req, res) => {
   }
 });
 
-// ── POST /api/profile/upload-resume — upload resume + AI-extract education ──
+// ── POST /api/profile/upload-resume — upload resume + AI-extract education & experience ──
 app.post('/api/profile/upload-resume', requireAuth, documentUpload.single('resume'), async (req, res) => {
   try {
     const userId = req.authenticatedUserId;
@@ -3116,21 +3116,31 @@ app.post('/api/profile/upload-resume', requireAuth, documentUpload.single('resum
       uploadedAt: new Date().toISOString()
     };
 
-    // Save document to profile
+    // Load profile and add document
     const rawProfile = await db.getProfile(userId);
     const profile = normalizeProfile(rawProfile, userId);
     profile.documents = [...(profile.documents || []), doc];
     profile.updatedAt = new Date().toISOString();
 
-    // AI: extract education from resume text
+    // AI: extract both education and experience in one call
     let extractedEducation = [];
+    let extractedExperience = [];
     if (resumeText.trim().length > 0 && GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
       try {
-        const prompt = `Extract all education entries from this resume. Return ONLY a valid JSON array with no other text. Each entry: {"school":"...","degree":"...","dates":"e.g. 2020 — 2024","gpa":"optional","courses":"optional comma-separated courses"}\n\nResume:\n${resumeText.slice(0, 4000)}`;
+        const prompt = `Extract all education and work/internship experience from this resume.
+Return ONLY a valid JSON object with no other text, markdown, or code fences:
+{
+  "education": [{"school":"...","degree":"...","dates":"e.g. 2020 - 2024","gpa":"","courses":""}],
+  "experience": [{"title":"...","company":"...","dates":"e.g. 2022 - 2023","description":"...","tags":"comma-separated skills"}]
+}
+If a field is unknown leave it as an empty string. Include all roles, internships, and projects.
+
+Resume:
+${resumeText.slice(0, 5000)}`;
         const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1, maxOutputTokens: 1024 } })
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1, maxOutputTokens: 2048 } })
         });
         if (response.ok) {
           const aiData = await response.json();
@@ -3138,16 +3148,37 @@ app.post('/api/profile/upload-resume', requireAuth, documentUpload.single('resum
           if (text) {
             const jsonStr = text.trim().replace(/```json?\n?/g, '').replace(/```/g, '').trim();
             const parsed = JSON.parse(jsonStr);
-            if (Array.isArray(parsed)) {
-              extractedEducation = parsed.filter(e => e && e.school && e.degree);
+            if (parsed && Array.isArray(parsed.education)) {
+              extractedEducation = parsed.education.filter(e => e && e.school && e.degree);
+            }
+            if (parsed && Array.isArray(parsed.experience)) {
+              extractedExperience = parsed.experience.filter(e => e && e.title && e.company);
             }
           }
         }
-      } catch (e) { console.error('Education AI extraction error:', e.message); }
+      } catch (e) { console.error('Resume AI extraction error:', e.message); }
     }
 
+    // Merge extracted education into profile (deduplicated)
+    extractedEducation.forEach(edu => {
+      const exists = profile.education.some(e => e.school === edu.school && e.degree === edu.degree);
+      if (!exists) profile.education.push({ school: edu.school || '', degree: edu.degree || '', dates: edu.dates || '', gpa: edu.gpa || '', courses: edu.courses || '' });
+    });
+
+    // Merge extracted experience into profile (deduplicated)
+    extractedExperience.forEach(exp => {
+      const exists = profile.experience.some(e => e.title === exp.title && e.company === exp.company);
+      if (!exists) profile.experience.push({
+        title: exp.title || '',
+        company: exp.company || '',
+        dates: exp.dates || '',
+        description: exp.description || '',
+        tags: typeof exp.tags === 'string' ? exp.tags.split(',').map(t => t.trim()).filter(Boolean) : (Array.isArray(exp.tags) ? exp.tags : [])
+      });
+    });
+
     await db.upsertProfile(userId, profile);
-    res.json({ success: true, document: doc, extractedEducation });
+    res.json({ success: true, document: doc, extractedEducation, extractedExperience });
   } catch (err) {
     console.error('Resume upload error:', err.message);
     res.status(500).json({ error: 'Failed to upload resume: ' + err.message });

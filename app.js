@@ -2785,8 +2785,11 @@ async function uploadResumeFile(file) {
     });
     var data = await resp.json();
     if (!resp.ok) throw new Error(data.error || 'Upload failed');
-    if (data.extractedEducation && data.extractedEducation.length > 0) {
-      showEducationPreview(data.extractedEducation);
+    profileState.data = null; // force fresh fetch after upload
+    var edu = data.extractedEducation || [];
+    var exp = data.extractedExperience || [];
+    if (edu.length > 0 || exp.length > 0) {
+      showResumeExtractedPreview(edu, exp);
     } else {
       initProfile();
     }
@@ -2798,9 +2801,12 @@ async function uploadResumeFile(file) {
   }
 }
 
-function showEducationPreview(entries) {
-  var previewHtml = '<p style="color:#64748b;font-size:13px;margin:0 0 16px;">Found ' + entries.length + ' education ' + (entries.length === 1 ? 'entry' : 'entries') + ' in your resume. Save to your profile?</p>' +
-    entries.map(function(edu) {
+function showResumeExtractedPreview(education, experience) {
+  var html = '<p style="color:#64748b;font-size:13px;margin:0 0 16px;">The following was extracted from your resume and <strong>saved to your profile</strong>. You can edit any entry manually.</p>';
+
+  if (education.length > 0) {
+    html += '<div class="edu-preview-section-title">Education (' + education.length + ')</div>';
+    html += education.map(function(edu) {
       return '<div class="edu-preview-card">' +
         '<div class="edu-preview-school">' + escapeHtml(edu.school || '') + '</div>' +
         '<div class="edu-preview-degree">' + escapeHtml(edu.degree || '') + (edu.dates ? ' <span class="edu-preview-dates">• ' + escapeHtml(edu.dates) + '</span>' : '') + '</div>' +
@@ -2808,22 +2814,26 @@ function showEducationPreview(entries) {
         (edu.courses ? '<div class="edu-preview-meta">' + escapeHtml(edu.courses) + '</div>' : '') +
       '</div>';
     }).join('');
+  }
+
+  if (experience.length > 0) {
+    html += '<div class="edu-preview-section-title" style="margin-top:16px;">Experience (' + experience.length + ')</div>';
+    html += experience.map(function(exp) {
+      return '<div class="edu-preview-card">' +
+        '<div class="edu-preview-school">' + escapeHtml(exp.title || '') + ' — ' + escapeHtml(exp.company || '') + '</div>' +
+        (exp.dates ? '<div class="edu-preview-degree"><span class="edu-preview-dates">' + escapeHtml(exp.dates) + '</span></div>' : '') +
+        (exp.description ? '<div class="edu-preview-meta">' + escapeHtml(exp.description.slice(0, 120)) + (exp.description.length > 120 ? '…' : '') + '</div>' : '') +
+      '</div>';
+    }).join('');
+  }
+
   openProfileFormModal({
-    title: 'Education Found in Resume',
+    title: 'Resume Scanned',
     fields: [],
-    onSave: async function() {
-      var profileData = await fetchProfileRecord();
-      var education = Array.isArray(profileData.education) ? profileData.education.slice() : [];
-      entries.forEach(function(edu) {
-        var exists = education.some(function(e) { return e.school === edu.school && e.degree === edu.degree; });
-        if (!exists) education.push(edu);
-      });
-      await saveProfilePatch({ education: education });
-      initProfile();
-    }
+    onSave: async function() { initProfile(); }
   });
-  document.getElementById('profileFormBody').innerHTML = previewHtml;
-  document.getElementById('profileFormSave').textContent = 'Save to Profile';
+  document.getElementById('profileFormBody').innerHTML = html;
+  document.getElementById('profileFormSave').textContent = 'Got it!';
 }
 
 // ── Profile Form Modal ──

@@ -1067,7 +1067,8 @@ body.dark-mode .quit-modal p { color: #94a3b8; }
 .profile-form-input:focus { outline: none; border-color: #4f46e5; }
 .profile-form-textarea { min-height: 90px; resize: vertical; }
 .profile-form-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0; }
-/* Education preview (resume upload) */
+/* Education/Experience preview (resume upload) */
+.edu-preview-section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; margin-bottom: 8px; }
 .edu-preview-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; margin-bottom: 10px; }
 .edu-preview-school { font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 3px; }
 .edu-preview-degree { font-size: 13px; color: #475569; }
@@ -1458,6 +1459,7 @@ body.dark-mode .profile-form-input { background: #0f172a; border-color: #334155;
 body.dark-mode .profile-form-input:focus { border-color: #818cf8; }
 body.dark-mode .profile-form-label { color: #94a3b8; }
 body.dark-mode .profile-form-footer { border-color: #334155; }
+body.dark-mode .edu-preview-section-title { color: #64748b; }
 body.dark-mode .edu-preview-card { background: #0f172a; border-color: #334155; }
 body.dark-mode .edu-preview-school { color: #e2e8f0; }
 body.dark-mode .edu-preview-degree { color: #94a3b8; }
