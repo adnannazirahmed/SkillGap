@@ -2618,7 +2618,16 @@ app.post('/api/analyzer/save-report', requireAuth, async (req, res) => {
     };
     reports.unshift(slim);
     profile.analyzerReports = reports.slice(0, 50);
-    await db.upsertProfile(userId, profile);
+    const saved = await db.upsertProfile(userId, profile);
+    if (saved._droppedColumns && saved._droppedColumns.indexOf('analyzerReports') !== -1) {
+      // The save silently dropped the report data because the DB is missing
+      // the analyzer_reports column. Return a real error so the client can
+      // surface it instead of pretending the save worked.
+      return res.status(503).json({
+        error: 'Saved reports require a one-time database migration. Ask the admin to run this SQL in Supabase: ALTER TABLE profiles ADD COLUMN IF NOT EXISTS analyzer_reports JSONB DEFAULT \'[]\'::jsonb;',
+        needsMigration: true
+      });
+    }
     res.json({ success: true, report: slim, count: profile.analyzerReports.length });
   } catch (err) {
     console.error('Save report error:', err.message);

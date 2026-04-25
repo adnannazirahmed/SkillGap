@@ -168,9 +168,13 @@ async function upsertProfile(userId, profile) {
 
   // Fallback for installs that haven't run the analyzer_reports migration yet.
   // Supabase/PostgREST returns PGRST204 (or PG 42703) when the column is missing.
+  // We retry without the column so signup/login still works, but we annotate
+  // the result so callers can warn the user that data was silently dropped.
+  let droppedColumns = [];
   if (error && (error.code === 'PGRST204' || error.code === '42703' ||
                 /analyzer_reports/i.test(error.message || ''))) {
-    console.warn('upsertProfile: analyzer_reports column missing, retrying without it. Run the ALTER TABLE migration in schema.sql to enable saved analyzer reports.');
+    console.warn('upsertProfile: analyzer_reports column missing, retrying without it. Run: ALTER TABLE profiles ADD COLUMN IF NOT EXISTS analyzer_reports JSONB DEFAULT \'[]\'::jsonb;');
+    droppedColumns.push('analyzerReports');
     const { analyzer_reports, ...rowSansReports } = row;
     ({ data, error } = await getClient()
       .from('profiles')
@@ -180,7 +184,11 @@ async function upsertProfile(userId, profile) {
   }
 
   if (error) throw error;
-  return rowToProfile(data);
+  const result = rowToProfile(data);
+  if (droppedColumns.length > 0) {
+    Object.defineProperty(result, '_droppedColumns', { value: droppedColumns, enumerable: false });
+  }
+  return result;
 }
 
 function rowToProfile(row) {
