@@ -652,12 +652,15 @@ function runAnalysis() {
   }, 2000);
 
   var currentUser = getActiveUser() || {};
+  var jobDescEl = document.getElementById('azJobDescription');
+  var jobDescription = jobDescEl ? (jobDescEl.value || '').trim() : '';
 
   var payload = {
     userSkills: analyzerState.allSkills.map(function(s) { return { name: s.name, score: s.score }; }),
     targetRole: role,
     region: region,
-    userId: currentUser.email || ''
+    userId: currentUser.email || '',
+    jobDescription: jobDescription
   };
 
   fetch('/api/analyzer/analyze', {
@@ -669,7 +672,7 @@ function runAnalysis() {
   .then(function(result) {
     clearInterval(msgInterval);
     analyzerState.lastResult = result;
-    analyzerState.lastResult._meta = { role: role, region: region, date: new Date().toISOString() };
+    analyzerState.lastResult._meta = { role: role, region: region, date: new Date().toISOString(), jobDescription: jobDescription };
     showAnalysisResults(result, role, region);
   })
   .catch(function(err) {
@@ -712,6 +715,44 @@ function showAnalysisResults(result, role, region) {
   // Summary
   var summaryEl = document.getElementById('azSummaryText');
   if (summaryEl) summaryEl.textContent = result.summary || '';
+
+  // Job-fit card (only if user pasted a JD)
+  var jobFitCard = document.getElementById('azJobFitCard');
+  var jf = result.jobFit;
+  if (jobFitCard) {
+    if (jf && typeof jf.likelihood === 'number') {
+      jobFitCard.style.display = '';
+      var pct = Math.max(0, Math.min(100, jf.likelihood));
+      var jfScoreEl = document.getElementById('azJobFitScore');
+      var jfLabelEl = document.getElementById('azJobFitLabel');
+      var jfReasonEl = document.getElementById('azJobFitReason');
+      var jfBlockersEl = document.getElementById('azJobFitBlockers');
+      if (jfScoreEl) {
+        jfScoreEl.textContent = pct + '%';
+        jfScoreEl.style.color = pct >= 70 ? '#16a34a' : pct >= 40 ? '#f59e0b' : '#ef4444';
+      }
+      if (jfLabelEl) jfLabelEl.textContent = jf.label || '';
+      if (jfReasonEl) jfReasonEl.textContent = jf.reason || '';
+      if (jfBlockersEl) {
+        var blockers = Array.isArray(jf.blockers) ? jf.blockers : [];
+        if (blockers.length > 0) {
+          jfBlockersEl.innerHTML = '<div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:6px;">Top blockers:</div>' +
+            blockers.map(function(b) { return '<span class="skill-tag missing" style="margin:2px 4px 2px 0;">' + escapeHtml(b) + '</span>'; }).join('');
+        } else {
+          jfBlockersEl.innerHTML = '';
+        }
+      }
+    } else {
+      jobFitCard.style.display = 'none';
+    }
+  }
+
+  // Reset save button label (in case this is a re-run of the same session)
+  var saveBtn = document.getElementById('azSaveReportBtn');
+  if (saveBtn) {
+    saveBtn.disabled = false;
+    saveBtn.textContent = '💾 Save to Profile';
+  }
 
   // Matched Skills
   var matchedEl = document.getElementById('matchedSkills');
@@ -809,6 +850,76 @@ function showAnalysisResults(result, role, region) {
   // Show results
   document.querySelectorAll('.analyzer-page .section').forEach(function(s) { s.classList.remove('visible'); });
   document.getElementById('az-step3').classList.add('visible');
+}
+
+// ── Analyzer: View a saved report ──
+async function viewSavedReport(reportId) {
+  try {
+    var profileData = await fetchProfileRecord();
+    var reports = Array.isArray(profileData.analyzerReports) ? profileData.analyzerReports : [];
+    var rep = reports.find(function(r) { return r.id === reportId; });
+    if (!rep) { alert('Report not found.'); return; }
+    analyzerState.lastResult = {
+      matchScore: rep.matchScore,
+      summary: rep.summary,
+      matchedSkills: rep.matchedSkills,
+      missingSkills: rep.missingSkills,
+      learningPath: rep.learningPath,
+      assessmentSuggestions: rep.assessmentSuggestions,
+      salaryInsight: rep.salaryInsight,
+      competitiveness: rep.competitiveness,
+      jobFit: rep.jobFit,
+      _meta: { role: rep.role, region: rep.region, date: rep.date, jobDescription: rep.jobDescriptionPreview || '' }
+    };
+    navigateTo('analyzer');
+    setTimeout(function() {
+      showAnalysisResults(analyzerState.lastResult, rep.role, rep.region);
+    }, 50);
+  } catch (err) {
+    console.error('viewSavedReport error:', err);
+    alert('Could not open report.');
+  }
+}
+
+async function deleteSavedReport(reportId) {
+  if (!confirm('Delete this saved report?')) return;
+  try {
+    var res = await fetch('/api/analyzer/reports/' + encodeURIComponent(reportId), {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('Delete failed');
+    if (profileState && profileState.data !== undefined) profileState.data = null;
+    initProfile();
+  } catch (err) {
+    console.error('deleteSavedReport error:', err);
+    alert('Could not delete report.');
+  }
+}
+
+// ── Analyzer: Save Report to Profile ──
+function saveAnalysisReport() {
+  if (!analyzerState.lastResult) { alert('No analysis to save.'); return; }
+  var btn = document.getElementById('azSaveReportBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+  fetch('/api/analyzer/save-report', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ report: analyzerState.lastResult })
+  })
+  .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+  .then(function(res) {
+    if (!res.ok) throw new Error((res.data && res.data.error) || 'Save failed');
+    if (btn) { btn.textContent = '✅ Saved — Open Profile'; }
+    if (profileState && profileState.data !== undefined) profileState.data = null;
+    setTimeout(function() { navigateTo('profile'); }, 600);
+  })
+  .catch(function(err) {
+    console.error('Save report error:', err);
+    alert('Could not save report: ' + (err.message || 'Unknown error'));
+    if (btn) { btn.disabled = false; btn.textContent = '💾 Save to Profile'; }
+  });
 }
 
 // ── Analyzer: Export Report ──
@@ -2736,6 +2847,45 @@ async function initProfile() {
     }
   }
 
+  var reportsEl = document.getElementById('profileAnalyzerReports');
+  if (reportsEl) {
+    var reports = Array.isArray(profileData.analyzerReports) ? profileData.analyzerReports : [];
+    if (reports.length === 0) {
+      reportsEl.innerHTML = '<p style="color:#94a3b8;font-size:13px;">No saved reports yet. Run the Analyzer and click <strong>Save to Profile</strong> to keep a copy here.</p>';
+    } else {
+      reportsEl.innerHTML = reports.map(function(rep) {
+        var date = rep.date ? new Date(rep.date).toLocaleDateString() : '';
+        var match = (rep.matchScore || 0) + '%';
+        var matchColor = rep.matchScore >= 70 ? '#16a34a' : rep.matchScore >= 40 ? '#f59e0b' : '#ef4444';
+        var jfHtml = '';
+        if (rep.jobFit && typeof rep.jobFit.likelihood === 'number') {
+          var jfColor = rep.jobFit.likelihood >= 70 ? '#16a34a' : rep.jobFit.likelihood >= 40 ? '#f59e0b' : '#ef4444';
+          jfHtml = '<span style="font-size:11px;color:' + jfColor + ';font-weight:600;margin-left:8px;">🎯 ' + rep.jobFit.likelihood + '% job fit</span>';
+        }
+        var topGaps = (rep.missingSkills || []).slice(0, 3).map(function(s) {
+          return '<span class="skill-tag missing" style="font-size:10px;margin:2px;">' + escapeHtml(s.name || '') + '</span>';
+        }).join('');
+        return '<div class="report-item" style="padding:12px;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="font-weight:600;font-size:14px;">' + escapeHtml(rep.role || 'Untitled role') + '</div>' +
+              '<div style="font-size:11px;color:#64748b;margin-top:2px;">' + escapeHtml(rep.region || '') + (rep.region ? ' • ' : '') + escapeHtml(date) + jfHtml + '</div>' +
+            '</div>' +
+            '<div style="text-align:right;">' +
+              '<div style="font-size:18px;font-weight:700;color:' + matchColor + ';">' + match + '</div>' +
+              '<div style="font-size:10px;color:#64748b;text-transform:uppercase;">match</div>' +
+            '</div>' +
+          '</div>' +
+          (topGaps ? '<div style="margin-top:8px;">' + topGaps + '</div>' : '') +
+          '<div style="display:flex;gap:6px;margin-top:10px;">' +
+            '<button class="btn btn-secondary" style="font-size:12px;padding:4px 10px;" onclick="viewSavedReport(\'' + rep.id + '\')">View</button>' +
+            '<button class="btn btn-secondary" style="font-size:12px;padding:4px 10px;color:#dc2626;" onclick="deleteSavedReport(\'' + rep.id + '\')">Delete</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+  }
+
   var strengthBtn = document.querySelector('#page-profile .strength-btn');
   if (strengthBtn) {
     strengthBtn.onclick = function() { navigateTo('assessment'); };
@@ -2986,6 +3136,24 @@ async function profileDeleteSkill(idx) {
 }
 
 // ── Profile: Add Experience ──
+// Merge a list of tag names into the skills array (case-insensitive dedup).
+// Returns the new skills array.
+function mergeTagsIntoSkills(existingSkills, tags) {
+  var skills = Array.isArray(existingSkills) ? existingSkills.slice() : [];
+  var existingNames = new Set(skills.map(function(s) {
+    return (typeof s === 'string' ? s : (s && s.name) || '').toLowerCase();
+  }));
+  (tags || []).forEach(function(tag) {
+    var name = (tag || '').trim();
+    if (!name) return;
+    if (!existingNames.has(name.toLowerCase())) {
+      existingNames.add(name.toLowerCase());
+      skills.push({ name: name, mastery: null });
+    }
+  });
+  return skills;
+}
+
 function profileAddExperience() {
   openProfileFormModal({
     title: 'Add Experience',
@@ -2994,20 +3162,22 @@ function profileAddExperience() {
       { label: 'Company / Organization', id: 'company', value: '', placeholder: 'e.g., Acme Corp' },
       { label: 'Dates', id: 'dates', value: '', placeholder: 'e.g., Jun 2024 — Dec 2024' },
       { type: 'textarea', label: 'Description', id: 'description', value: '', placeholder: 'What did you build or achieve?' },
-      { label: 'Tags (comma-separated)', id: 'tags', value: '', placeholder: 'Python, SQL, Tableau' }
+      { label: 'Tags / Skills (comma-separated)', id: 'tags', value: '', placeholder: 'Python, SQL, Tableau — auto-added to your Skills' }
     ],
     onSave: async function(v) {
       if (!v.title.trim() || !v.company.trim()) throw new Error('Title and company are required');
       var profileData = await fetchProfileRecord();
       var experience = Array.isArray(profileData.experience) ? profileData.experience.slice() : [];
+      var tags = v.tags.split(',').map(function(t) { return t.trim(); }).filter(Boolean);
       experience.push({
         title: v.title.trim(),
         company: v.company.trim(),
         dates: v.dates.trim(),
         description: v.description.trim(),
-        tags: v.tags.split(',').map(function(t) { return t.trim(); }).filter(Boolean)
+        tags: tags
       });
-      await saveProfilePatch({ experience: experience });
+      var skills = mergeTagsIntoSkills(profileData.skills, tags);
+      await saveProfilePatch({ experience: experience, skills: skills });
       initProfile();
     }
   });
@@ -3054,18 +3224,20 @@ async function profileEditExperience(idx) {
       { label: 'Company / Organization', id: 'company', value: exp.company || '', placeholder: 'e.g., Acme Corp' },
       { label: 'Dates', id: 'dates', value: exp.dates || '', placeholder: 'e.g., Jun 2024 — Dec 2024' },
       { type: 'textarea', label: 'Description', id: 'description', value: exp.description || '', placeholder: 'What did you build or achieve?' },
-      { label: 'Tags (comma-separated)', id: 'tags', value: Array.isArray(exp.tags) ? exp.tags.join(', ') : (exp.tags || ''), placeholder: 'Python, SQL, Tableau' }
+      { label: 'Tags / Skills (comma-separated)', id: 'tags', value: Array.isArray(exp.tags) ? exp.tags.join(', ') : (exp.tags || ''), placeholder: 'Python, SQL, Tableau — auto-added to your Skills' }
     ],
     onSave: async function(v) {
       if (!v.title.trim() || !v.company.trim()) throw new Error('Title and company are required');
       var fresh = await fetchProfileRecord();
       var freshExp = Array.isArray(fresh.experience) ? fresh.experience.slice() : [];
+      var tags = v.tags.split(',').map(function(t) { return t.trim(); }).filter(Boolean);
       freshExp[idx] = {
         title: v.title.trim(), company: v.company.trim(), dates: v.dates.trim(),
         description: v.description.trim(),
-        tags: v.tags.split(',').map(function(t) { return t.trim(); }).filter(Boolean)
+        tags: tags
       };
-      await saveProfilePatch({ experience: freshExp });
+      var skills = mergeTagsIntoSkills(fresh.skills, tags);
+      await saveProfilePatch({ experience: freshExp, skills: skills });
       initProfile();
     }
   });

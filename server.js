@@ -1566,6 +1566,7 @@ function getDefaultProfile(userId) {
     social: { linkedin: '', github: '', portfolio: '' },
     role: 'scholar',
     provider: 'local',
+    analyzerReports: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -1588,6 +1589,7 @@ function normalizeProfile(profile, userId) {
     experience: Array.isArray(source.experience) ? source.experience : defaults.experience,
     education: Array.isArray(source.education) ? source.education : defaults.education,
     documents: Array.isArray(source.documents) ? source.documents : defaults.documents,
+    analyzerReports: Array.isArray(source.analyzerReports) ? source.analyzerReports : defaults.analyzerReports,
     social: {
       ...defaults.social,
       ...(source.social || {})
@@ -2280,11 +2282,13 @@ ${resumeText}`;
 
 // ── POST /api/analyzer/analyze ──
 app.post('/api/analyzer/analyze', async (req, res) => {
-  const { userSkills, targetRole, region, userId } = req.body;
+  const { userSkills, targetRole, region, userId, jobDescription } = req.body;
 
   if (!targetRole) {
     return res.status(400).json({ error: 'targetRole is required' });
   }
+
+  const jobDescText = (jobDescription || '').trim().slice(0, 4000);
 
   try {
     // Load user's assessment history and profile in parallel
@@ -2361,13 +2365,17 @@ app.post('/api/analyzer/analyze', async (req, res) => {
     // Try Gemini API for analysis
     if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
       try {
+        const jobFitBlock = jobDescText
+          ? `\n\nThe candidate also pasted a SPECIFIC job posting. Score how likely they are to get THIS exact job (not just the general role) and explain why. Job posting:\n"""\n${jobDescText}\n"""\n\nAdd a "jobFit" object to the response: {"likelihood": 0-100, "label": "Strong Fit"|"Moderate Fit"|"Weak Fit"|"Long Shot", "reason": "1-2 sentence assessment", "blockers": ["Missing skill X", "..."]}.`
+          : '';
+
         const prompt = `You are a career skills gap analyzer. Analyze the gap between a candidate's current skills and their target role.
 
 Candidate's Skills (with assessment scores where available, out of 10):
 ${skillsForPrompt}
 
 Target Role: ${targetRole}
-Region: ${region || 'Global'}
+Region: ${region || 'Global'}${jobFitBlock}
 
 Return a JSON object with this EXACT structure:
 {
@@ -2378,7 +2386,7 @@ Return a JSON object with this EXACT structure:
   "learningPath": [{"skill": "TensorFlow", "timeEstimate": "4-6 weeks", "resources": [{"title": "TensorFlow Developer Certificate", "type": "Certification", "url": "https://www.tensorflow.org/certificate"}, {"title": "Deep Learning Specialization", "type": "Course", "platform": "Coursera"}]}],
   "assessmentSuggestions": ["Machine Learning", "Python"],
   "salaryInsight": "$75,000 - $95,000 based on current skill level",
-  "competitiveness": "Above Average"
+  "competitiveness": "Above Average"${jobDescText ? ',\n  "jobFit": {"likelihood": 72, "label": "Moderate Fit", "reason": "...", "blockers": ["..."]}' : ''}
 }
 
 IMPORTANT: Return ONLY valid JSON with no markdown formatting, no code fences, just raw JSON.`;
@@ -2415,7 +2423,8 @@ IMPORTANT: Return ONLY valid JSON with no markdown formatting, no code fences, j
                 learningPath: parsed.learningPath || [],
                 assessmentSuggestions: parsed.assessmentSuggestions || [],
                 salaryInsight: parsed.salaryInsight || 'Not available',
-                competitiveness: parsed.competitiveness || 'Not assessed'
+                competitiveness: parsed.competitiveness || 'Not assessed',
+                jobFit: jobDescText ? (parsed.jobFit || null) : null
               });
             }
           }
@@ -2536,6 +2545,29 @@ IMPORTANT: Return ONLY valid JSON with no markdown formatting, no code fences, j
       })
       .slice(0, 5);
 
+    let fallbackJobFit = null;
+    if (jobDescText) {
+      const jdLower = jobDescText.toLowerCase();
+      let jdMatched = 0;
+      let jdTotal = 0;
+      const blockers = [];
+      for (const reqSkill of allRequired) {
+        if (jdLower.includes(reqSkill.toLowerCase())) {
+          jdTotal++;
+          const found = combinedSkills.find(s => s.name.toLowerCase() === reqSkill.toLowerCase());
+          if (found) jdMatched++;
+          else blockers.push(reqSkill);
+        }
+      }
+      const likelihood = jdTotal > 0 ? Math.round((jdMatched / jdTotal) * 100) : matchScore;
+      fallbackJobFit = {
+        likelihood,
+        label: likelihood >= 75 ? 'Strong Fit' : likelihood >= 50 ? 'Moderate Fit' : likelihood >= 25 ? 'Weak Fit' : 'Long Shot',
+        reason: `You match ${jdMatched} of ${jdTotal} skills explicitly mentioned in this posting.`,
+        blockers: blockers.slice(0, 5)
+      };
+    }
+
     res.json({
       matchScore,
       summary: `You match ${matchScore}% of the skills required for a ${roleKey} role. ${missingSkills.filter(s => s.priority === 'high').length} critical skills need attention.`,
@@ -2544,12 +2576,66 @@ IMPORTANT: Return ONLY valid JSON with no markdown formatting, no code fences, j
       learningPath,
       assessmentSuggestions,
       salaryInsight: roleInfo.salaryRange,
-      competitiveness: matchScore >= 75 ? 'Strong' : matchScore >= 50 ? 'Above Average' : matchScore >= 25 ? 'Average' : 'Below Average'
+      competitiveness: matchScore >= 75 ? 'Strong' : matchScore >= 50 ? 'Above Average' : matchScore >= 25 ? 'Average' : 'Below Average',
+      jobFit: fallbackJobFit
     });
 
   } catch (err) {
     console.error('Analyze error:', err.message);
     res.status(500).json({ error: 'Failed to analyze skills gap', message: err.message });
+  }
+});
+
+// ── POST /api/analyzer/save-report — save a report to user's profile ──
+app.post('/api/analyzer/save-report', requireAuth, async (req, res) => {
+  const userId = req.authenticatedUserId;
+  const { report } = req.body;
+  if (!report || typeof report !== 'object') {
+    return res.status(400).json({ error: 'report is required' });
+  }
+  try {
+    const profile = normalizeProfile(await db.getProfile(userId), userId);
+    const reports = Array.isArray(profile.analyzerReports) ? profile.analyzerReports.slice() : [];
+    const meta = report._meta || {};
+    const slim = {
+      id: 'rpt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+      role: meta.role || '',
+      region: meta.region || '',
+      date: meta.date || new Date().toISOString(),
+      hasJobDescription: !!meta.jobDescription,
+      jobDescriptionPreview: meta.jobDescription ? String(meta.jobDescription).slice(0, 200) : '',
+      matchScore: report.matchScore || 0,
+      jobFit: report.jobFit || null,
+      summary: report.summary || '',
+      matchedSkills: report.matchedSkills || [],
+      missingSkills: report.missingSkills || [],
+      learningPath: report.learningPath || [],
+      assessmentSuggestions: report.assessmentSuggestions || [],
+      salaryInsight: report.salaryInsight || '',
+      competitiveness: report.competitiveness || ''
+    };
+    reports.unshift(slim);
+    profile.analyzerReports = reports.slice(0, 50);
+    await db.upsertProfile(userId, profile);
+    res.json({ success: true, report: slim, count: profile.analyzerReports.length });
+  } catch (err) {
+    console.error('Save report error:', err.message);
+    res.status(500).json({ error: 'Failed to save report' });
+  }
+});
+
+// ── DELETE /api/analyzer/reports/:id ──
+app.delete('/api/analyzer/reports/:id', requireAuth, async (req, res) => {
+  const userId = req.authenticatedUserId;
+  try {
+    const profile = normalizeProfile(await db.getProfile(userId), userId);
+    const reports = (profile.analyzerReports || []).filter(r => r.id !== req.params.id);
+    profile.analyzerReports = reports;
+    await db.upsertProfile(userId, profile);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Delete report error:', err.message);
+    res.status(500).json({ error: 'Failed to delete report' });
   }
 });
 

@@ -31,9 +31,13 @@ CREATE TABLE IF NOT EXISTS profiles (
   social      JSONB DEFAULT '{"linkedin":"","github":"","portfolio":""}'::jsonb,
   role        TEXT DEFAULT 'scholar',
   provider    TEXT DEFAULT 'local',
+  analyzer_reports JSONB DEFAULT '[]'::jsonb,
   created_at  TIMESTAMPTZ DEFAULT NOW(),
   updated_at  TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Add analyzer_reports column to existing installations (idempotent)
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS analyzer_reports JSONB DEFAULT '[]'::jsonb;
 
 -- Assessment history (one row per completed assessment)
 CREATE TABLE IF NOT EXISTS assessment_history (

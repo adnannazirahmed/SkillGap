@@ -505,18 +505,17 @@
         <div id="profileExperience">
         </div>
       </div>
-      <div class="card">
+      <div class="card" style="margin-bottom:20px;">
         <div class="card-header"><h3>Education</h3><span class="card-link" onclick="profileAddEducation()">+</span></div>
-        <div id="profileEducation">
-        <div class="edu-item">
-          <div class="edu-icon">🎓</div>
-          <div>
-            <div class="edu-school">Clark University</div>
-            <div class="edu-degree">M.S. in Data Analytics</div>
-            <div class="edu-dates">2024 — 2026 (Expected) <span class="gpa-badge">GPA: 3.9/4.0</span></div>
-            <div class="edu-courses"><strong>Relevant Coursework</strong>Machine Learning, Data Mining, Statistical Methods, Database Systems, Big Data Analytics</div>
-          </div>
+        <div id="profileEducation"></div>
+      </div>
+      <div class="card" id="profileReportsCard">
+        <div class="card-header">
+          <h3>Saved Analyzer Reports</h3>
+          <span class="card-link" onclick="navigateTo('analyzer')">+ New</span>
         </div>
+        <div id="profileAnalyzerReports">
+          <p style="color:#94a3b8;font-size:13px;">No saved reports yet. Run the Analyzer and click <strong>Save to Profile</strong> to keep a copy here.</p>
         </div>
       </div>
     </div>
@@ -611,6 +610,12 @@
       </div>
     </div>
 
+    <!-- Optional: paste a real job posting to score fit against it -->
+    <div class="form-group" style="margin-top:8px;">
+      <label for="azJobDescription">Paste a specific job description <span style="color:#94a3b8;font-weight:400;">(optional — adds a job-fit score)</span></label>
+      <textarea id="azJobDescription" rows="6" placeholder="Paste the responsibilities & requirements section of a job posting here. We'll compare your skills directly against what the posting asks for and give you a likelihood-of-getting-the-job score."></textarea>
+    </div>
+
     <!-- Skills summary before analysis -->
     <div class="card" id="azSkillsSummary" style="margin-top:12px;">
       <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;">Skills being analyzed</h3>
@@ -652,6 +657,22 @@
       <p id="azSummaryText" style="font-size:14px;color:#334155;line-height:1.6;"></p>
     </div>
 
+    <!-- Job-fit card (only shown when user pasted a job description) -->
+    <div class="card" id="azJobFitCard" style="display:none;margin-bottom:16px;border-left:4px solid #16a34a;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div>
+          <h3 style="margin:0;">🎯 Job-Fit Likelihood</h3>
+          <p style="font-size:12px;color:#64748b;margin:2px 0 0;">Based on the job description you pasted</p>
+        </div>
+        <div style="margin-left:auto;text-align:right;">
+          <div id="azJobFitScore" style="font-size:32px;font-weight:800;color:#16a34a;line-height:1;">--%</div>
+          <div id="azJobFitLabel" style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;"></div>
+        </div>
+      </div>
+      <p id="azJobFitReason" style="font-size:13px;color:#334155;line-height:1.6;margin-top:12px;"></p>
+      <div id="azJobFitBlockers" style="margin-top:8px;"></div>
+    </div>
+
     <!-- Matched vs Missing -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
       <div class="card">
@@ -686,7 +707,10 @@
     <!-- Actions -->
     <div class="actions">
       <button class="btn btn-secondary" onclick="analyzerGoToStep(1)">← Start Over</button>
-      <button class="btn btn-primary" onclick="exportAnalysisReport()">📄 Export Report</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" onclick="exportAnalysisReport()">📄 Export</button>
+        <button class="btn btn-primary" id="azSaveReportBtn" onclick="saveAnalysisReport()">💾 Save to Profile</button>
+      </div>
     </div>
   </div>
 

@@ -156,6 +156,7 @@ async function upsertProfile(userId, profile) {
     social:     profile.social     || { linkedin: '', github: '', portfolio: '' },
     role:       profile.role     || 'scholar',
     provider:   profile.provider || 'local',
+    analyzer_reports: profile.analyzerReports || [],
     created_at: profile.createdAt || new Date().toISOString(),
     updated_at: new Date().toISOString()
   };
@@ -184,6 +185,7 @@ function rowToProfile(row) {
     social:     row.social     || { linkedin: '', github: '', portfolio: '' },
     role:       row.role,
     provider:   row.provider,
+    analyzerReports: row.analyzer_reports || [],
     createdAt:  row.created_at,
     updatedAt:  row.updated_at
   };
