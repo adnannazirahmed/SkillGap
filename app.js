@@ -2,6 +2,79 @@
 // SkillGap Analyzer – Universal App JS
 // ══════════════════════════════════════
 
+// ── App Dialog & Toast (replaces native confirm/alert) ──
+// showAppToast: non-blocking notification, auto-dismisses.
+// showAppConfirm: returns Promise<boolean>; callers must await.
+// window.alert is overridden to use showAppToast (alert has no return value).
+// window.confirm is NOT overridden — it's synchronous and async modals can't
+// emulate that. All callers have been migrated to await showAppConfirm().
+var _appToastTimer = null;
+function showAppToast(msg, type) {
+  type = type || 'info';
+  var el = document.getElementById('appToast');
+  var msgEl = document.getElementById('appToastMsg');
+  var iconEl = document.getElementById('appToastIcon');
+  if (!el || !msgEl) { console.log('[' + type + '] ' + msg); return; }
+  msgEl.textContent = String(msg);
+  el.className = 'app-toast app-toast-' + type;
+  el.style.display = 'flex';
+  if (iconEl) iconEl.textContent = type === 'error' ? '!' : type === 'success' ? '✓' : type === 'warn' ? '!' : 'i';
+  if (_appToastTimer) clearTimeout(_appToastTimer);
+  var ttl = (type === 'error' || (msg && String(msg).length > 80)) ? 5500 : 3500;
+  _appToastTimer = setTimeout(function() { el.style.display = 'none'; }, ttl);
+}
+function dismissAppToast() {
+  var el = document.getElementById('appToast');
+  if (el) el.style.display = 'none';
+  if (_appToastTimer) { clearTimeout(_appToastTimer); _appToastTimer = null; }
+}
+function showAppConfirm(message, opts) {
+  opts = opts || {};
+  return new Promise(function(resolve) {
+    var modal = document.getElementById('appDialog');
+    var titleEl = document.getElementById('appDialogTitle');
+    var msgEl = document.getElementById('appDialogMessage');
+    var iconEl = document.getElementById('appDialogIcon');
+    var cancelBtn = document.getElementById('appDialogCancel');
+    var okBtn = document.getElementById('appDialogOk');
+    if (!modal) { resolve(window.confirm(message)); return; } // SSR / missing markup fallback
+
+    titleEl.textContent = opts.title || 'Confirm';
+    msgEl.textContent = String(message);
+    iconEl.textContent = opts.danger ? '!' : opts.success ? '✓' : '?';
+    iconEl.className = 'app-dialog-icon' + (opts.danger ? ' danger' : opts.success ? ' success' : '');
+    cancelBtn.textContent = opts.cancelLabel || 'Cancel';
+    okBtn.textContent = opts.okLabel || 'OK';
+    okBtn.className = 'btn ' + (opts.danger ? 'btn-danger' : 'btn-primary');
+    cancelBtn.style.display = opts.alertOnly ? 'none' : '';
+    modal.style.display = 'flex';
+    setTimeout(function() { okBtn.focus(); }, 50);
+
+    function cleanup(result) {
+      modal.style.display = 'none';
+      okBtn.onclick = null;
+      cancelBtn.onclick = null;
+      modal.onclick = null;
+      document.removeEventListener('keydown', escHandler);
+      resolve(result);
+    }
+    function escHandler(e) {
+      if (e.key === 'Escape') cleanup(false);
+      else if (e.key === 'Enter') cleanup(true);
+    }
+    okBtn.onclick = function() { cleanup(true); };
+    cancelBtn.onclick = function() { cleanup(false); };
+    modal.onclick = function(e) { if (e.target === modal) cleanup(false); };
+    document.addEventListener('keydown', escHandler);
+  });
+}
+// Override native alert. We can't override confirm — synchronous return required.
+window.alert = function(msg) {
+  var s = String(msg || '');
+  var type = /(fail|error|cannot|invalid|denied)/i.test(s) ? 'error' : 'info';
+  showAppToast(s, type);
+};
+
 function parseStoredJson(raw, fallback) {
   if (!raw) return fallback;
   try {
@@ -882,7 +955,7 @@ async function viewSavedReport(reportId) {
 }
 
 async function deleteSavedReport(reportId) {
-  if (!confirm('Delete this saved report?')) return;
+  if (!await showAppConfirm('Delete this saved report? This cannot be undone.', { title: 'Delete report', okLabel: 'Delete', danger: true })) return;
   try {
     var res = await fetch('/api/analyzer/reports/' + encodeURIComponent(reportId), {
       method: 'DELETE',
@@ -3127,7 +3200,7 @@ async function profileEditSkill(idx) {
 
 // ── Profile: Delete Skill ──
 async function profileDeleteSkill(idx) {
-  if (!confirm('Remove this skill from your profile?')) return;
+  if (!await showAppConfirm('Remove this skill from your profile?', { title: 'Remove skill', okLabel: 'Remove', danger: true })) return;
   var profileData = await fetchProfileRecord();
   var skills = Array.isArray(profileData.skills) ? profileData.skills.slice() : [];
   skills.splice(idx, 1);
@@ -3244,7 +3317,7 @@ async function profileEditExperience(idx) {
 }
 
 async function profileDeleteExperience(idx) {
-  if (!confirm('Remove this experience entry?')) return;
+  if (!await showAppConfirm('Remove this experience entry?', { title: 'Remove experience', okLabel: 'Remove', danger: true })) return;
   var profileData = await fetchProfileRecord();
   var experience = Array.isArray(profileData.experience) ? profileData.experience.slice() : [];
   experience.splice(idx, 1);
@@ -3279,7 +3352,7 @@ async function profileEditEducation(idx) {
 }
 
 async function profileDeleteEducation(idx) {
-  if (!confirm('Remove this education entry?')) return;
+  if (!await showAppConfirm('Remove this education entry?', { title: 'Remove education', okLabel: 'Remove', danger: true })) return;
   var profileData = await fetchProfileRecord();
   var education = Array.isArray(profileData.education) ? profileData.education.slice() : [];
   education.splice(idx, 1);
@@ -3732,7 +3805,7 @@ function toggleRoadmapTopic(topic) {
   state[topic] = !state[topic];
   roadmapSetTopicState(currentRoadmapSkill, state);
   // Re-render the whole roadmap so node circles, banner %, connectors update
-  loadRoadmap(currentRoadmapSkill);
+  loadRoadmap(currentRoadmapSkill, { preserveOpenIdx: openRoadmapIdx });
 }
 function roadmapMarkNode(nodeIdx, done) {
   if (!currentRoadmapSkill) return;
@@ -3743,13 +3816,13 @@ function roadmapMarkNode(nodeIdx, done) {
     if (done) state[t] = true; else delete state[t];
   });
   roadmapSetTopicState(currentRoadmapSkill, state);
-  loadRoadmap(currentRoadmapSkill);
+  loadRoadmap(currentRoadmapSkill, { preserveOpenIdx: openRoadmapIdx });
 }
-function roadmapResetSkill() {
+async function roadmapResetSkill() {
   if (!currentRoadmapSkill) return;
-  if (!confirm('Reset all topic progress for ' + currentRoadmapSkill + '?')) return;
+  if (!await showAppConfirm('Reset all topic progress for ' + currentRoadmapSkill + '? Your tick marks will be cleared.', { title: 'Reset progress', okLabel: 'Reset', danger: true })) return;
   roadmapSetTopicState(currentRoadmapSkill, {});
-  loadRoadmap(currentRoadmapSkill);
+  loadRoadmap(currentRoadmapSkill, { preserveOpenIdx: openRoadmapIdx });
 }
 function roadmapMarkSkillComplete() {
   if (!currentRoadmapSkill) return;
@@ -3760,7 +3833,7 @@ function roadmapMarkSkillComplete() {
     (node.topics || []).forEach(function(t) { state[t] = true; });
   });
   roadmapSetTopicState(currentRoadmapSkill, state);
-  loadRoadmap(currentRoadmapSkill);
+  loadRoadmap(currentRoadmapSkill, { preserveOpenIdx: openRoadmapIdx });
 }
 
 function initRoadmap() {
@@ -3786,7 +3859,9 @@ function initRoadmap() {
 
 var openRoadmapIdx = null;
 
-function loadRoadmap(skill) {
+function loadRoadmap(skill, opts) {
+  opts = opts || {};
+  var preservedIdx = (opts.preserveOpenIdx !== undefined && opts.preserveOpenIdx !== null) ? opts.preserveOpenIdx : null;
   var data = ROADMAP_DATA[skill];
   var banner = document.getElementById('roadmapBanner');
   var timeline = document.getElementById('roadmapTimeline');
@@ -3919,8 +3994,14 @@ function loadRoadmap(skill) {
     timeline.appendChild(row);
   });
 
-  // Scroll to current node
-  setTimeout(function() { scrollToCurrentNode(); }, 200);
+  // Re-open the previously open detail card (e.g. after a topic toggle)
+  if (preservedIdx !== null && data.nodes[preservedIdx]) {
+    var psStatus = nodeCompleted[preservedIdx] ? 'completed' : preservedIdx === currentIndex ? 'current' : 'available';
+    toggleRoadmapDetail(skill, preservedIdx, psStatus, { noScroll: true });
+  } else {
+    // First-time render: scroll to current node
+    setTimeout(function() { scrollToCurrentNode(); }, 200);
+  }
 }
 
 function scrollToCurrentNode() {
@@ -3931,7 +4012,8 @@ function scrollToCurrentNode() {
   }
 }
 
-function toggleRoadmapDetail(skill, idx, status) {
+function toggleRoadmapDetail(skill, idx, status, opts) {
+  opts = opts || {};
   var data = ROADMAP_DATA[skill];
   var node = data.nodes[idx];
   var row = document.querySelector('.roadmap-row[data-node-idx="' + idx + '"]');
@@ -4013,8 +4095,10 @@ function toggleRoadmapDetail(skill, idx, status) {
   targetSide.innerHTML = '';
   targetSide.appendChild(card);
 
-  // Smooth scroll to the row
-  row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // Smooth scroll to the row (skipped when re-opening after a topic toggle)
+  if (!opts.noScroll) {
+    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 }
 
 function closeRoadmapDetail() {

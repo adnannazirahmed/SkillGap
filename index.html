@@ -1217,6 +1217,28 @@
   </div>
 </div>
 
+<!-- App Dialog (replaces native confirm/alert when blocking is needed) -->
+<div id="appDialog" class="app-dialog-overlay" style="display:none;" role="dialog" aria-modal="true">
+  <div class="app-dialog">
+    <div class="app-dialog-icon" id="appDialogIcon">?</div>
+    <div class="app-dialog-body">
+      <div class="app-dialog-title" id="appDialogTitle">Confirm</div>
+      <div class="app-dialog-message" id="appDialogMessage"></div>
+    </div>
+    <div class="app-dialog-actions">
+      <button class="btn btn-secondary" id="appDialogCancel">Cancel</button>
+      <button class="btn btn-primary" id="appDialogOk">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- App Toast (non-blocking notifications, replaces alert()) -->
+<div id="appToast" class="app-toast" style="display:none;" role="status" aria-live="polite">
+  <span class="app-toast-icon" id="appToastIcon">i</span>
+  <span class="app-toast-msg" id="appToastMsg"></span>
+  <button class="app-toast-close" onclick="dismissAppToast()" aria-label="Dismiss">&times;</button>
+</div>
+
 <script src="app.js"></script>
 </body>
 </html>
