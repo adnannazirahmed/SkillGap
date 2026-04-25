@@ -2597,13 +2597,15 @@ app.post('/api/analyzer/save-report', requireAuth, async (req, res) => {
     const profile = normalizeProfile(await db.getProfile(userId), userId);
     const reports = Array.isArray(profile.analyzerReports) ? profile.analyzerReports.slice() : [];
     const meta = report._meta || {};
+    const fullJd = meta.jobDescription ? String(meta.jobDescription).slice(0, 4000) : '';
     const slim = {
       id: 'rpt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
       role: meta.role || '',
       region: meta.region || '',
       date: meta.date || new Date().toISOString(),
-      hasJobDescription: !!meta.jobDescription,
-      jobDescriptionPreview: meta.jobDescription ? String(meta.jobDescription).slice(0, 200) : '',
+      hasJobDescription: !!fullJd,
+      jobDescription: fullJd,
+      jobDescriptionPreview: fullJd ? fullJd.slice(0, 200) : '',
       matchScore: report.matchScore || 0,
       jobFit: report.jobFit || null,
       summary: report.summary || '',
@@ -3117,6 +3119,13 @@ async function authorizeChatAccess(bookingId, userId) {
     const u = (userId || '').toLowerCase();
     if (u !== inquiry.coachId && u !== inquiry.learnerId) {
       return { ok: false, status: 403, error: 'Access denied' };
+    }
+    // The "coach" side of an inquiry must be a registered, active coach.
+    // Without this check, the inquiry channel becomes a backdoor DM where any
+    // logged-in user could spam any other email by claiming they're a coach.
+    const coach = await db.getCoach(inquiry.coachId);
+    if (!coach || coach.active === false) {
+      return { ok: false, status: 404, error: 'This coach is not available for messages.' };
     }
     return { ok: true, isInquiry: true, inquiry };
   }

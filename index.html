@@ -894,6 +894,10 @@
       <a class="roadmap-continue-btn" id="roadmapContinueBtn" onclick="scrollToCurrentNode()">
         Continue Learning <span>→</span>
       </a>
+      <div class="roadmap-banner-actions">
+        <button class="roadmap-banner-btn" onclick="roadmapMarkSkillComplete()">Mark all complete</button>
+        <button class="roadmap-banner-btn roadmap-banner-btn-danger" onclick="roadmapResetSkill()">Reset progress</button>
+      </div>
     </div>
     <div class="roadmap-banner-pct" id="roadmapBannerPct">0%</div>
   </div>
@@ -916,7 +920,7 @@
   <div class="roadmap-empty" id="roadmapEmpty">
     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
     <h3>Choose a skill to see your roadmap</h3>
-    <p>Each roadmap has 8-12 milestones from basics to mastery. Complete assessments to unlock stages.</p>
+    <p>Each roadmap has 8-12 milestones from basics to mastery. Tick off topics as you finish them — the progress bar tracks what you've actually completed.</p>
   </div>
 
   <div class="footer">&copy; 2026 SkillGap Analyzer</div>

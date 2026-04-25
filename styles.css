@@ -902,6 +902,7 @@ body.dark-mode .quit-modal p { color: #94a3b8; }
 .roadmap-detail-card .rm-detail-status.completed { background: #dcfce7; color: #16a34a; }
 .roadmap-detail-card .rm-detail-status.current { background: #ede9fe; color: #4f46e5; }
 .roadmap-detail-card .rm-detail-status.locked { background: #f1f5f9; color: #94a3b8; }
+.roadmap-detail-card .rm-detail-status.available { background: #f1f5f9; color: #64748b; }
 
 /* Checklist topics */
 .rm-checklist { list-style: none; padding: 0; margin: 0 0 12px; }
@@ -924,8 +925,31 @@ body.dark-mode .quit-modal p { color: #94a3b8; }
   font-size: 10px;
 }
 .rm-check-icon.checked { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+.rm-check-icon.unchecked { background: #fff; border-color: #cbd5e1; }
 .rm-check-icon.locked-check { background: #f8fafc; border-color: #e2e8f0; }
 .rm-check-icon.current-check { background: #eef2ff; border-color: #4f46e5; }
+
+/* Clickable topic rows */
+.rm-checklist li.rm-topic-row { cursor: pointer; user-select: none; padding: 8px 6px; border-radius: 6px; transition: background 0.12s; }
+.rm-checklist li.rm-topic-row:hover { background: #f8fafc; }
+.rm-checklist li.rm-topic-row:hover .rm-check-icon.unchecked { border-color: #4f46e5; }
+body.dark-mode .rm-checklist li.rm-topic-row:hover { background: rgba(99, 102, 241, 0.08); }
+body.dark-mode .rm-check-icon.unchecked { background: transparent; border-color: #475569; }
+
+/* Per-node "Mark stage complete" / "Reset" controls */
+.rm-node-controls { margin: 4px 0 12px; display: flex; gap: 6px; }
+.rm-node-btn { font-size: 11px !important; padding: 4px 10px !important; }
+
+/* Banner action buttons (Mark all complete / Reset progress) */
+.roadmap-banner-actions { display: flex; gap: 8px; margin-top: 10px; }
+.roadmap-banner-btn {
+  font-size: 11px; font-weight: 600; color: #fff;
+  background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: background 0.15s;
+}
+.roadmap-banner-btn:hover { background: rgba(255, 255, 255, 0.22); }
+.roadmap-banner-btn-danger { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.35); }
+.roadmap-banner-btn-danger:hover { background: rgba(239, 68, 68, 0.35); }
 
 /* Resources in detail card */
 .rm-resources { margin-top: 8px; }

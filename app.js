@@ -869,7 +869,7 @@ async function viewSavedReport(reportId) {
       salaryInsight: rep.salaryInsight,
       competitiveness: rep.competitiveness,
       jobFit: rep.jobFit,
-      _meta: { role: rep.role, region: rep.region, date: rep.date, jobDescription: rep.jobDescriptionPreview || '' }
+      _meta: { role: rep.role, region: rep.region, date: rep.date, jobDescription: rep.jobDescription || rep.jobDescriptionPreview || '' }
     };
     navigateTo('analyzer');
     setTimeout(function() {
@@ -3706,6 +3706,63 @@ var ROADMAP_DATA = {
 
 var currentRoadmapSkill = null;
 
+// ── Roadmap user-controlled topic completion ──
+// localStorage shape: sgaRoadmapTopics[skill] = { "Topic Name": true, ... }
+function roadmapGetAllTopicState() {
+  try { return JSON.parse(localStorage.getItem('sgaRoadmapTopics') || '{}'); }
+  catch (e) { return {}; }
+}
+function roadmapGetTopicState(skill) {
+  var all = roadmapGetAllTopicState();
+  return all[skill] || {};
+}
+function roadmapSetTopicState(skill, state) {
+  var all = roadmapGetAllTopicState();
+  all[skill] = state;
+  localStorage.setItem('sgaRoadmapTopics', JSON.stringify(all));
+}
+function roadmapNodeIsCompleted(skill, node) {
+  var state = roadmapGetTopicState(skill);
+  if (!node.topics || node.topics.length === 0) return false;
+  return node.topics.every(function(t) { return !!state[t]; });
+}
+function toggleRoadmapTopic(topic) {
+  if (!currentRoadmapSkill) return;
+  var state = roadmapGetTopicState(currentRoadmapSkill);
+  state[topic] = !state[topic];
+  roadmapSetTopicState(currentRoadmapSkill, state);
+  // Re-render the whole roadmap so node circles, banner %, connectors update
+  loadRoadmap(currentRoadmapSkill);
+}
+function roadmapMarkNode(nodeIdx, done) {
+  if (!currentRoadmapSkill) return;
+  var data = ROADMAP_DATA[currentRoadmapSkill];
+  if (!data || !data.nodes[nodeIdx]) return;
+  var state = roadmapGetTopicState(currentRoadmapSkill);
+  data.nodes[nodeIdx].topics.forEach(function(t) {
+    if (done) state[t] = true; else delete state[t];
+  });
+  roadmapSetTopicState(currentRoadmapSkill, state);
+  loadRoadmap(currentRoadmapSkill);
+}
+function roadmapResetSkill() {
+  if (!currentRoadmapSkill) return;
+  if (!confirm('Reset all topic progress for ' + currentRoadmapSkill + '?')) return;
+  roadmapSetTopicState(currentRoadmapSkill, {});
+  loadRoadmap(currentRoadmapSkill);
+}
+function roadmapMarkSkillComplete() {
+  if (!currentRoadmapSkill) return;
+  var data = ROADMAP_DATA[currentRoadmapSkill];
+  if (!data) return;
+  var state = {};
+  data.nodes.forEach(function(node) {
+    (node.topics || []).forEach(function(t) { state[t] = true; });
+  });
+  roadmapSetTopicState(currentRoadmapSkill, state);
+  loadRoadmap(currentRoadmapSkill);
+}
+
 function initRoadmap() {
   var select = document.getElementById('roadmapSkillSelect');
   if (!select) return;
@@ -3747,15 +3804,18 @@ function loadRoadmap(skill) {
   openRoadmapIdx = null;
   empty.style.display = 'none';
 
-  // Get user's score for this skill
-  var scores = JSON.parse(localStorage.getItem('sgaSkillScores') || '{}');
-  var skillScore = scores[skill] ? scores[skill].score : 0;
+  // User-controlled per-topic completion. Stored in localStorage as
+  // sgaRoadmapTopics[skill] = { "Topic Name": true, ... }. A node is
+  // "completed" when ALL its topics are checked, "current" when it's the
+  // first non-completed node, "available" otherwise. No more locking — the
+  // user can read ahead.
   var totalNodes = data.nodes.length;
-
-  // Calculate how many nodes are completed based on score
-  var completedCount = Math.floor((skillScore / 10) * totalNodes);
-  var currentIndex = Math.min(completedCount, totalNodes - 1);
-  var progressPct = Math.round((completedCount / totalNodes) * 100);
+  var nodeCompleted = data.nodes.map(function(node) { return roadmapNodeIsCompleted(skill, node); });
+  var completedCount = nodeCompleted.filter(Boolean).length;
+  // currentIndex = first non-completed node (or last if all complete)
+  var currentIndex = nodeCompleted.indexOf(false);
+  if (currentIndex === -1) currentIndex = totalNodes - 1;
+  var progressPct = totalNodes > 0 ? Math.round((completedCount / totalNodes) * 100) : 0;
 
   // Banner
   banner.style.display = 'flex';
@@ -3775,12 +3835,12 @@ function loadRoadmap(skill) {
   if (svgDefs) timeline.appendChild(svgDefs);
 
   data.nodes.forEach(function(node, idx) {
-    var status = idx < completedCount ? 'completed' : idx === currentIndex ? 'current' : 'locked';
+    var status = nodeCompleted[idx] ? 'completed' : idx === currentIndex ? 'current' : 'available';
     var alignClass = idx % 2 === 0 ? 'align-right' : 'align-left';
 
-    // Curved connector (before each node except first)
+    // Curved connector — completed if both this and previous node are done
     if (idx > 0) {
-      var connStatus = idx <= completedCount ? 'completed' : idx === completedCount ? 'active' : '';
+      var connStatus = nodeCompleted[idx] && nodeCompleted[idx - 1] ? 'completed' : (idx === currentIndex ? 'active' : '');
       var curveDiv = document.createElement('div');
       curveDiv.className = 'roadmap-curve-connector ' + connStatus;
 
@@ -3837,8 +3897,6 @@ function loadRoadmap(skill) {
     circle.className = 'roadmap-node-circle';
     if (status === 'completed') {
       circle.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>';
-    } else if (status === 'locked') {
-      circle.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
     } else {
       circle.textContent = node.icon;
     }
@@ -3896,51 +3954,54 @@ function toggleRoadmapDetail(skill, idx, status) {
   card.className = 'roadmap-detail-card';
 
   // Header
-  var statusLabel = status === 'completed' ? 'Completed' : status === 'current' ? 'In Progress' : 'Locked';
-  var header = '<h4>' + node.title + '</h4>' +
-    '<div class="rm-detail-sub">' + node.sub + '</div>' +
+  var statusLabel = status === 'completed' ? 'Completed' : status === 'current' ? 'Up Next' : 'Available';
+  var header = '<h4>' + escapeHtml(node.title) + '</h4>' +
+    '<div class="rm-detail-sub">' + escapeHtml(node.sub) + '</div>' +
     '<span class="rm-detail-status ' + status + '">' + statusLabel + '</span>';
 
-  // Checklist
+  // Checklist — every topic is now a real, clickable checkbox the user toggles.
+  var topicState = roadmapGetTopicState(skill);
+  var allCheckedHere = node.topics.every(function(t) { return !!topicState[t]; });
+  var anyCheckedHere = node.topics.some(function(t) { return !!topicState[t]; });
   var checklist = '<ul class="rm-checklist">';
   node.topics.forEach(function(topic) {
-    var checkClass = status === 'completed' ? 'checked' : status === 'current' ? 'current-check' : 'locked-check';
-    var checkIcon = status === 'completed' ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>' : '';
-    checklist += '<li><span class="rm-check-icon ' + checkClass + '">' + checkIcon + '</span>' + topic + '</li>';
+    var checked = !!topicState[topic];
+    var checkClass = checked ? 'checked' : 'unchecked';
+    var checkIcon = checked ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>' : '';
+    var safeTopicAttr = topic.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    checklist += '<li class="rm-topic-row" onclick="toggleRoadmapTopic(\'' + safeTopicAttr.replace(/'/g, "\\'") + '\')" role="button" tabindex="0">' +
+      '<span class="rm-check-icon ' + checkClass + '">' + checkIcon + '</span>' + escapeHtml(topic) + '</li>';
   });
   checklist += '</ul>';
 
-  // Build the resource list. We prepend a topic-targeted YouTube search and the
-  // recommended creator channels for this skill — these are guaranteed-stable
-  // links (search URLs always work, channel handles redirect even if renamed).
-  // The original resources (often docs/courses) come last as supplementary.
-  var resources = '';
-  if (status !== 'locked') {
-    var ytItems = [];
-    var searchUrl = buildYouTubeSearchUrl(skill, node.title);
-    ytItems.push('<a href="' + searchUrl + '" target="_blank" rel="noopener" class="rm-yt-link">▶ YouTube: tutorials for "' + escapeHtml(node.title) + '" ↗</a>');
-    var creators = SKILL_YOUTUBE_CREATORS[skill] || [];
-    creators.forEach(function(c) {
-      ytItems.push('<a href="' + c.url + '" target="_blank" rel="noopener" class="rm-yt-link">📺 ' + escapeHtml(c.name) + ' channel ↗</a>');
-    });
-    var docItems = (node.resources || []).map(function(r) {
-      return '<a href="' + r.url + '" target="_blank" rel="noopener">' + r.type + ': ' + escapeHtml(r.title) + ' ↗</a>';
-    });
-    if (ytItems.length > 0 || docItems.length > 0) {
-      resources = '<div class="rm-resources">' + ytItems.concat(docItems).join('') + '</div>';
-    }
+  // Per-node convenience controls
+  var nodeControls = '<div class="rm-node-controls">';
+  if (allCheckedHere) {
+    nodeControls += '<button class="btn btn-secondary rm-node-btn" onclick="roadmapMarkNode(' + idx + ', false)">Reset this stage</button>';
+  } else {
+    nodeControls += '<button class="btn btn-secondary rm-node-btn" onclick="roadmapMarkNode(' + idx + ', true)">' + (anyCheckedHere ? 'Mark stage complete' : 'Mark all done') + '</button>';
   }
+  nodeControls += '</div>';
 
-  // CTA — point at the targeted YouTube search so the user always gets a working link
-  var cta = '';
-  if (status === 'current' || status === 'completed') {
-    var ctaUrl = buildYouTubeSearchUrl(skill, node.title);
-    cta = '<div class="rm-detail-cta"><a href="' + ctaUrl + '" target="_blank" rel="noopener" class="btn btn-primary rm-learn-btn">▶ Watch tutorials for "' + escapeHtml(node.title) + '" ↗</a></div>';
-  } else if (status === 'locked') {
-    cta = '<div class="rm-detail-cta"><p class="rm-locked-hint">Complete the assessment to unlock this stage.</p></div>';
-  }
+  // Build the resource list. YouTube search + creator channels are stable;
+  // existing doc/course links follow as supplementary references.
+  var ytItems = [];
+  var searchUrl = buildYouTubeSearchUrl(skill, node.title);
+  ytItems.push('<a href="' + searchUrl + '" target="_blank" rel="noopener" class="rm-yt-link">▶ YouTube: tutorials for "' + escapeHtml(node.title) + '" ↗</a>');
+  var creators = SKILL_YOUTUBE_CREATORS[skill] || [];
+  creators.forEach(function(c) {
+    ytItems.push('<a href="' + c.url + '" target="_blank" rel="noopener" class="rm-yt-link">📺 ' + escapeHtml(c.name) + ' channel ↗</a>');
+  });
+  var docItems = (node.resources || []).map(function(r) {
+    return '<a href="' + r.url + '" target="_blank" rel="noopener">' + escapeHtml(r.type) + ': ' + escapeHtml(r.title) + ' ↗</a>';
+  });
+  var resources = '<div class="rm-resources">' + ytItems.concat(docItems).join('') + '</div>';
 
-  card.innerHTML = header + checklist + resources + cta;
+  // CTA — always points at the targeted YouTube search
+  var ctaUrl = buildYouTubeSearchUrl(skill, node.title);
+  var cta = '<div class="rm-detail-cta"><a href="' + ctaUrl + '" target="_blank" rel="noopener" class="btn btn-primary rm-learn-btn">▶ Watch tutorials for "' + escapeHtml(node.title) + '" ↗</a></div>';
+
+  card.innerHTML = header + checklist + nodeControls + resources + cta;
 
   // Insert card into the correct side
   var targetSide;
@@ -4174,6 +4235,9 @@ function renderPCCoachCard(coach) {
   }
 
   var safeId = coach.userId.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  // JS-escape the name BEFORE injecting into onclick — escHtml does not escape
+  // apostrophes, which would break the JS string literal for names like O'Brien.
+  var safeNameJs = (coach.name || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
   return '<div class="pc-coach-card">' +
     '<div class="pc-coach-top">' +
       '<div class="pc-coach-avatar">' + coach.avatar + '</div>' +
@@ -4192,7 +4256,7 @@ function renderPCCoachCard(coach) {
     '</div>' +
     '<div class="pc-coach-actions">' +
       '<button class="btn btn-secondary" onclick="openCoachProfile(\'' + safeId + '\')">View Profile</button>' +
-      '<button class="btn btn-secondary" onclick="openInquiryChat(\'' + safeId + '\', \'' + escHtml(coach.name) + '\')">💬 Message</button>' +
+      '<button class="btn btn-secondary" onclick="openInquiryChat(\'' + safeId + '\', \'' + safeNameJs + '\')">💬 Message</button>' +
       '<button class="btn btn-primary" onclick="openBookingModal(\'' + safeId + '\')">Book</button>' +
     '</div>' +
   '</div>';
