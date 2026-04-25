@@ -3097,15 +3097,43 @@ app.get('/api/peer-coaching/analytics', async (req, res) => {
 });
 
 // ── Peer Chat ──
+// Pre-booking inquiry threads use a synthetic bookingId of the form
+// "inquiry__<coachId>__<learnerId>". They reuse chat_messages without needing
+// a real booking row. parseInquiryBookingId returns null for normal booking ids.
+function parseInquiryBookingId(bookingId) {
+  if (typeof bookingId !== 'string' || !bookingId.startsWith('inquiry__')) return null;
+  const rest = bookingId.slice('inquiry__'.length);
+  const sep = rest.indexOf('__');
+  if (sep < 0) return null;
+  const coachId = rest.slice(0, sep);
+  const learnerId = rest.slice(sep + 2);
+  if (!coachId || !learnerId) return null;
+  return { coachId: coachId.toLowerCase(), learnerId: learnerId.toLowerCase() };
+}
+
+async function authorizeChatAccess(bookingId, userId) {
+  const inquiry = parseInquiryBookingId(bookingId);
+  if (inquiry) {
+    const u = (userId || '').toLowerCase();
+    if (u !== inquiry.coachId && u !== inquiry.learnerId) {
+      return { ok: false, status: 403, error: 'Access denied' };
+    }
+    return { ok: true, isInquiry: true, inquiry };
+  }
+  const booking = await db.getBookingById(bookingId);
+  if (!booking) return { ok: false, status: 404, error: 'Booking not found' };
+  if (booking.coachUserId !== userId && booking.learnerUserId !== userId) {
+    return { ok: false, status: 403, error: 'Access denied' };
+  }
+  return { ok: true, isInquiry: false, booking };
+}
+
 app.get('/api/chat/:bookingId', requireAuth, async (req, res) => {
   try {
     const { bookingId } = req.params;
     const userId = req.authenticatedUserId;
-    const booking = await db.getBookingById(bookingId);
-    if (!booking) return res.status(404).json({ error: 'Booking not found' });
-    if (booking.coachUserId !== userId && booking.learnerUserId !== userId) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
+    const auth = await authorizeChatAccess(bookingId, userId);
+    if (!auth.ok) return res.status(auth.status).json({ error: auth.error });
     const messages = await db.getChatMessages(bookingId);
     res.json({ messages });
   } catch (err) {
@@ -3120,11 +3148,8 @@ app.post('/api/chat/:bookingId', requireAuth, async (req, res) => {
     const userId = req.authenticatedUserId;
     const { content } = req.body;
     if (!content || !content.trim()) return res.status(400).json({ error: 'Message cannot be empty' });
-    const booking = await db.getBookingById(bookingId);
-    if (!booking) return res.status(404).json({ error: 'Booking not found' });
-    if (booking.coachUserId !== userId && booking.learnerUserId !== userId) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
+    const auth = await authorizeChatAccess(bookingId, userId);
+    if (!auth.ok) return res.status(auth.status).json({ error: auth.error });
     const message = await db.insertChatMessage(bookingId, userId, content.trim());
     res.json({ message });
   } catch (err) {
@@ -3137,8 +3162,9 @@ app.post('/api/chat/:bookingId', requireAuth, async (req, res) => {
 app.get('/api/chat/recent', requireAuth, async (req, res) => {
   try {
     const userId = req.authenticatedUserId;
-    const [allBookings, coaches, profiles] = await Promise.all([
-      db.getAllBookings(), db.getAllCoaches(), db.getAllProfiles()
+    const userIdLower = (userId || '').toLowerCase();
+    const [allBookings, coaches, profiles, inquiryMessages] = await Promise.all([
+      db.getAllBookings(), db.getAllCoaches(), db.getAllProfiles(), db.getAllInquiryMessages()
     ]);
     const userBookings = allBookings.filter(b => b.coachUserId === userId || b.learnerUserId === userId);
     const items = [];
@@ -3153,12 +3179,42 @@ app.get('/api/chat/recent', requireAuth, async (req, res) => {
       items.push({
         bookingId: booking.id,
         skill: booking.skill,
+        kind: 'session',
         lastMessageAt: last.createdAt,
         lastSenderId: last.senderId,
         preview: last.content.slice(0, 80),
         otherPersonName: otherName
       });
     }
+
+    // Surface inquiry threads (pre-booking chats) too
+    const inquiryThreads = new Map();
+    for (const m of inquiryMessages) {
+      const parsed = parseInquiryBookingId(m.bookingId);
+      if (!parsed) continue;
+      if (parsed.coachId !== userIdLower && parsed.learnerId !== userIdLower) continue;
+      // keep latest message per thread
+      const prev = inquiryThreads.get(m.bookingId);
+      if (!prev || new Date(m.createdAt) > new Date(prev.createdAt)) {
+        inquiryThreads.set(m.bookingId, m);
+      }
+    }
+    for (const [bookingId, last] of inquiryThreads) {
+      const parsed = parseInquiryBookingId(bookingId);
+      const isCoach = parsed.coachId === userIdLower;
+      const otherId = isCoach ? parsed.learnerId : parsed.coachId;
+      const otherName = (coaches[otherId]?.name) || (profiles[otherId]?.name) || otherId;
+      items.push({
+        bookingId,
+        skill: 'Inquiry',
+        kind: 'inquiry',
+        lastMessageAt: last.createdAt,
+        lastSenderId: last.senderId,
+        preview: last.content.slice(0, 80),
+        otherPersonName: otherName
+      });
+    }
+
     res.json({ items });
   } catch (err) {
     console.error('GET /api/chat/recent error:', err);

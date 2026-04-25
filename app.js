@@ -3522,6 +3522,39 @@ function timeAgo(isoStr) {
 // ── Roadmap Module
 // ══════════════════════════════════════
 
+// Curated YouTube creators per skill — used to render reliable video links
+// next to each roadmap stage. We prefer channel handles (very stable) plus a
+// topic-targeted YouTube search URL (always works).
+var SKILL_YOUTUBE_CREATORS = {
+  'Python':           [{ name: 'Corey Schafer',         url: 'https://www.youtube.com/@coreyms' },
+                       { name: 'freeCodeCamp',          url: 'https://www.youtube.com/@freecodecamp' }],
+  'JavaScript':       [{ name: 'Web Dev Simplified',    url: 'https://www.youtube.com/@WebDevSimplified' },
+                       { name: 'The Net Ninja',         url: 'https://www.youtube.com/@NetNinja' }],
+  'SQL':              [{ name: 'Alex The Analyst',      url: 'https://www.youtube.com/@AlexTheAnalyst' },
+                       { name: 'freeCodeCamp',          url: 'https://www.youtube.com/@freecodecamp' }],
+  'Machine Learning': [{ name: 'StatQuest (Josh Starmer)', url: 'https://www.youtube.com/@statquest' },
+                       { name: 'Krish Naik',            url: 'https://www.youtube.com/@krishnaik06' },
+                       { name: '3Blue1Brown',           url: 'https://www.youtube.com/@3blue1brown' }],
+  'Data Analysis':    [{ name: 'Alex The Analyst',      url: 'https://www.youtube.com/@AlexTheAnalyst' },
+                       { name: 'Ken Jee',               url: 'https://www.youtube.com/@KenJee_ds' }],
+  'React':            [{ name: 'Web Dev Simplified',    url: 'https://www.youtube.com/@WebDevSimplified' },
+                       { name: 'The Net Ninja',         url: 'https://www.youtube.com/@NetNinja' }],
+  'Excel':            [{ name: 'Leila Gharani',         url: 'https://www.youtube.com/@LeilaGharani' },
+                       { name: 'ExcelIsFun',            url: 'https://www.youtube.com/@excelisfun' }],
+  'Statistics':       [{ name: 'StatQuest (Josh Starmer)', url: 'https://www.youtube.com/@statquest' },
+                       { name: '3Blue1Brown',           url: 'https://www.youtube.com/@3blue1brown' }],
+  'Cloud Computing':  [{ name: 'TechWorld with Nana',   url: 'https://www.youtube.com/@TechWorldwithNana' },
+                       { name: 'AWS (official)',        url: 'https://www.youtube.com/@amazonwebservices' }],
+  'Cybersecurity':    [{ name: 'NetworkChuck',          url: 'https://www.youtube.com/@NetworkChuck' },
+                       { name: 'John Hammond',          url: 'https://www.youtube.com/@_JohnHammond' }]
+};
+
+// Build a topic-specific YouTube search URL — always works, no dead links.
+function buildYouTubeSearchUrl(skill, topic) {
+  var q = encodeURIComponent((skill + ' ' + topic + ' tutorial').trim());
+  return 'https://www.youtube.com/results?search_query=' + q;
+}
+
 var ROADMAP_DATA = {
   'Python': {
     title: 'Python Developer',
@@ -3877,23 +3910,32 @@ function toggleRoadmapDetail(skill, idx, status) {
   });
   checklist += '</ul>';
 
-  // Resources
+  // Build the resource list. We prepend a topic-targeted YouTube search and the
+  // recommended creator channels for this skill — these are guaranteed-stable
+  // links (search URLs always work, channel handles redirect even if renamed).
+  // The original resources (often docs/courses) come last as supplementary.
   var resources = '';
-  if (status !== 'locked' && node.resources && node.resources.length > 0) {
-    resources = '<div class="rm-resources">';
-    node.resources.forEach(function(r) {
-      resources += '<a href="' + r.url + '" target="_blank">' + r.type + ': ' + r.title + ' ↗</a>';
+  if (status !== 'locked') {
+    var ytItems = [];
+    var searchUrl = buildYouTubeSearchUrl(skill, node.title);
+    ytItems.push('<a href="' + searchUrl + '" target="_blank" rel="noopener" class="rm-yt-link">▶ YouTube: tutorials for "' + escapeHtml(node.title) + '" ↗</a>');
+    var creators = SKILL_YOUTUBE_CREATORS[skill] || [];
+    creators.forEach(function(c) {
+      ytItems.push('<a href="' + c.url + '" target="_blank" rel="noopener" class="rm-yt-link">📺 ' + escapeHtml(c.name) + ' channel ↗</a>');
     });
-    resources += '</div>';
+    var docItems = (node.resources || []).map(function(r) {
+      return '<a href="' + r.url + '" target="_blank" rel="noopener">' + r.type + ': ' + escapeHtml(r.title) + ' ↗</a>';
+    });
+    if (ytItems.length > 0 || docItems.length > 0) {
+      resources = '<div class="rm-resources">' + ytItems.concat(docItems).join('') + '</div>';
+    }
   }
 
-  // CTA
+  // CTA — point at the targeted YouTube search so the user always gets a working link
   var cta = '';
   if (status === 'current' || status === 'completed') {
-    var firstResource = node.resources && node.resources.length > 0 ? node.resources[0] : null;
-    if (firstResource) {
-      cta = '<div class="rm-detail-cta"><a href="' + firstResource.url + '" target="_blank" rel="noopener" class="btn btn-primary rm-learn-btn">Learn: ' + escapeHtml(firstResource.title) + ' ↗</a></div>';
-    }
+    var ctaUrl = buildYouTubeSearchUrl(skill, node.title);
+    cta = '<div class="rm-detail-cta"><a href="' + ctaUrl + '" target="_blank" rel="noopener" class="btn btn-primary rm-learn-btn">▶ Watch tutorials for "' + escapeHtml(node.title) + '" ↗</a></div>';
   } else if (status === 'locked') {
     cta = '<div class="rm-detail-cta"><p class="rm-locked-hint">Complete the assessment to unlock this stage.</p></div>';
   }
@@ -4150,7 +4192,8 @@ function renderPCCoachCard(coach) {
     '</div>' +
     '<div class="pc-coach-actions">' +
       '<button class="btn btn-secondary" onclick="openCoachProfile(\'' + safeId + '\')">View Profile</button>' +
-      '<button class="btn btn-primary" onclick="openBookingModal(\'' + safeId + '\')">Book Session</button>' +
+      '<button class="btn btn-secondary" onclick="openInquiryChat(\'' + safeId + '\', \'' + escHtml(coach.name) + '\')">💬 Message</button>' +
+      '<button class="btn btn-primary" onclick="openBookingModal(\'' + safeId + '\')">Book</button>' +
     '</div>' +
   '</div>';
 }
@@ -4191,7 +4234,10 @@ function openCoachProfile(userId) {
 
   document.getElementById('coachProfileBody').innerHTML = html;
   var safeId = userId.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  var safeName = (coach.name || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
   document.getElementById('coachProfileBookBtn').setAttribute('onclick', "closeCoachProfile(); openBookingModal('" + safeId + "')");
+  var msgBtn = document.getElementById('coachProfileMessageBtn');
+  if (msgBtn) msgBtn.setAttribute('onclick', "closeCoachProfile(); openInquiryChat('" + safeId + "', '" + safeName + "')");
   document.getElementById('coachProfileModal').style.display = 'flex';
 }
 
@@ -4350,14 +4396,43 @@ function loadSessions() {
   var user = getActiveUser() || {};
   if (!user.email) return;
 
-  fetch('/api/peer-coaching/bookings?userId=' + encodeURIComponent(user.email))
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
+  Promise.all([
+    fetch('/api/peer-coaching/bookings?userId=' + encodeURIComponent(user.email)).then(function(r) { return r.json(); }),
+    fetch('/api/chat/recent', { credentials: 'include' }).then(function(r) { return r.json(); }).catch(function() { return { items: [] }; })
+  ])
+    .then(function(results) {
+      var data = results[0];
+      var inquiryItems = (results[1].items || []).filter(function(it) { return it.kind === 'inquiry'; });
       var list = document.getElementById('pcSessionsList');
       var countBadge = document.getElementById('pcSessionCount');
 
+      // Render inquiry threads at the top
+      var inquiryHtml = '';
+      if (inquiryItems.length > 0) {
+        inquiryHtml = '<div style="font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 8px;">Pre-booking conversations</div>' +
+          inquiryItems.map(function(it) {
+            var safeName = escHtml(it.otherPersonName || 'Coach');
+            var preview = escHtml(it.preview || '');
+            var when = it.lastMessageAt ? new Date(it.lastMessageAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+            return '<div class="pc-session-card">' +
+              '<div class="pc-session-icon learning">💬</div>' +
+              '<div class="pc-session-info">' +
+                '<div class="pc-session-title">Inquiry — ' + safeName + '</div>' +
+                '<div class="pc-session-meta">' + escHtml(when) + (preview ? ' · "' + preview + '"' : '') + '</div>' +
+              '</div>' +
+              '<span class="pc-session-status pending">inquiry</span>' +
+              '<div class="pc-session-actions"><button class="btn btn-secondary btn-sm" onclick="openChatModal(\'' + it.bookingId.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\', \'' + safeName.replace(/'/g, "\\'") + '\')">💬 Open Chat</button></div>' +
+            '</div>';
+          }).join('') + (data.bookings && data.bookings.length > 0 ? '<div style="font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;">Sessions</div>' : '');
+      }
+
+      if ((!data.bookings || data.bookings.length === 0) && inquiryItems.length === 0) {
+        list.innerHTML = '<div class="pc-empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><h3>No sessions yet</h3><p>Book a coaching session, start a pre-booking conversation, or coach others to see activity here.</p></div>';
+        countBadge.style.display = 'none';
+        return;
+      }
       if (!data.bookings || data.bookings.length === 0) {
-        list.innerHTML = '<div class="pc-empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><h3>No sessions yet</h3><p>Book a coaching session or start coaching others to see your sessions here.</p></div>';
+        list.innerHTML = inquiryHtml;
         countBadge.style.display = 'none';
         return;
       }
@@ -4371,7 +4446,7 @@ function loadSessions() {
         countBadge.style.display = 'none';
       }
 
-      list.innerHTML = data.bookings.map(function(b) {
+      list.innerHTML = inquiryHtml + data.bookings.map(function(b) {
         var isCoach = b.role === 'coach';
         var iconClass = isCoach ? 'coaching' : 'learning';
         var iconEmoji = isCoach ? '🎓' : '📚';
@@ -4505,10 +4580,27 @@ function submitReview() {
 var chatCurrentBookingId = null;
 var chatPollInterval = null;
 
-function openChatModal(bookingId, otherPersonName) {
+// Open a pre-booking inquiry chat with a coach. The synthetic bookingId
+// pattern "inquiry__<coachId>__<learnerId>" lets the existing chat endpoints
+// recognize this as a non-booking thread and skip the booking-row check.
+function openInquiryChat(coachUserId, coachName) {
+  var user = getActiveUser() || {};
+  var learnerId = (user.email || '').toLowerCase().trim();
+  var coachId = (coachUserId || '').toLowerCase().trim();
+  if (!learnerId) { alert('Please log in to message a coach.'); return; }
+  if (learnerId === coachId) { alert('You cannot message yourself.'); return; }
+  var bookingId = 'inquiry__' + coachId + '__' + learnerId;
+  openChatModal(bookingId, coachName, { isInquiry: true });
+}
+
+function openChatModal(bookingId, otherPersonName, opts) {
+  opts = opts || {};
+  var isInquiry = opts.isInquiry || (typeof bookingId === 'string' && bookingId.indexOf('inquiry__') === 0);
   chatCurrentBookingId = bookingId;
-  document.getElementById('chatModalTitle').textContent = 'Chat with ' + otherPersonName;
-  document.getElementById('chatModalSub').textContent = 'Messages are saved to your session';
+  document.getElementById('chatModalTitle').textContent = (isInquiry ? 'Ask ' : 'Chat with ') + otherPersonName;
+  document.getElementById('chatModalSub').textContent = isInquiry
+    ? 'Pre-booking conversation — ask questions before you book a session.'
+    : 'Messages are saved to your session';
   document.getElementById('pcChatModal').style.display = 'flex';
   // Mark as read so notifications clear
   var lastRead = JSON.parse(localStorage.getItem('sgaChatLastRead') || '{}');

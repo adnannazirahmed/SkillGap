@@ -425,6 +425,18 @@ async function insertChatMessage(bookingId, senderId, content) {
   return rowToMessage(data);
 }
 
+// Returns ALL inquiry-thread messages (booking_id like 'inquiry__%').
+// Caller filters to threads where the user is a participant; volume here is small.
+async function getAllInquiryMessages() {
+  const { data, error } = await getClient()
+    .from('chat_messages')
+    .select('*')
+    .like('booking_id', 'inquiry__%')
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+  return (data || []).map(rowToMessage);
+}
+
 function rowToMessage(row) {
   return {
     id:        row.id,
@@ -456,5 +468,6 @@ module.exports = {
   uploadDocument,
   deleteDocument,
   getChatMessages,
-  insertChatMessage
+  insertChatMessage,
+  getAllInquiryMessages
 };

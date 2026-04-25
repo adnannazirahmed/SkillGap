@@ -940,6 +940,19 @@ body.dark-mode .quit-modal p { color: #94a3b8; }
   margin-bottom: 4px;
 }
 .rm-resources a:hover { text-decoration: underline; }
+.rm-resources a.rm-yt-link {
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #fecaca;
+}
+.rm-resources a.rm-yt-link:hover { background: #fee2e2; text-decoration: none; }
+body.dark-mode .rm-resources a.rm-yt-link {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.3);
+}
 
 /* CTA in detail card */
 .rm-detail-cta {
