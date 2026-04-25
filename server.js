@@ -3257,10 +3257,24 @@ app.post('/api/profile/upload-resume', requireAuth, documentUpload.single('resum
       } catch (e) { console.error('DOCX parse error:', e.message); }
     }
 
-    // Upload file to Supabase Storage
+    // Upload file to Supabase Storage. We catch failure here so a missing
+    // bucket / RLS policy / wrong key doesn't prevent the rest of the flow
+    // (AI extraction + profile save) from working. Without this, any storage
+    // hiccup blocked the resume from being recorded at all.
     const docId = Date.now().toString(36);
     const safeFilename = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 40) + ext;
-    const { filePath, publicUrl } = await db.uploadDocument(userId, docId, safeFilename, file.buffer, file.mimetype);
+    let filePath = null;
+    let publicUrl = null;
+    let storageWarning = null;
+    try {
+      const uploaded = await db.uploadDocument(userId, docId, safeFilename, file.buffer, file.mimetype);
+      filePath = uploaded.filePath;
+      publicUrl = uploaded.publicUrl;
+    } catch (storageErr) {
+      console.error('Storage upload failed (continuing without file save):', storageErr.message || storageErr);
+      storageWarning = 'File scanned successfully, but the original could not be saved to storage. ' +
+        'You will not be able to download it later. (Server log has details.)';
+    }
     const doc = {
       id: docId, name: file.originalname, filePath,
       size: file.size, type: ext.slice(1), url: publicUrl,
@@ -3343,7 +3357,7 @@ ${resumeText.slice(0, 5000)}`;
     });
 
     await db.upsertProfile(userId, profile);
-    res.json({ success: true, document: doc, extractedEducation, extractedExperience, extractedSkills });
+    res.json({ success: true, document: doc, extractedEducation, extractedExperience, extractedSkills, storageWarning });
   } catch (err) {
     console.error('Resume upload error:', err.message);
     res.status(500).json({ error: 'Failed to upload resume: ' + err.message });

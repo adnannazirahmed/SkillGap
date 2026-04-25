@@ -3030,10 +3030,16 @@ async function uploadResumeFile(file) {
     var edu = data.extractedEducation || [];
     var exp = data.extractedExperience || [];
     var skills = data.extractedSkills || [];
-    if (edu.length > 0 || exp.length > 0 || skills.length > 0) {
-      showResumeExtractedPreview(edu, exp, skills);
+    // Refresh profile UI BEFORE opening the preview modal so the strength card
+    // flips to "Resume Scanned" no matter how the user closes the preview.
+    initProfile();
+    if (data.storageWarning) {
+      showAppToast(data.storageWarning, 'warn');
     } else {
-      initProfile();
+      showAppToast('Resume uploaded.', 'success');
+    }
+    if (edu.length > 0 || exp.length > 0 || skills.length > 0) {
+      showResumeExtractedPreview(edu, exp, skills, data.storageWarning);
     }
   } catch (err) {
     console.error('Resume upload error:', err);
@@ -3043,8 +3049,13 @@ async function uploadResumeFile(file) {
   }
 }
 
-function showResumeExtractedPreview(education, experience, skills) {
+function showResumeExtractedPreview(education, experience, skills, storageWarning) {
   var html = '<p style="color:#64748b;font-size:13px;margin:0 0 16px;">The following was extracted from your resume and <strong>saved to your profile</strong>. You can edit any entry manually.</p>';
+  if (storageWarning) {
+    html += '<div style="margin:0 0 16px;padding:10px 12px;background:#fef3c7;border:1px solid #fde68a;border-radius:8px;color:#92400e;font-size:12px;">' +
+      '<strong>Heads up:</strong> ' + escapeHtml(storageWarning) +
+    '</div>';
+  }
 
   if (education.length > 0) {
     html += '<div class="edu-preview-section-title">Education (' + education.length + ')</div>';
