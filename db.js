@@ -160,11 +160,25 @@ async function upsertProfile(userId, profile) {
     created_at: profile.createdAt || new Date().toISOString(),
     updated_at: new Date().toISOString()
   };
-  const { data, error } = await getClient()
+  let { data, error } = await getClient()
     .from('profiles')
     .upsert(row, { onConflict: 'user_id' })
     .select()
     .single();
+
+  // Fallback for installs that haven't run the analyzer_reports migration yet.
+  // Supabase/PostgREST returns PGRST204 (or PG 42703) when the column is missing.
+  if (error && (error.code === 'PGRST204' || error.code === '42703' ||
+                /analyzer_reports/i.test(error.message || ''))) {
+    console.warn('upsertProfile: analyzer_reports column missing, retrying without it. Run the ALTER TABLE migration in schema.sql to enable saved analyzer reports.');
+    const { analyzer_reports, ...rowSansReports } = row;
+    ({ data, error } = await getClient()
+      .from('profiles')
+      .upsert(rowSansReports, { onConflict: 'user_id' })
+      .select()
+      .single());
+  }
+
   if (error) throw error;
   return rowToProfile(data);
 }
