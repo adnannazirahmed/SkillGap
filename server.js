@@ -2212,6 +2212,7 @@ app.post('/api/analyzer/parse-resume', upload.single('resume'), async (req, res)
     // Try Gemini API for full structured resume extraction
     let skills = [];
     let parsedResume = {};
+    let geminiError = null;
     if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
       try {
         const prompt = `Extract ALL structured information from this resume. Return ONLY a valid JSON object with no markdown or code fences:
@@ -2243,7 +2244,7 @@ ${resumeText.slice(0, 10000)}`;
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.1, maxOutputTokens: 4096 }
+            generationConfig: { temperature: 0.1, maxOutputTokens: 4096, responseMimeType: 'application/json' }
           })
         });
 
@@ -2251,7 +2252,7 @@ ${resumeText.slice(0, 10000)}`;
           const data = await response.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
           if (text) {
-            // Extract JSON by finding first { and last } — handles any markdown wrapping
+            // Extract JSON — responseMimeType forces raw JSON, regex is safety net
             const jsonMatch = text.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
               parsedResume = JSON.parse(jsonMatch[0]);
@@ -2259,14 +2260,21 @@ ${resumeText.slice(0, 10000)}`;
                 skills = parsedResume.skills.filter(s => typeof s === 'string' && s.trim().length > 0);
               }
             } else {
-              console.error('Gemini resume parse: no JSON object found in response:', text.slice(0, 200));
+              geminiError = 'no_json_in_response: ' + text.slice(0, 300);
+              console.error('Gemini resume parse: no JSON in response:', text.slice(0, 300));
             }
+          } else {
+            const finishReason = data.candidates?.[0]?.finishReason;
+            geminiError = 'no_text_in_response, finishReason=' + finishReason + ', full=' + JSON.stringify(data).slice(0, 300);
+            console.error('Gemini resume parse: no text, finishReason:', finishReason, JSON.stringify(data).slice(0, 300));
           }
         } else {
           const errText = await response.text();
-          console.error('Gemini resume parse HTTP error:', response.status, errText.slice(0, 200));
+          geminiError = 'http_' + response.status + ': ' + errText.slice(0, 300);
+          console.error('Gemini resume parse HTTP error:', response.status, errText.slice(0, 300));
         }
       } catch (geminiErr) {
+        geminiError = geminiErr.message;
         console.error('Gemini resume parse error:', geminiErr.message);
       }
     }
@@ -2300,6 +2308,7 @@ ${resumeText.slice(0, 10000)}`;
     res.json({
       skills,
       rawText,
+      _geminiError:   geminiError || undefined,
       name:           parsedResume.name           || '',
       email:          parsedResume.email          || '',
       phone:          parsedResume.phone          || '',
