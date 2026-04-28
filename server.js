@@ -2239,14 +2239,23 @@ IMPORTANT RULES:
 Resume text:
 ${resumeText.slice(0, 10000)}`;
 
-        const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.1, maxOutputTokens: 4096, responseMimeType: 'application/json' }
-          })
+        const GEMINI_FALLBACK_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+        const geminiBody = JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.1, maxOutputTokens: 4096, responseMimeType: 'application/json' }
         });
+
+        let response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: geminiBody
+        });
+
+        // 503 = model overloaded (preview capacity) — retry with stable 2.0-flash
+        if (response.status === 503) {
+          console.warn('gemini-2.5-flash 503, retrying with gemini-2.0-flash');
+          response = await fetch(`${GEMINI_FALLBACK_URL}?key=${GEMINI_API_KEY}`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: geminiBody
+          });
+        }
 
         if (response.ok) {
           const data = await response.json();
