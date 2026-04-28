@@ -3406,21 +3406,27 @@ Return ONLY a valid JSON object with no other text, markdown, or code fences:
   "experience": [{"title":"...","company":"...","dates":"e.g. 2022 - 2023","description":"...","tags":"comma-separated skills"}],
   "skills": ["Python", "SQL", "Machine Learning"]
 }
-If a field is unknown leave it as an empty string. Include all roles, internships, and projects.
+IMPORTANT: scan the ENTIRE resume for any university, college, job, internship, or role — include ALL of them. If a field is unknown leave it as an empty string.
 
 Resume:
-${resumeText.slice(0, 5000)}`;
-        const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1, maxOutputTokens: 2048 } })
+${resumeText.slice(0, 10000)}`;
+        const GEMINI_FALLBACK_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+        const geminiBody = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1, maxOutputTokens: 4096, responseMimeType: 'application/json' } });
+        let response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: geminiBody
         });
+        if (response.status === 503) {
+          console.warn('gemini-2.5-flash 503 on profile upload, retrying with gemini-2.0-flash');
+          response = await fetch(`${GEMINI_FALLBACK_URL}?key=${GEMINI_API_KEY}`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: geminiBody
+          });
+        }
         if (response.ok) {
           const aiData = await response.json();
           const text = aiData.candidates?.[0]?.content?.parts?.[0]?.text;
           if (text) {
-            const jsonStr = text.trim().replace(/```json?\n?/g, '').replace(/```/g, '').trim();
-            const parsed = JSON.parse(jsonStr);
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
             if (parsed && Array.isArray(parsed.education)) {
               extractedEducation = parsed.education.filter(e => e && e.school && e.degree);
             }
