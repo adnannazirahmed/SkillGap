@@ -322,7 +322,8 @@ function initUserSkills() {
         el.innerHTML = '<span style="color:#94a3b8;font-size:13px;">No skills added yet.</span>';
       } else {
         skills.forEach(function(s) {
-          el.innerHTML += '<span class="skill-chip">' + s + '</span>';
+          var label = typeof s === 'string' ? s : (s && s.name ? s.name : '');
+          if (label) el.innerHTML += '<span class="skill-chip">' + label + '</span>';
         });
       }
       el.innerHTML += '<span class="add-skill-btn" onclick="navigateTo(\'profile\')">+ Add Skill</span>';
