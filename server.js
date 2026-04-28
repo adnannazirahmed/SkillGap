@@ -2209,24 +2209,36 @@ app.post('/api/analyzer/parse-resume', upload.single('resume'), async (req, res)
       return res.status(400).json({ error: 'Could not extract text from the uploaded file.' });
     }
 
-    // Try Gemini API for skill extraction
+    // Try Gemini API for full structured resume extraction
     let skills = [];
+    let parsedResume = {};
     if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
       try {
-        const prompt = `Extract all professional skills, tools, technologies, and competencies from this resume. Return ONLY a JSON array of skill strings, nothing else. Example: ["Python", "SQL", "Machine Learning", "Data Analysis"]
+        const prompt = `Extract structured information from this resume. Return ONLY a valid JSON object with no markdown or code fences:
+{
+  "name": "Full Name or empty string",
+  "email": "email or empty string",
+  "phone": "phone or empty string",
+  "linkedin": "linkedin URL/username or empty string",
+  "github": "github URL/username or empty string",
+  "summary": "2-3 sentence professional summary or empty string",
+  "skills": ["Python", "SQL", "Machine Learning"],
+  "education": [{"school":"University Name","degree":"Degree Title","dates":"2020 - 2024","gpa":"","courses":""}],
+  "experience": [{"title":"Job Title","company":"Company Name","dates":"Jan 2022 - Dec 2023","description":"Key responsibilities","tags":"skill1, skill2"}],
+  "certifications": ["AWS Certified Solutions Architect"],
+  "projects": [{"name":"Project Name","description":"What it does","technologies":"tech1, tech2"}]
+}
+Use empty strings for missing scalar fields, empty arrays for missing list fields. Include all roles, internships, and projects.
 
 Resume text:
-${resumeText}`;
+${resumeText.slice(0, 5000)}`;
 
         const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              temperature: 0.3,
-              maxOutputTokens: 1024
-            }
+            generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
           })
         });
 
@@ -2234,13 +2246,10 @@ ${resumeText}`;
           const data = await response.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
           if (text) {
-            let jsonStr = text.trim();
-            if (jsonStr.startsWith('```')) {
-              jsonStr = jsonStr.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
-            }
-            const parsed = JSON.parse(jsonStr);
-            if (Array.isArray(parsed)) {
-              skills = parsed.filter(s => typeof s === 'string' && s.trim().length > 0);
+            const jsonStr = text.trim().replace(/```json?\n?/g, '').replace(/```/g, '').trim();
+            parsedResume = JSON.parse(jsonStr);
+            if (Array.isArray(parsedResume.skills)) {
+              skills = parsedResume.skills.filter(s => typeof s === 'string' && s.trim().length > 0);
             }
           }
         }
@@ -2272,7 +2281,20 @@ ${resumeText}`;
 
     const rawText = resumeText.substring(0, 200);
 
-    res.json({ skills, rawText });
+    res.json({
+      skills,
+      rawText,
+      name:           parsedResume.name           || '',
+      email:          parsedResume.email          || '',
+      phone:          parsedResume.phone          || '',
+      linkedin:       parsedResume.linkedin       || '',
+      github:         parsedResume.github         || '',
+      summary:        parsedResume.summary        || '',
+      education:      Array.isArray(parsedResume.education)      ? parsedResume.education      : [],
+      experience:     Array.isArray(parsedResume.experience)     ? parsedResume.experience     : [],
+      certifications: Array.isArray(parsedResume.certifications) ? parsedResume.certifications : [],
+      projects:       Array.isArray(parsedResume.projects)       ? parsedResume.projects       : []
+    });
 
   } catch (err) {
     console.error('Resume parse error:', err.message);

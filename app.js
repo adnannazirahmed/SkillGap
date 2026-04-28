@@ -564,7 +564,9 @@ var analyzerState = {
   resumeSkills: [],    // from resume parsing
   manualSkills: [],    // typed in manually
   allSkills: [],       // combined
-  lastResult: null     // last analysis result for export
+  lastResult: null,    // last analysis result for export
+  resumeData: null,    // full parsed resume data (name, education, experience, etc.)
+  _pendingFile: null   // file object kept for potential re-upload
 };
 
 // ── Analyzer: Init (called when navigating to analyzer page) ──
@@ -610,8 +612,14 @@ function initUploadArea() {
   resumeFile.onchange = function() {
     if (resumeFile.files.length === 0) return;
     var file = resumeFile.files[0];
+    analyzerState._pendingFile = file;
     uploadArea.classList.add('has-file');
     document.getElementById('uploadText').textContent = '⏳ Parsing ' + file.name + '...';
+
+    var previewEl = document.getElementById('azResumePreview');
+    var statusEl = document.getElementById('azImportStatus');
+    if (previewEl) previewEl.style.display = 'none';
+    if (statusEl) statusEl.style.display = 'none';
 
     var formData = new FormData();
     formData.append('resume', file);
@@ -624,6 +632,7 @@ function initUploadArea() {
           return;
         }
         analyzerState.resumeSkills = data.skills || [];
+        analyzerState.resumeData = data;
         document.getElementById('uploadText').textContent = '✅ ' + file.name + ' — ' + analyzerState.resumeSkills.length + ' skills found';
 
         var resumeSection = document.getElementById('azResumeSkills');
@@ -634,6 +643,9 @@ function initUploadArea() {
             return '<span class="skill-tag">' + s + '</span>';
           }).join('');
         }
+
+        renderResumePreview(data);
+        syncAnalyzerResumeToProfile({ auto: true, data: data });
       })
       .catch(function(err) {
         document.getElementById('uploadText').textContent = '❌ Failed to parse. Try entering skills manually.';
@@ -3096,6 +3108,175 @@ function showResumeExtractedPreview(education, experience, skills, storageWarnin
   document.getElementById('profileFormSave').textContent = 'Got it!';
 }
 
+// ── Analyzer: Rich Resume Preview ──
+function renderResumePreview(data) {
+  var container = document.getElementById('azResumePreview');
+  if (!container) return;
+  if (!data || (!data.name && !(data.education && data.education.length) && !(data.experience && data.experience.length))) {
+    container.style.display = 'none';
+    return;
+  }
+
+  var html = '<div class="card" style="margin-top:0;">';
+  html += '<div style="font-size:13px;font-weight:600;color:#4f46e5;margin-bottom:10px;">📋 Resume Preview</div>';
+
+  if (data.name) {
+    html += '<div style="margin-bottom:10px;">';
+    html += '<div style="font-size:16px;font-weight:700;color:#1e293b;">' + escapeHtml(data.name) + '</div>';
+    var contacts = [];
+    if (data.email) contacts.push(escapeHtml(data.email));
+    if (data.phone) contacts.push(escapeHtml(data.phone));
+    if (data.linkedin) {
+      var liHref = data.linkedin.startsWith('http') ? data.linkedin : 'https://' + data.linkedin;
+      contacts.push('<a href="' + escapeHtml(liHref) + '" target="_blank" rel="noopener" style="color:#4f46e5;text-decoration:none;">' + escapeHtml(data.linkedin) + '</a>');
+    }
+    if (data.github) {
+      var ghHref = data.github.startsWith('http') ? data.github : 'https://' + data.github;
+      contacts.push('<a href="' + escapeHtml(ghHref) + '" target="_blank" rel="noopener" style="color:#4f46e5;text-decoration:none;">' + escapeHtml(data.github) + '</a>');
+    }
+    if (contacts.length > 0) {
+      html += '<div style="font-size:12px;color:#64748b;margin-top:3px;">' + contacts.join(' &bull; ') + '</div>';
+    }
+    html += '</div>';
+  }
+
+  if (data.summary) {
+    html += '<p style="font-size:13px;color:#334155;line-height:1.6;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #f1f5f9;">' + escapeHtml(data.summary) + '</p>';
+  }
+
+  if (data.skills && data.skills.length > 0) {
+    html += '<div style="margin-bottom:10px;">';
+    html += '<div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Skills</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:4px;">';
+    var skillsToShow = data.skills.slice(0, 20);
+    skillsToShow.forEach(function(s) {
+      html += '<span class="skill-chip" style="font-size:11px;padding:2px 8px;">' + escapeHtml(typeof s === 'string' ? s : (s.name || '')) + '</span>';
+    });
+    if (data.skills.length > 20) html += '<span style="font-size:11px;color:#94a3b8;align-self:center;">+' + (data.skills.length - 20) + ' more</span>';
+    html += '</div></div>';
+  }
+
+  if (data.experience && data.experience.length > 0) {
+    html += '<div style="margin-bottom:10px;">';
+    html += '<div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Experience</div>';
+    data.experience.forEach(function(exp) {
+      html += '<div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #f8fafc;">';
+      html += '<div style="font-size:13px;font-weight:600;color:#1e293b;">' + escapeHtml(exp.title || '') + (exp.company ? ' &mdash; ' + escapeHtml(exp.company) : '') + '</div>';
+      if (exp.dates) html += '<div style="font-size:11px;color:#94a3b8;margin-top:2px;">' + escapeHtml(exp.dates) + '</div>';
+      if (exp.description) html += '<div style="font-size:12px;color:#475569;margin-top:4px;line-height:1.5;">' + escapeHtml(exp.description.slice(0, 150)) + (exp.description.length > 150 ? '…' : '') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  if (data.education && data.education.length > 0) {
+    html += '<div style="margin-bottom:10px;">';
+    html += '<div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Education</div>';
+    data.education.forEach(function(edu) {
+      html += '<div style="margin-bottom:6px;">';
+      html += '<div style="font-size:13px;font-weight:600;color:#1e293b;">' + escapeHtml(edu.school || '') + '</div>';
+      html += '<div style="font-size:12px;color:#475569;">' + escapeHtml(edu.degree || '') + (edu.dates ? ' &middot; ' + escapeHtml(edu.dates) : '') + (edu.gpa ? ' &middot; GPA ' + escapeHtml(edu.gpa) : '') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  if (data.certifications && data.certifications.length > 0) {
+    html += '<div style="margin-bottom:6px;">';
+    html += '<div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Certifications</div>';
+    data.certifications.forEach(function(cert) {
+      html += '<div style="font-size:12px;color:#475569;margin-bottom:2px;">&bull; ' + escapeHtml(typeof cert === 'string' ? cert : (cert.name || '')) + '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+  container.style.display = 'block';
+}
+
+// ── Analyzer: Sync Resume Data to Profile ──
+async function syncAnalyzerResumeToProfile(options) {
+  options = options || {};
+  var data = options.data || analyzerState.resumeData;
+  if (!data) return;
+
+  var user = getActiveUser();
+  var statusEl = document.getElementById('azImportStatus');
+  if (!user || !user.email) {
+    if (statusEl) {
+      statusEl.style.display = 'block';
+      statusEl.innerHTML = '<span style="font-size:12px;color:#64748b;">Sign in to sync this resume to your profile.</span>';
+    }
+    return;
+  }
+
+  if (statusEl) {
+    statusEl.style.display = 'block';
+    statusEl.innerHTML = '<span style="font-size:12px;color:#64748b;">&#9203; Syncing to profile&hellip;</span>';
+  }
+
+  try {
+    var baseResp = await fetch('/api/profile?userId=' + encodeURIComponent(user.email));
+    var baseProfile = baseResp.ok ? await baseResp.json() : {};
+    if (baseProfile.error) baseProfile = {};
+
+    var patch = { userId: user.email };
+
+    if (data.name && isMeaningfulProfileText(data.name) && !isMeaningfulProfileText(baseProfile.name)) {
+      patch.name = data.name;
+    }
+
+    if (data.skills && data.skills.length > 0) {
+      patch.skills = mergeProfileSkills(baseProfile.skills || [], data.skills);
+    }
+
+    if (data.education && data.education.length > 0) {
+      patch.education = mergeProfileEducation(baseProfile.education || [], data.education);
+    }
+
+    if (data.experience && data.experience.length > 0) {
+      patch.experience = mergeProfileExperience(baseProfile.experience || [], data.experience);
+    }
+
+    if (data.linkedin || data.github) {
+      patch.social = buildResumeSocialPatch(data, baseProfile.social || {});
+    }
+
+    if (Object.keys(patch).length <= 1) {
+      if (statusEl) {
+        statusEl.innerHTML = '<span style="font-size:12px;color:#64748b;">Profile already up to date.</span>';
+        setTimeout(function() { statusEl.style.display = 'none'; }, 3000);
+      }
+      return;
+    }
+
+    var resp = await fetch('/api/profile', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch)
+    });
+    if (!resp.ok) throw new Error('Profile update failed');
+
+    profileState.data = null;
+
+    if (statusEl) {
+      statusEl.innerHTML =
+        '<span style="font-size:12px;color:#16a34a;">&#10003; Resume data synced to your profile.</span> ' +
+        '<a href="#" onclick="navigateTo(\'profile\');return false;" style="font-size:12px;color:#4f46e5;text-decoration:none;">View Profile &rarr;</a>';
+    }
+  } catch (err) {
+    console.error('syncAnalyzerResumeToProfile error:', err);
+    if (statusEl) {
+      statusEl.innerHTML = '<span style="font-size:12px;color:#ef4444;">Could not sync to profile automatically. Visit your Profile page to import manually.</span>';
+    }
+  }
+}
+
+function importResumeToProfile() {
+  syncAnalyzerResumeToProfile({ auto: false, data: analyzerState.resumeData });
+}
+
 // ── Profile Form Modal ──
 var profileFormCallback = null;
 
@@ -3217,6 +3398,80 @@ async function profileDeleteSkill(idx) {
   skills.splice(idx, 1);
   await saveProfilePatch({ skills: skills });
   initProfile();
+}
+
+// ── Resume Import Helpers ──
+function normalizeImportedSkill(skill) {
+  if (typeof skill === 'string') return { name: skill.trim(), mastery: null };
+  if (skill && typeof skill === 'object') return { name: (skill.name || '').trim(), mastery: skill.mastery || null };
+  return null;
+}
+
+function isMeaningfulProfileText(value) {
+  if (!value || typeof value !== 'string') return false;
+  var v = value.trim().toLowerCase();
+  if (v.length < 2) return false;
+  var defaults = ['your name', 'add your', 'aspiring data professional', 'career intelligence', 'skillgap'];
+  return !defaults.some(function(d) { return v.includes(d); });
+}
+
+function isDefaultProfileTitle(value) {
+  if (!value || typeof value !== 'string') return true;
+  var v = value.trim().toLowerCase();
+  return !v || v === 'aspiring data professional' || v.startsWith('aspiring');
+}
+
+function mergeProfileSkills(existingSkills, incomingSkills) {
+  var result = Array.isArray(existingSkills) ? existingSkills.slice() : [];
+  var seen = {};
+  result.forEach(function(s) {
+    var name = typeof s === 'string' ? s : (s && s.name || '');
+    if (name) seen[name.toLowerCase()] = true;
+  });
+  (incomingSkills || []).forEach(function(raw) {
+    var sk = normalizeImportedSkill(raw);
+    if (!sk || !sk.name) return;
+    var key = sk.name.toLowerCase();
+    if (!seen[key]) { seen[key] = true; result.push(sk); }
+  });
+  return result;
+}
+
+function mergeProfileExperience(existingExperience, incomingExperience) {
+  var result = Array.isArray(existingExperience) ? existingExperience.slice() : [];
+  (incomingExperience || []).forEach(function(exp) {
+    var exists = result.some(function(e) { return e.title === exp.title && e.company === exp.company; });
+    if (!exists) {
+      result.push({
+        title: exp.title || '',
+        company: exp.company || '',
+        dates: exp.dates || '',
+        description: exp.description || '',
+        tags: typeof exp.tags === 'string'
+          ? exp.tags.split(',').map(function(t) { return t.trim(); }).filter(Boolean)
+          : (Array.isArray(exp.tags) ? exp.tags : [])
+      });
+    }
+  });
+  return result;
+}
+
+function mergeProfileEducation(existingEducation, incomingEducation) {
+  var result = Array.isArray(existingEducation) ? existingEducation.slice() : [];
+  (incomingEducation || []).forEach(function(edu) {
+    var exists = result.some(function(e) { return e.school === edu.school && e.degree === edu.degree; });
+    if (!exists) {
+      result.push({ school: edu.school || '', degree: edu.degree || '', dates: edu.dates || '', gpa: edu.gpa || '', courses: edu.courses || '' });
+    }
+  });
+  return result;
+}
+
+function buildResumeSocialPatch(data, existingSocial) {
+  var social = Object.assign({ linkedin: '', github: '', portfolio: '' }, existingSocial || {});
+  if (data.linkedin && !social.linkedin) social.linkedin = data.linkedin;
+  if (data.github && !social.github) social.github = data.github;
+  return social;
 }
 
 // ── Profile: Add Experience ──
