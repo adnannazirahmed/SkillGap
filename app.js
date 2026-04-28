@@ -191,12 +191,15 @@ function initUser() {
 }
 
 function logout() {
-  localStorage.removeItem('sgaCurrentUser');
-  sessionStorage.removeItem('sgaCurrentUser');
-  localStorage.removeItem('sgaUser');
-  sessionStorage.removeItem('sgaUser');
-  localStorage.removeItem('sgaAuthToken');
-  sessionStorage.removeItem('sgaAuthToken');
+  var userKeys = [
+    'sgaCurrentUser', 'sgaUser', 'sgaAuthToken',
+    'sgaSkillScores', 'sgaRoadmapTopics', 'sgaChatLastRead',
+    'sgaSeenNotifs', 'sgaLastPage'
+  ];
+  userKeys.forEach(function(k) {
+    localStorage.removeItem(k);
+    sessionStorage.removeItem(k);
+  });
   window.location.href = 'login.html';
 }
 
