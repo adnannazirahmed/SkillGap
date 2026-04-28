@@ -261,7 +261,7 @@ const INITIAL_STEP = 1.5;
 const STEP_DECAY = 0.7;
 const MIN_STEP = 0.3;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 const ADZUNA_APP_ID = process.env.ADZUNA_APP_ID;
 const ADZUNA_APP_KEY = process.env.ADZUNA_APP_KEY;
 const ADZUNA_BASE = 'https://api.adzuna.com/v1/api/jobs';
@@ -2228,7 +2228,7 @@ app.post('/api/analyzer/parse-resume', upload.single('resume'), async (req, res)
   "certifications": ["AWS Certified Solutions Architect"],
   "projects": [{"name":"Project Name","description":"What it does","technologies":"tech1, tech2"}]
 }
-Use empty strings for missing scalar fields, empty arrays for missing list fields. Include all roles, internships, and projects.
+Use empty strings for missing scalar fields, empty arrays for missing list fields. Include all roles, internships, and projects. Only include single-letter items in skills (like "R") if the resume explicitly mentions them as a programming language or tool — never infer them from partial words.
 
 Resume text:
 ${resumeText.slice(0, 5000)}`;
@@ -2271,12 +2271,15 @@ ${resumeText.slice(0, 5000)}`;
         'Git', 'GitHub', 'Linux', 'Agile', 'Scrum', 'Jira',
         'REST', 'GraphQL', 'Microservices', 'API', 'OAuth',
         'Cybersecurity', 'Networking', 'Cloud Computing', 'DevOps',
-        'Statistics', 'R', 'MATLAB', 'Spark', 'Hadoop', 'Kafka',
+        'Statistics', 'MATLAB', 'Spark', 'Hadoop', 'Kafka',
         'Figma', 'Sketch', 'Adobe XD', 'UI/UX', 'Product Management',
         'Communication', 'Leadership', 'Project Management', 'Problem Solving', 'Teamwork'
       ];
-      const textLower = resumeText.toLowerCase();
-      skills = knownSkills.filter(skill => textLower.includes(skill.toLowerCase()));
+      // Use word-boundary matching so short tokens like 'Go' or 'R' don't match inside longer words
+      skills = knownSkills.filter(skill => {
+        const escaped = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return new RegExp('\\b' + escaped + '\\b', 'i').test(resumeText);
+      });
     }
 
     const rawText = resumeText.substring(0, 200);
@@ -2460,7 +2463,7 @@ IMPORTANT: Return ONLY valid JSON with no markdown formatting, no code fences, j
     const ROLE_DATA = {
       'Data Scientist': {
         requiredSkills: ['Python', 'Machine Learning', 'Statistics', 'SQL', 'Data Analysis'],
-        optionalSkills: ['Deep Learning', 'TensorFlow', 'PyTorch', 'NLP', 'Spark', 'R'],
+        optionalSkills: ['Deep Learning', 'TensorFlow', 'PyTorch', 'NLP', 'Spark'],
         salaryRange: '$85,000 - $130,000'
       },
       'Software Engineer': {
@@ -2470,7 +2473,7 @@ IMPORTANT: Return ONLY valid JSON with no markdown formatting, no code fences, j
       },
       'Data Analyst': {
         requiredSkills: ['SQL', 'Excel', 'Data Analysis', 'Statistics', 'Python'],
-        optionalSkills: ['Tableau', 'Power BI', 'R', 'Pandas', 'NumPy'],
+        optionalSkills: ['Tableau', 'Power BI', 'Pandas', 'NumPy'],
         salaryRange: '$55,000 - $85,000'
       },
       'ML Engineer': {
@@ -2492,16 +2495,51 @@ IMPORTANT: Return ONLY valid JSON with no markdown formatting, no code fences, j
         requiredSkills: ['Cybersecurity', 'Networking', 'Linux', 'Python', 'Cloud Computing'],
         optionalSkills: ['AWS', 'Docker', 'SQL', 'Git', 'Agile'],
         salaryRange: '$70,000 - $120,000'
+      },
+      'UX Designer': {
+        requiredSkills: ['Figma', 'UI/UX', 'Prototyping', 'User Research', 'Sketch'],
+        optionalSkills: ['Adobe XD', 'HTML', 'CSS', 'JavaScript', 'Accessibility'],
+        salaryRange: '$70,000 - $120,000'
+      },
+      'Product Manager': {
+        requiredSkills: ['Product Management', 'Agile', 'Scrum', 'Communication', 'Problem Solving'],
+        optionalSkills: ['SQL', 'Python', 'Figma', 'Jira', 'Leadership'],
+        salaryRange: '$95,000 - $150,000'
+      },
+      'Backend Developer': {
+        requiredSkills: ['Python', 'SQL', 'REST', 'Git', 'Docker'],
+        optionalSkills: ['Node.js', 'AWS', 'Kubernetes', 'PostgreSQL', 'Redis'],
+        salaryRange: '$80,000 - $140,000'
+      },
+      'DevOps Engineer': {
+        requiredSkills: ['Docker', 'Kubernetes', 'CI/CD', 'Linux', 'AWS'],
+        optionalSkills: ['Terraform', 'Python', 'Ansible', 'Git', 'Monitoring'],
+        salaryRange: '$85,000 - $145,000'
       }
     };
 
-    // Find closest matching role
+    // Find closest matching role (exact → partial → null for unknown roles)
     const roleKey = Object.keys(ROLE_DATA).find(r => r.toLowerCase() === targetRole.toLowerCase())
       || Object.keys(ROLE_DATA).find(r => targetRole.toLowerCase().includes(r.toLowerCase().split(' ')[0]))
-      || Object.keys(ROLE_DATA)[0];
+      || null;
+
+    // When no matching role found, return a skill-agnostic response using the user's own skills
+    if (!roleKey) {
+      const matchScore = combinedSkills.length > 0 ? Math.min(100, combinedSkills.length * 8) : 0;
+      return res.json({
+        matchScore,
+        summary: `You have ${combinedSkills.length} skills on your profile. Add more skills and run assessments to get a detailed gap analysis for ${targetRole}.`,
+        matchedSkills: combinedSkills.map(s => ({ name: s.name, score: s.score || null, demandPct: 70, verdict: 'Listed on profile' })),
+        missingSkills: [],
+        learningPath: [],
+        assessmentSuggestions: combinedSkills.slice(0, 5).map(s => s.name),
+        salaryInsight: 'Search job boards for current salary data',
+        competitiveness: 'Not assessed',
+        jobFit: null
+      });
+    }
 
     const roleInfo = ROLE_DATA[roleKey];
-    const userSkillNames = combinedSkills.map(s => s.name.toLowerCase());
 
     const matchedSkills = [];
     const missingSkills = [];
@@ -2524,7 +2562,7 @@ IMPORTANT: Return ONLY valid JSON with no markdown formatting, no code fences, j
           name: reqSkill,
           priority: 'high',
           demandPct: 90,
-          reason: `Core requirement for ${roleKey}`
+          reason: `Core requirement for ${targetRole}`
         });
       }
     }
@@ -2544,7 +2582,7 @@ IMPORTANT: Return ONLY valid JSON with no markdown formatting, no code fences, j
           name: optSkill,
           priority: 'medium',
           demandPct: 65,
-          reason: `Beneficial for ${roleKey}`
+          reason: `Beneficial for ${targetRole}`
         });
       }
     }
@@ -2592,7 +2630,7 @@ IMPORTANT: Return ONLY valid JSON with no markdown formatting, no code fences, j
 
     res.json({
       matchScore,
-      summary: `You match ${matchScore}% of the skills required for a ${roleKey} role. ${missingSkills.filter(s => s.priority === 'high').length} critical skills need attention.`,
+      summary: `You match ${matchScore}% of the skills required for a ${targetRole} role. ${missingSkills.filter(s => s.priority === 'high').length} critical skills need attention.`,
       matchedSkills,
       missingSkills,
       learningPath,
@@ -2620,8 +2658,10 @@ app.post('/api/analyzer/save-report', requireAuth, async (req, res) => {
     const reports = Array.isArray(profile.analyzerReports) ? profile.analyzerReports.slice() : [];
     const meta = report._meta || {};
     const fullJd = meta.jobDescription ? String(meta.jobDescription).slice(0, 4000) : '';
+    const existingId = meta.existingId || null;
+    const existingIdx = existingId ? reports.findIndex(r => r.id === existingId) : -1;
     const slim = {
-      id: 'rpt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+      id: existingIdx !== -1 ? existingId : ('rpt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8)),
       role: meta.role || '',
       region: meta.region || '',
       date: meta.date || new Date().toISOString(),
@@ -2638,7 +2678,11 @@ app.post('/api/analyzer/save-report', requireAuth, async (req, res) => {
       salaryInsight: report.salaryInsight || '',
       competitiveness: report.competitiveness || ''
     };
-    reports.unshift(slim);
+    if (existingIdx !== -1) {
+      reports.splice(existingIdx, 1, slim); // Update in place
+    } else {
+      reports.unshift(slim); // New report
+    }
     profile.analyzerReports = reports.slice(0, 50);
     const saved = await db.upsertProfile(userId, profile);
     if (saved._droppedColumns && saved._droppedColumns.indexOf('analyzerReports') !== -1) {

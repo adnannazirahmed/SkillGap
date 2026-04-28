@@ -954,7 +954,7 @@ async function viewSavedReport(reportId) {
       salaryInsight: rep.salaryInsight,
       competitiveness: rep.competitiveness,
       jobFit: rep.jobFit,
-      _meta: { role: rep.role, region: rep.region, date: rep.date, jobDescription: rep.jobDescription || rep.jobDescriptionPreview || '' }
+      _meta: { role: rep.role, region: rep.region, date: rep.date, jobDescription: rep.jobDescription || rep.jobDescriptionPreview || '', existingId: rep.id }
     };
     navigateTo('analyzer');
     setTimeout(function() {
@@ -983,28 +983,35 @@ async function deleteSavedReport(reportId) {
 }
 
 // ── Analyzer: Save Report to Profile ──
-function saveAnalysisReport() {
+async function saveAnalysisReport() {
   if (!analyzerState.lastResult) { alert('No analysis to save.'); return; }
   var btn = document.getElementById('azSaveReportBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-  fetch('/api/analyzer/save-report', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ report: analyzerState.lastResult })
-  })
-  .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
-  .then(function(res) {
-    if (!res.ok) throw new Error((res.data && res.data.error) || 'Save failed');
+  try {
+    var r = await fetch('/api/analyzer/save-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ report: analyzerState.lastResult })
+    });
+    var data = await r.json();
+    if (!r.ok) throw new Error((data && data.error) || 'Save failed');
+
+    // Also sync resume education/experience to profile if available and not yet synced
+    if (analyzerState.resumeData &&
+        ((analyzerState.resumeData.education && analyzerState.resumeData.education.length > 0) ||
+         (analyzerState.resumeData.experience && analyzerState.resumeData.experience.length > 0))) {
+      await syncAnalyzerResumeToProfile({ auto: false, data: analyzerState.resumeData });
+    }
+
     if (btn) { btn.textContent = '✅ Saved — Open Profile'; }
     if (profileState && profileState.data !== undefined) profileState.data = null;
     setTimeout(function() { navigateTo('profile'); }, 600);
-  })
-  .catch(function(err) {
+  } catch (err) {
     console.error('Save report error:', err);
     alert('Could not save report: ' + (err.message || 'Unknown error'));
     if (btn) { btn.disabled = false; btn.textContent = '💾 Save to Profile'; }
-  });
+  }
 }
 
 // ── Analyzer: Export Report ──
