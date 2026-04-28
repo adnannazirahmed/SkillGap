@@ -2214,7 +2214,7 @@ app.post('/api/analyzer/parse-resume', upload.single('resume'), async (req, res)
     let parsedResume = {};
     if (GEMINI_API_KEY && GEMINI_API_KEY !== 'your_gemini_api_key_here') {
       try {
-        const prompt = `Extract structured information from this resume. Return ONLY a valid JSON object with no markdown or code fences:
+        const prompt = `Extract ALL structured information from this resume. Return ONLY a valid JSON object with no markdown or code fences:
 {
   "name": "Full Name or empty string",
   "email": "email or empty string",
@@ -2228,17 +2228,22 @@ app.post('/api/analyzer/parse-resume', upload.single('resume'), async (req, res)
   "certifications": ["AWS Certified Solutions Architect"],
   "projects": [{"name":"Project Name","description":"What it does","technologies":"tech1, tech2"}]
 }
-Use empty strings for missing scalar fields, empty arrays for missing list fields. Include all roles, internships, and projects. Only include single-letter items in skills (like "R") if the resume explicitly mentions them as a programming language or tool — never infer them from partial words.
+IMPORTANT RULES:
+- education: scan every section of the resume for any university, college, school, degree, major, GPA, graduation year — include ALL of them
+- experience: scan every section for any job title, company, employer, internship, assistantship, freelance work, or volunteer role — include ALL of them
+- Use empty strings for missing scalar fields, empty arrays for missing list fields
+- Include all roles, internships, and projects
+- Only include single-letter items in skills (like "R") if the resume explicitly mentions them as a programming language or tool — never infer them from partial words
 
 Resume text:
-${resumeText.slice(0, 5000)}`;
+${resumeText.slice(0, 10000)}`;
 
         const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
+            generationConfig: { temperature: 0.1, maxOutputTokens: 4096 }
           })
         });
 
@@ -2246,12 +2251,20 @@ ${resumeText.slice(0, 5000)}`;
           const data = await response.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
           if (text) {
-            const jsonStr = text.trim().replace(/```json?\n?/g, '').replace(/```/g, '').trim();
-            parsedResume = JSON.parse(jsonStr);
-            if (Array.isArray(parsedResume.skills)) {
-              skills = parsedResume.skills.filter(s => typeof s === 'string' && s.trim().length > 0);
+            // Extract JSON by finding first { and last } — handles any markdown wrapping
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              parsedResume = JSON.parse(jsonMatch[0]);
+              if (Array.isArray(parsedResume.skills)) {
+                skills = parsedResume.skills.filter(s => typeof s === 'string' && s.trim().length > 0);
+              }
+            } else {
+              console.error('Gemini resume parse: no JSON object found in response:', text.slice(0, 200));
             }
           }
+        } else {
+          const errText = await response.text();
+          console.error('Gemini resume parse HTTP error:', response.status, errText.slice(0, 200));
         }
       } catch (geminiErr) {
         console.error('Gemini resume parse error:', geminiErr.message);
