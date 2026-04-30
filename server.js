@@ -360,10 +360,10 @@ function findSeedQuestion(skill, targetDifficulty, usedIds, preferredType) {
   return unused[0];
 }
 
-// ── Helper: Call Gemini API for adaptive AI question ──
+// ── Helper: Call Claude API for adaptive AI question ──
 async function generateAIQuestion(skill, session) {
-  if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your_gemini_api_key_here') {
-    return null; // No API key configured
+  if (!ANTHROPIC_API_KEY) {
+    return null;
   }
 
   // Build question/answer history for the professor prompt
@@ -381,91 +381,87 @@ async function generateAIQuestion(skill, session) {
   const prompt = `You are an expert professor assessing a student's knowledge in ${skill}.
 
 The student has answered the following questions so far:
-${historyContext}
-Based on their performance pattern, as a professor, what question would you ask next to better gauge their true skill level?
+${historyContext || 'No questions answered yet.'}
+Based on their performance, generate the next adaptive question at difficulty: ${calculatedDifficulty}
 
-The question difficulty should be: ${calculatedDifficulty}
+CRITICAL RULES for answer options:
+- The correct answer must be placed at a RANDOM position (0, 1, 2, or 3) — do NOT always put it last.
+- All 4 options must be similar in length. The correct answer must NOT be longer or more detailed than the wrong ones.
+- Wrong options must be plausible and specific (not obviously wrong).
+- Never use vague distractors like "None of the above" or "All of the above".
 
-Generate ONE question in this JSON format:
+Return ONLY this JSON, no other text:
 {
-  "type": "{one of: mcq, true_false, multiple_select, coding}",
+  "type": "mcq",
   "question": "the question text",
-  "codeSnippet": "optional code if relevant",
-  "options": ["option A", "option B", "option C", "option D"],
-  "correctIndex": 0,
-  "explanation": "why this is correct"
+  "codeSnippet": "include only if a code example is essential",
+  "options": ["option 0", "option 1", "option 2", "option 3"],
+  "correctIndex": 2,
+  "explanation": "brief explanation of why the correct answer is right"
 }
 
-For multiple_select type, correctIndex should be an array like [0, 2].
-For coding type, include a codeSnippet with the code and ask what the output would be.
-For true_false, only include 2 options: ["True", "False"].
-
-Return ONLY the JSON, no other text.`;
+correctIndex must be a number (0–3) that genuinely varies — do not default to 3.`;
 
   try {
-    const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json'
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 1024
-        }
+        model: ANTHROPIC_INTERVIEW_MODEL,
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: prompt }]
       })
     });
 
-    if (!response.ok) {
-      console.error('Gemini API error:', response.status);
-      return null;
-    }
-
     const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) return null;
-
-    // Extract JSON from response (handle possible markdown fences)
-    let jsonStr = text.trim();
-    if (jsonStr.startsWith('```')) {
-      jsonStr = jsonStr.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
-    }
-
-    const parsed = JSON.parse(jsonStr);
-
-    // Validate structure
-    if (!parsed.question || !Array.isArray(parsed.options) || !parsed.type) {
+    if (data.error) {
+      console.error('Claude assessment error:', data.error.message);
       return null;
     }
 
-    // Validate correct answer fields based on type
+    let text = data?.content?.[0]?.text || '';
+    // Strip markdown fences if present
+    text = text.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
+    // Extract first JSON object
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+
+    const parsed = JSON.parse(match[0]);
+
+    if (!parsed.question || !Array.isArray(parsed.options) || !parsed.type) return null;
+
+    // Shuffle options so correct answer position is truly random
+    if (parsed.type !== 'true_false' && typeof parsed.correctIndex === 'number') {
+      const correctAnswer = parsed.options[parsed.correctIndex];
+      const shuffled = parsed.options.slice().sort(() => Math.random() - 0.5);
+      parsed.options = shuffled;
+      parsed.correctIndex = shuffled.indexOf(correctAnswer);
+    }
+
+    // Validate correct index
     if (parsed.type === 'multiple_select') {
-      // The new prompt tells AI to put array in correctIndex for multiple_select
-      // Normalize: accept correctIndex (array) or correctIndices (array)
       if (Array.isArray(parsed.correctIndex)) {
         parsed.correctIndices = parsed.correctIndex;
         delete parsed.correctIndex;
       }
-      if (!Array.isArray(parsed.correctIndices) || parsed.correctIndices.length === 0) {
-        return null;
-      }
-      for (const idx of parsed.correctIndices) {
-        if (idx < 0 || idx >= parsed.options.length) return null;
-      }
+      if (!Array.isArray(parsed.correctIndices) || parsed.correctIndices.length === 0) return null;
     } else {
       if (typeof parsed.correctIndex !== 'number') return null;
       if (parsed.correctIndex < 0 || parsed.correctIndex >= parsed.options.length) return null;
     }
 
-    // Map difficulty string to numeric for theta calculation
     const difficultyMap = { easy: 3, intermediate: 6, hard: 9 };
     parsed.numericDifficulty = difficultyMap[parsed.difficulty] || 6;
-
     parsed.id = 'ai_' + Date.now().toString(36);
-    parsed.source = 'gemini';
+    parsed.source = 'claude';
     return parsed;
 
   } catch (err) {
-    console.error('Gemini generation error:', err.message);
+    console.error('Claude assessment generation error:', err.message);
     return null;
   }
 }
