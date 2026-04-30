@@ -1007,9 +1007,12 @@
   <!-- Screen: Question -->
   <div id="interview-question" style="display:none;">
     <div class="interview-header">
-      <div class="interview-meta">
-        <span class="quiz-skill-badge" id="interviewSkillBadge"></span>
-        <span id="interviewQProgress" style="font-size:13px;color:#64748b;"></span>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div class="interview-meta">
+          <span class="quiz-skill-badge" id="interviewSkillBadge"></span>
+          <span id="interviewQProgress" style="font-size:13px;color:#64748b;"></span>
+        </div>
+        <button class="btn btn-secondary" style="font-size:12px;padding:7px 14px;" onclick="quitInterview()">✕ Quit Interview</button>
       </div>
       <div class="quiz-progress-bar" style="margin-top:8px;"><div class="quiz-progress-fill" id="interviewProgressFill" style="width:20%"></div></div>
     </div>
@@ -1025,12 +1028,15 @@
   <div id="interview-feedback" style="display:none;">
     <div class="card interview-fb-card" style="max-width:720px;margin:0 auto;">
       <div class="interview-fb-score" id="interviewFbScore"></div>
+      <p id="interviewFbText" style="text-align:center;color:#475569;font-size:14px;line-height:1.6;margin-bottom:20px;"></p>
       <div class="interview-fb-question" id="interviewFbQuestion"></div>
-      <div class="interview-fb-section"><strong>Your Answer</strong><p id="interviewFbAnswer"></p></div>
+      <div class="interview-fb-section"><strong>Your Answer</strong><p id="interviewFbAnswer" style="white-space:pre-wrap;"></p></div>
       <div class="interview-fb-section" style="background:#f0fdf4;border-color:#bbf7d0;"><strong style="color:#065f46;">Strengths</strong><p id="interviewFbStrengths" style="color:#065f46;"></p></div>
       <div class="interview-fb-section" style="background:#fff7ed;border-color:#fed7aa;"><strong style="color:#92400e;">Improvements</strong><p id="interviewFbImprovements" style="color:#92400e;"></p></div>
-      <p id="interviewFbText" style="color:#475569;font-size:14px;line-height:1.6;margin-top:12px;"></p>
-      <button class="btn btn-primary" style="margin-top:20px;width:100%;padding:14px;" id="interviewNextBtn" onclick="nextInterviewQuestion()">Next Question →</button>
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <button class="btn btn-secondary" style="padding:13px 18px;font-size:13px;white-space:nowrap;" onclick="quitInterview()">✕ Quit</button>
+        <button class="btn btn-primary" style="flex:1;padding:13px;" id="interviewNextBtn" onclick="nextInterviewQuestion()">Next Question →</button>
+      </div>
     </div>
   </div>
 

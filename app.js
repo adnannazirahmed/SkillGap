@@ -5316,6 +5316,16 @@ function showInterviewSelect() {
   _interviewQuestions = []; _interviewCurrentQ = 0; _interviewScores = []; _interviewSkill = '';
 }
 
+async function quitInterview() {
+  var confirmed = await showAppConfirm('Quit the interview? Your progress will not be saved.', {
+    title: 'Quit Interview',
+    danger: true,
+    okLabel: 'Quit',
+    cancelLabel: 'Keep Going'
+  });
+  if (confirmed) showInterviewSelect();
+}
+
 async function startMockInterview() {
   var skill = document.getElementById('interviewSkillSelect').value;
   if (!skill) { alert('Please select a skill.'); return; }
@@ -5371,15 +5381,21 @@ function showInterviewFeedback(data, question, answer) {
   showInterviewScreen('interview-feedback');
   var score = data.score || 5;
   var color = score >= 8 ? '#16a34a' : score >= 5 ? '#4f46e5' : '#ef4444';
-  document.getElementById('interviewFbScore').innerHTML = '<span style="font-size:48px;font-weight:700;color:' + color + ';">' + score + '</span><span style="font-size:18px;color:#94a3b8;">/10</span>';
+  var scoreLabel = score >= 8 ? 'Excellent' : score >= 6 ? 'Good' : score >= 4 ? 'Fair' : 'Needs Work';
+  document.getElementById('interviewFbScore').innerHTML =
+    '<span style="font-size:56px;font-weight:700;color:' + color + ';">' + score + '</span>' +
+    '<span style="font-size:20px;color:#94a3b8;">/10</span>' +
+    '<div style="font-size:13px;font-weight:600;color:' + color + ';margin-top:4px;">' + scoreLabel + '</div>';
+  document.getElementById('interviewFbText').textContent = data.feedback || '';
   document.getElementById('interviewFbQuestion').textContent = question;
   document.getElementById('interviewFbAnswer').textContent = answer;
-  document.getElementById('interviewFbStrengths').textContent = data.strengths || '—';
-  document.getElementById('interviewFbImprovements').textContent = data.improvements || '—';
-  document.getElementById('interviewFbText').textContent = data.feedback || '';
+  document.getElementById('interviewFbStrengths').textContent = data.strengths || 'The answer demonstrated relevant knowledge of the topic.';
+  document.getElementById('interviewFbImprovements').textContent = data.improvements || 'Consider adding specific examples and deeper technical detail.';
   var nextBtn = document.getElementById('interviewNextBtn');
   var isLast = _interviewCurrentQ >= _interviewQuestions.length - 1;
   nextBtn.textContent = isLast ? 'View Results →' : 'Next Question →';
+  var fbCard = document.querySelector('#interview-feedback .interview-fb-card');
+  if (fbCard) fbCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function nextInterviewQuestion() {

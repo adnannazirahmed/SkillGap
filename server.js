@@ -3563,21 +3563,36 @@ app.post('/api/interview/evaluate', async (req, res) => {
   if (!skill || !question || !answer) return res.status(400).json({ error: 'skill, question, and answer required' });
   if (!GEMINI_API_KEY) return res.status(503).json({ error: 'AI not configured' });
 
-  const prompt = `You are an expert interviewer for ${skill} roles. Evaluate this interview answer.
+  const prompt = `You are an expert ${skill} interviewer. Score and evaluate the candidate's answer.
+
 Question: ${question}
-Candidate Answer: ${answer.slice(0, 1000)}
-Score the answer from 1-10 and give brief constructive feedback (2-3 sentences).
-Return ONLY a JSON object (no markdown): {"score":7,"feedback":"...","strengths":"...","improvements":"..."}`;
+Candidate's Answer: ${answer.slice(0, 1000)}
+
+Return ONLY valid JSON in EXACTLY this format (no markdown, no code blocks, no extra text):
+{"score":7,"strengths":"Point 1. Point 2. Point 3.","improvements":"Point 1. Point 2. Point 3.","feedback":"One to two sentence overall assessment."}
+
+Rules:
+- score: integer 1–10 (10=excellent, 1=completely off-topic)
+- strengths: 2–3 specific positive points about THIS answer (not generic praise)
+- improvements: 2–3 specific actionable ways to improve THIS answer
+- feedback: 1–2 sentence overall summary`;
 
   try {
-    const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 512, responseMimeType: 'application/json' } });
+    const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 600, responseMimeType: 'application/json' } });
     let resp = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
     if (resp.status === 503) resp = await fetch(`${GEMINI_FALLBACK_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
     const data = await resp.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    const match = text.match(/\{[\s\S]*\}/);
-    if (!match) return res.status(500).json({ error: 'Failed to evaluate answer' });
-    res.json(JSON.parse(match[0]));
+    let result;
+    try { result = JSON.parse(text); } catch {
+      const match = text.match(/\{[\s\S]*\}/);
+      if (!match) return res.status(500).json({ error: 'Failed to evaluate answer' });
+      result = JSON.parse(match[0]);
+    }
+    if (!result.strengths) result.strengths = 'The answer demonstrated relevant knowledge of the topic.';
+    if (!result.improvements) result.improvements = 'Consider adding specific examples and deeper technical detail.';
+    if (!result.feedback) result.feedback = 'Review the points above to strengthen future answers.';
+    res.json(result);
   } catch (err) {
     console.error('interview/evaluate error:', err.message);
     res.status(500).json({ error: 'Failed to evaluate answer' });
