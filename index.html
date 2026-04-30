@@ -112,7 +112,6 @@
     <p>You've made significant progress this week. There are new opportunities tailored specifically to your skill profile.</p>
     <div class="welcome-actions">
       <span class="wa-btn primary" onclick="navigateTo('analyzer')">Start Skill Analysis</span>
-      <span class="wa-btn secondary" onclick="navigateTo('jobs')">Browse Opportunities</span>
     </div>
     <div class="banner-stat">
       <div>
@@ -153,7 +152,6 @@
     <div class="card">
       <div class="card-header">
         <h3>Skills You Have</h3>
-        <span class="card-link" onclick="editSkillsPrompt()">Edit</span>
       </div>
       <div class="skill-chips" id="userSkillChips"></div>
     </div>
@@ -431,19 +429,6 @@
           <div class="profile-social" id="profileSocial"></div>
         </div>
       </div>
-    </div>
-    <div class="strength-card">
-      <div class="strength-label">Profile Strength</div>
-      <div class="strength-pct" id="profileStrengthPct">84%</div>
-      <div class="strength-sub" id="profileStrengthSub">Resume Scanned</div>
-      <div class="strength-ring">
-        <svg width="80" height="80" viewBox="0 0 80 80">
-          <circle cx="40" cy="40" r="35" fill="none" stroke="#e2e8f0" stroke-width="6"/>
-          <circle id="profileStrengthRing" cx="40" cy="40" r="35" fill="none" stroke="#4f46e5" stroke-width="6" stroke-dasharray="220" stroke-dashoffset="35" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="strength-hint" id="profileStrengthHint">Your profile is highly optimized. Add a portfolio link to reach 100%.</div>
-      <button class="strength-btn">Improve Match Score</button>
     </div>
   </div>
 

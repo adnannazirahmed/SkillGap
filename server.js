@@ -1050,6 +1050,7 @@ async function fetchMuseJobs({ search, category, level, location, page }) {
       publishedAt: job.publication_date || '',
       url: job.refs?.landing_page || '#',
       tags: (job.tags || []).map(t => t.name || t),
+      description: job.contents ? job.contents.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160) : '',
       source: 'themuse'
     }));
 

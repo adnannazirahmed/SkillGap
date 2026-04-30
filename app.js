@@ -2095,6 +2095,7 @@ async function searchJobs(page) {
       if (isNew) tagsHtml += '<span class="job-tag new">New</span>';
       if (job.salary) tagsHtml += '<span class="job-tag salary">' + escapeHtml(job.salary) + '</span>';
 
+      var descSnippet = job.description ? '<div class="job-desc">' + escapeHtml(job.description) + (job.description.length >= 160 ? '…' : '') + '</div>' : '';
       return '<div class="job-card" onclick="openJobModal(window._currentJobs[' + idx + '])" style="cursor:pointer;">' +
         '<div class="job-top">' +
           '<div class="job-logo">' + icon + '</div>' +
@@ -2104,6 +2105,7 @@ async function searchJobs(page) {
             (timeAgo ? '<div class="job-time">' + timeAgo + '</div>' : '') +
           '</div>' +
         '</div>' +
+        descSnippet +
         '<div class="job-tags">' + tagsHtml + '</div>' +
         '<div class="job-bottom">' +
           '<a href="' + escapeHtml(job.url) + '" target="_blank" rel="noopener" class="job-apply" onclick="event.stopPropagation()">View Original →</a>' +
