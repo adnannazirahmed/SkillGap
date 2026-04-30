@@ -3538,21 +3538,28 @@ app.delete('/api/job-tracker/:id', async (req, res) => {
 
 async function callInterviewAI(prompt, maxTokens) {
   if (ANTHROPIC_API_KEY) {
+    console.log('[interview] using Claude', ANTHROPIC_INTERVIEW_MODEL);
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
       body: JSON.stringify({ model: ANTHROPIC_INTERVIEW_MODEL, max_tokens: maxTokens, messages: [{ role: 'user', content: prompt }] })
     });
     const data = await resp.json();
-    if (data.error) throw new Error(data.error.message || 'Anthropic error');
-    return data?.content?.[0]?.text || '';
+    if (data.error) throw new Error('Claude error: ' + (data.error.message || JSON.stringify(data.error)));
+    const text = data?.content?.[0]?.text || '';
+    console.log('[interview] Claude raw text length:', text.length);
+    return text;
   }
   if (!GEMINI_API_KEY) throw new Error('No AI API key configured');
-  const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.5, maxOutputTokens: maxTokens, responseMimeType: 'application/json' } });
+  console.log('[interview] using Gemini (no ANTHROPIC_API_KEY)');
+  // No responseMimeType — let Gemini return plain text and extract JSON ourselves
+  const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.4, maxOutputTokens: maxTokens } });
   let resp = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
   if (resp.status === 503) resp = await fetch(`${GEMINI_FALLBACK_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
   const data = await resp.json();
-  return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  console.log('[interview] Gemini raw text length:', text.length, '| snippet:', text.slice(0, 120));
+  return text;
 }
 
 app.post('/api/interview/generate', async (req, res) => {
@@ -3603,9 +3610,14 @@ Rules:
       if (!match) return res.status(500).json({ error: 'Failed to evaluate answer' });
       result = JSON.parse(match[0]);
     }
-    if (!result.strengths) result.strengths = 'The answer demonstrated relevant knowledge of the topic.';
-    if (!result.improvements) result.improvements = 'Consider adding specific examples and deeper technical detail.';
-    if (!result.feedback) result.feedback = 'Review the points above to strengthen future answers.';
+    // Normalize: handle arrays (Gemini sometimes returns arrays instead of strings)
+    if (Array.isArray(result.strengths)) result.strengths = result.strengths.join(' ');
+    if (Array.isArray(result.improvements)) result.improvements = result.improvements.join(' ');
+    if (!result.strengths || result.strengths.trim() === '') result.strengths = 'The answer demonstrated relevant knowledge of the topic.';
+    if (!result.improvements || result.improvements.trim() === '') result.improvements = 'Consider adding specific examples and deeper technical detail.';
+    if (!result.feedback || result.feedback.trim() === '') result.feedback = 'Review the points above to strengthen future answers.';
+    result.score = Math.max(1, Math.min(10, parseInt(result.score) || 5));
+    console.log('[interview/evaluate] score:', result.score, '| strengths ok:', !!result.strengths, '| improvements ok:', !!result.improvements);
     res.json(result);
   } catch (err) {
     console.error('interview/evaluate error:', err.message);
