@@ -862,7 +862,12 @@ function runAnalysis() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   })
-  .then(function(r) { return r.json(); })
+  .then(function(r) {
+    return r.json().then(function(data) {
+      if (!r.ok) throw new Error(data.message || data.error || 'Server error ' + r.status);
+      return data;
+    });
+  })
   .then(function(result) {
     clearInterval(msgInterval);
     analyzerState.lastResult = result;
@@ -872,7 +877,7 @@ function runAnalysis() {
   .catch(function(err) {
     clearInterval(msgInterval);
     console.error('Analysis error:', err);
-    alert('Analysis failed. Please try again.');
+    alert('Analysis failed: ' + err.message);
     analyzerGoToStep(2);
   });
 }

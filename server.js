@@ -2346,10 +2346,10 @@ app.post('/api/analyzer/analyze', async (req, res) => {
   const jobDescText = (jobDescription || '').trim().slice(0, 4000);
 
   try {
-    // Load user's assessment history and profile in parallel
+    // Load user's assessment history and profile in parallel (degrade gracefully on DB errors)
     const [userAssessments, rawProfile] = await Promise.all([
-      userId ? db.getHistoryForUser(userId) : Promise.resolve([]),
-      userId ? db.getProfile(userId) : Promise.resolve(null)
+      userId ? db.getHistoryForUser(userId).catch(() => []) : Promise.resolve([]),
+      userId ? db.getProfile(userId).catch(() => null) : Promise.resolve(null)
     ]);
     const profile = rawProfile || {};
     const profileSkills = profile.skills || [];
