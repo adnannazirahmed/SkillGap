@@ -569,6 +569,105 @@ function wireSkillsLabAssessmentButton() {
 }
 
 // ── Analyzer: State ──
+var JOB_CATALOG = [
+  { title: 'Frontend Developer',       domain: 'Engineering', skills: ['JavaScript','React','CSS','HTML','TypeScript'] },
+  { title: 'Backend Developer',        domain: 'Engineering', skills: ['Python','Node.js','SQL','REST APIs','Docker'] },
+  { title: 'Full Stack Developer',     domain: 'Engineering', skills: ['JavaScript','React','Node.js','SQL','REST APIs'] },
+  { title: 'Software Engineer',        domain: 'Engineering', skills: ['Python','JavaScript','SQL','Git','REST APIs'] },
+  { title: 'QA Engineer',             domain: 'Engineering', skills: ['Testing','Selenium','Python','JavaScript','Agile'] },
+  { title: 'iOS Developer',            domain: 'Engineering', skills: ['Swift','Xcode','iOS','UIKit','REST APIs'] },
+  { title: 'Android Developer',        domain: 'Engineering', skills: ['Kotlin','Android','Java','REST APIs','Firebase'] },
+  { title: 'Data Analyst',             domain: 'Data',        skills: ['SQL','Excel','Python','Data Analysis','Statistics','Tableau'] },
+  { title: 'Data Scientist',           domain: 'Data',        skills: ['Python','Machine Learning','Statistics','Data Analysis','SQL'] },
+  { title: 'ML Engineer',              domain: 'Data',        skills: ['Python','Machine Learning','TensorFlow','Statistics','Docker'] },
+  { title: 'Data Engineer',            domain: 'Data',        skills: ['Python','SQL','Apache Spark','ETL','Cloud Computing'] },
+  { title: 'Database Administrator',   domain: 'Data',        skills: ['SQL','PostgreSQL','MySQL','Database Design'] },
+  { title: 'AI Research Engineer',     domain: 'Data',        skills: ['Python','Machine Learning','Deep Learning','Statistics'] },
+  { title: 'Cloud Engineer',           domain: 'DevOps',      skills: ['Cloud Computing','AWS','Docker','Kubernetes','Linux'] },
+  { title: 'DevOps Engineer',          domain: 'DevOps',      skills: ['Docker','Kubernetes','CI/CD','Linux','Cloud Computing'] },
+  { title: 'Site Reliability Engineer',domain: 'DevOps',      skills: ['Linux','Python','Cloud Computing','Docker','Monitoring'] },
+  { title: 'Cybersecurity Analyst',    domain: 'Security',    skills: ['Cybersecurity','Linux','Networking','Python','SIEM'] },
+  { title: 'Product Manager',          domain: 'Product',     skills: ['Product Management','Agile','SQL','User Research','Roadmapping'] },
+  { title: 'Business Analyst',         domain: 'Business',    skills: ['SQL','Excel','Data Analysis','Tableau','Agile'] },
+  { title: 'UX Designer',             domain: 'Design',      skills: ['Figma','UX Design','User Research','Prototyping','CSS'] },
+];
+
+function computeJobRecommendations(allSkills, resumeData) {
+  var userSkillNames = allSkills.map(function(s) { return (s.name || '').toLowerCase(); });
+  var expYears = 0;
+  if (resumeData && Array.isArray(resumeData.experience)) expYears = resumeData.experience.length;
+
+  return JOB_CATALOG.map(function(job) {
+    var matched = job.skills.filter(function(req) {
+      return userSkillNames.indexOf(req.toLowerCase()) !== -1;
+    });
+    var pct = Math.round((matched.length / job.skills.length) * 100);
+    return { title: job.title, domain: job.domain, matchPct: pct, matched: matched, total: job.skills.length };
+  }).sort(function(a, b) { return b.matchPct - a.matchPct; });
+}
+
+function renderRecommendedJobs() {
+  var container = document.getElementById('azJobRecs');
+  if (!container) return;
+
+  var allSkills = analyzerState.allSkills || [];
+  if (allSkills.length === 0 && analyzerState.lastResult) {
+    allSkills = (analyzerState.lastResult.matchedSkills || []).map(function(s) { return { name: s.name }; });
+  }
+
+  var recs = computeJobRecommendations(allSkills, analyzerState.resumeData);
+  var top = recs.slice(0, 8);
+  var domains = ['All'].concat(Array.from(new Set(JOB_CATALOG.map(function(j) { return j.domain; }))));
+
+  function renderCards(filter) {
+    var filtered = filter === 'All' ? top : top.filter(function(r) {
+      var job = JOB_CATALOG.find(function(j) { return j.title === r.title; });
+      return job && job.domain === filter;
+    });
+    if (filtered.length === 0) {
+      return '<p style="color:#94a3b8;font-size:13px;padding:8px 0;">No matches in this category with your current skills.</p>';
+    }
+    return filtered.map(function(r) {
+      var color = r.matchPct >= 70 ? '#16a34a' : r.matchPct >= 40 ? '#f59e0b' : '#94a3b8';
+      var job = JOB_CATALOG.find(function(j) { return j.title === r.title; }) || {};
+      var domainBadge = { Engineering:'#3b82f6', Data:'#8b5cf6', DevOps:'#0891b2', Security:'#ef4444', Product:'#f59e0b', Business:'#16a34a', Design:'#ec4899' }[job.domain] || '#64748b';
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9;">' +
+        '<div>' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<strong style="font-size:14px;">' + escapeHtml(r.title) + '</strong>' +
+            '<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:' + domainBadge + '1a;color:' + domainBadge + ';">' + escapeHtml(job.domain || '') + '</span>' +
+          '</div>' +
+          '<div style="font-size:11px;color:#64748b;margin-top:3px;">Based on ' + r.matched.length + ' of ' + r.total + ' key skills matched</div>' +
+        '</div>' +
+        '<div style="text-align:right;flex-shrink:0;margin-left:12px;">' +
+          '<div style="font-size:22px;font-weight:800;color:' + color + ';line-height:1;">' + r.matchPct + '%</div>' +
+          '<div style="font-size:10px;color:#94a3b8;">fit</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  var activeFilter = 'All';
+  var filtersHtml = domains.map(function(d) {
+    return '<button class="azjr-filter' + (d === 'All' ? ' active' : '') + '" data-domain="' + d + '" style="font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid #e2e8f0;background:' + (d === 'All' ? '#4f46e5' : '#fff') + ';color:' + (d === 'All' ? '#fff' : '#64748b') + ';cursor:pointer;font-weight:600;">' + d + '</button>';
+  }).join('');
+
+  container.innerHTML =
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;" id="azjrFilters">' + filtersHtml + '</div>' +
+    '<div id="azjrCards">' + renderCards('All') + '</div>' +
+    '<p style="font-size:11px;color:#94a3b8;margin-top:10px;">Match % is based on skills detected from your profile, resume, and manual input.</p>';
+
+  container.querySelectorAll('.azjr-filter').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      container.querySelectorAll('.azjr-filter').forEach(function(b) {
+        b.style.background = '#fff'; b.style.color = '#64748b';
+      });
+      btn.style.background = '#4f46e5'; btn.style.color = '#fff';
+      document.getElementById('azjrCards').innerHTML = renderCards(btn.dataset.domain);
+    });
+  });
+}
+
 var analyzerState = {
   autoSkills: [],      // from profile/assessments with scores
   resumeSkills: [],    // from resume parsing
@@ -941,6 +1040,9 @@ function showAnalysisResults(result, role, region) {
       document.getElementById('azAssessCard').style.display = 'none';
     }
   }
+
+  // Recommended Jobs
+  renderRecommendedJobs();
 
   // Show results
   document.querySelectorAll('.analyzer-page .section').forEach(function(s) { s.classList.remove('visible'); });
