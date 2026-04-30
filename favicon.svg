@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Rounded purple background -->
+  <rect width="32" height="32" rx="7" fill="#4f46e5"/>
+  <!-- Rising bar chart: 3 bars of increasing height, representing skill growth -->
+  <rect x="5" y="20" width="5" height="7" rx="1.5" fill="white" opacity="0.6"/>
+  <rect x="13.5" y="14" width="5" height="13" rx="1.5" fill="white" opacity="0.8"/>
+  <rect x="22" y="7" width="5" height="20" rx="1.5" fill="white"/>
+  <!-- Small upward tick/arrow above tallest bar -->
+  <polyline points="20,10 24.5,5 29,10" fill="none" stroke="#a5b4fc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
