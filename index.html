@@ -252,34 +252,6 @@
   </div>
 
   <div class="jobs-layout">
-    <!-- Filters Sidebar -->
-    <div class="filters">
-      <h3>Quick Filters <span onclick="clearJobFilters()" style="cursor:pointer;">Clear all</span></h3>
-      <div class="filter-group">
-        <label>Location</label>
-        <input type="text" id="jobLocationFilter" placeholder="e.g. New York, Remote..." class="jobs-location-input">
-      </div>
-      <div class="filter-group">
-        <label>Popular Searches</label>
-        <div class="filter-tags" id="popularSearchTags">
-          <span class="filter-tag" onclick="quickSearch('Python')">Python</span>
-          <span class="filter-tag" onclick="quickSearch('Data Scientist')">Data Scientist</span>
-          <span class="filter-tag" onclick="quickSearch('Machine Learning')">ML Engineer</span>
-          <span class="filter-tag" onclick="quickSearch('Frontend')">Frontend</span>
-          <span class="filter-tag" onclick="quickSearch('Backend')">Backend</span>
-          <span class="filter-tag" onclick="quickSearch('Cloud')">Cloud</span>
-          <span class="filter-tag" onclick="quickSearch('DevOps')">DevOps</span>
-          <span class="filter-tag" onclick="quickSearch('Cybersecurity')">Security</span>
-        </div>
-      </div>
-      <div class="filter-group" style="margin-top:24px; padding-top:16px; border-top:1px solid #e2e8f0;">
-        <label>Based on Your Skills</label>
-        <div class="filter-tags" id="skillBasedTags">
-          <!-- Populated by JS from assessment scores -->
-        </div>
-      </div>
-    </div>
-
     <!-- Job Listings -->
     <div class="jobs-section">
       <div id="jobListings">

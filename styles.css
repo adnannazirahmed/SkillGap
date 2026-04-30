@@ -214,11 +214,7 @@ body.dark-mode .notif-icon.completed { background: rgba(234,179,8,0.15); }
 .featured-btns .primary { background: #fff; color: #4338ca; }
 .featured-btns .secondary { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
 
-.jobs-layout { display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
-
-.filters { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; height: fit-content; position: sticky; top: 92px; }
-.filters h3 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 16px; display: flex; justify-content: space-between; }
-.filters h3 span { color: #4f46e5; font-size: 12px; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.jobs-layout { display: block; }
 .filter-group { margin-bottom: 20px; }
 .filter-group label { display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 8px; }
 .filter-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #475569; margin-bottom: 8px; cursor: pointer; }
@@ -561,8 +557,6 @@ body.dark-mode .notif-icon.completed { background: rgba(234,179,8,0.15); }
 @media (max-width: 1024px) {
   .dash-grid { grid-template-columns: 1fr; }
   .dash-grid-3 { grid-template-columns: 1fr; }
-  .jobs-layout { grid-template-columns: 1fr; }
-  .filters { position: static; }
   .skills-layout { grid-template-columns: 1fr; }
   .benchmarks { grid-template-columns: 1fr; }
   .stat-row { grid-template-columns: 1fr; }
@@ -1286,13 +1280,7 @@ body.dark-mode .trending-rank { background: #334155; color: #94a3b8; }
 body.dark-mode .trending-name { color: #e2e8f0; }
 
 /* Jobs Page */
-body.dark-mode .filters { background: #1e293b; border-color: #334155; }
-body.dark-mode .filters h3 { color: #94a3b8; }
-body.dark-mode .filters h3 span { color: #a5b4fc; }
-body.dark-mode .filter-group label { color: #cbd5e1; }
-body.dark-mode .filter-check { color: #94a3b8; }
-body.dark-mode .filter-tag { border-color: #475569; color: #94a3b8; background: #1e293b; }
-body.dark-mode .filter-tag:hover, body.dark-mode .filter-tag.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+
 body.dark-mode .jobs-search-bar { background: #1e293b; border-color: #334155; }
 body.dark-mode .jobs-search-input { background: #334155; border-color: #475569; color: #e2e8f0; }
 body.dark-mode .jobs-search-input:focus { border-color: #4f46e5; background: #1e293b; }
