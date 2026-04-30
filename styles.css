@@ -272,7 +272,6 @@ body.dark-mode .notif-icon.completed { background: rgba(234,179,8,0.15); }
 
 /* Job time ago */
 .job-time { font-size: 11px; color: #94a3b8; margin-top: 4px; }
-.job-desc { font-size: 13px; color: #64748b; margin-top: 8px; line-height: 1.5; }
 
 /* Job salary tag */
 .job-tag.salary { background: #f0fdf4; color: #166534; font-weight: 600; }
@@ -294,21 +293,29 @@ body.dark-mode .notif-icon.completed { background: rgba(234,179,8,0.15); }
 /* Job Detail Modal */
 .job-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
 .job-modal-overlay.active { display: flex; }
-.job-modal { background: #fff; border-radius: 16px; max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 32px; position: relative; animation: modalSlideIn 0.25s ease-out; }
+.job-modal { background: #fff; border-radius: 16px; max-width: 740px; width: 100%; max-height: 88vh; display: flex; flex-direction: column; position: relative; animation: modalSlideIn 0.25s ease-out; }
 @keyframes modalSlideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-.job-modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
+.job-modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; z-index: 1; }
 .job-modal-close:hover { background: #f1f5f9; color: #1e293b; }
-.job-modal-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.job-modal-header { display: flex; align-items: flex-start; gap: 16px; padding: 28px 28px 0; flex-shrink: 0; }
 .job-modal-icon { font-size: 32px; width: 56px; height: 56px; background: #eef2ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .job-modal-title { font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
 .job-modal-company { font-size: 14px; color: #64748b; }
-.job-modal-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-.job-modal-meta { font-size: 12px; color: #94a3b8; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9; }
-.job-modal-body h3 { font-size: 14px; font-weight: 600; color: #334155; margin-bottom: 12px; }
-.job-modal-platforms { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+.job-modal-tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 28px 0; flex-shrink: 0; }
+.job-modal-meta { font-size: 12px; color: #94a3b8; padding: 10px 28px 14px; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; }
+.job-modal-body { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.job-modal-desc { font-size: 14px; color: #334155; line-height: 1.7; margin-bottom: 24px; }
+.job-modal-desc p { margin-bottom: 10px; }
+.job-modal-desc ul, .job-modal-desc ol { padding-left: 20px; margin-bottom: 10px; }
+.job-modal-desc li { margin-bottom: 4px; }
+.job-modal-desc h2, .job-modal-desc h3, .job-modal-desc h4 { font-size: 14px; font-weight: 700; color: #1e293b; margin: 16px 0 6px; }
+.job-modal-desc strong, .job-modal-desc b { font-weight: 600; color: #1e293b; }
+.job-modal-platforms-section { border-top: 1px solid #f1f5f9; padding-top: 16px; }
+.job-modal-platforms-label { font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+.job-modal-platforms { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .job-modal-platform-btn { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; color: #334155; text-decoration: none; transition: all 0.15s; cursor: pointer; }
 .job-modal-platform-btn:hover { border-color: #4f46e5; color: #4f46e5; background: #eef2ff; }
-.job-modal-actions { display: flex; gap: 10px; margin-top: 8px; }
+.job-modal-actions { display: flex; gap: 10px; padding: 16px 28px; border-top: 1px solid #f1f5f9; flex-shrink: 0; }
 .job-modal-actions .btn { flex: 1; text-align: center; text-decoration: none; }
 
 @media (max-width: 768px) {
@@ -317,7 +324,12 @@ body.dark-mode .notif-icon.completed { background: rgba(234,179,8,0.15); }
   .jobs-filter-select { width: 100%; }
   .platform-grid { grid-template-columns: repeat(2, 1fr); }
   .platform-search-bar { flex-direction: column; }
-  .job-modal { padding: 20px; margin: 10px; }
+  .job-modal { margin: 8px; max-height: 92vh; }
+  .job-modal-header { padding: 20px 20px 0; }
+  .job-modal-tags { padding: 10px 20px 0; }
+  .job-modal-meta { padding: 8px 20px 12px; }
+  .job-modal-body { padding: 16px 20px; }
+  .job-modal-actions { padding: 14px 20px; }
   .job-modal-platforms { grid-template-columns: 1fr; }
 }
 
@@ -1300,7 +1312,10 @@ body.dark-mode .job-modal-title { color: #e2e8f0; }
 body.dark-mode .job-modal-company { color: #94a3b8; }
 body.dark-mode .job-modal-icon { background: rgba(79,70,229,0.2); }
 body.dark-mode .job-modal-meta { color: #64748b; border-color: #334155; }
-body.dark-mode .job-modal-body h3 { color: #cbd5e1; }
+body.dark-mode .job-modal-desc { color: #cbd5e1; }
+body.dark-mode .job-modal-desc h2, body.dark-mode .job-modal-desc h3, body.dark-mode .job-modal-desc h4, body.dark-mode .job-modal-desc strong, body.dark-mode .job-modal-desc b { color: #e2e8f0; }
+body.dark-mode .job-modal-platforms-section { border-color: #334155; }
+body.dark-mode .job-modal-actions { border-color: #334155; }
 body.dark-mode .job-modal-close:hover { background: #334155; color: #e2e8f0; }
 body.dark-mode .job-modal-platform-btn { background: #334155; border-color: #475569; color: #cbd5e1; }
 body.dark-mode .job-modal-platform-btn:hover { border-color: #4f46e5; color: #a5b4fc; background: rgba(79,70,229,0.15); }

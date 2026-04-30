@@ -263,6 +263,8 @@ const MIN_STEP = 0.3;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 const GEMINI_FALLBACK_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const ANTHROPIC_INTERVIEW_MODEL = 'claude-haiku-4-5-20251001';
 const ADZUNA_APP_ID = process.env.ADZUNA_APP_ID;
 const ADZUNA_APP_KEY = process.env.ADZUNA_APP_KEY;
 const ADZUNA_BASE = 'https://api.adzuna.com/v1/api/jobs';
@@ -1051,7 +1053,7 @@ async function fetchMuseJobs({ search, category, level, location, page }) {
       publishedAt: job.publication_date || '',
       url: job.refs?.landing_page || '#',
       tags: (job.tags || []).map(t => t.name || t),
-      description: job.contents ? job.contents.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160) : '',
+      description: job.contents || '',
       source: 'themuse'
     }));
 
@@ -3532,22 +3534,38 @@ app.delete('/api/job-tracker/:id', async (req, res) => {
 // ════════════════════════════════════════════════
 // AI MOCK INTERVIEW
 // ════════════════════════════════════════════════
+// Uses Claude Haiku (ANTHROPIC_API_KEY) when available; falls back to Gemini.
+
+async function callInterviewAI(prompt, maxTokens) {
+  if (ANTHROPIC_API_KEY) {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      body: JSON.stringify({ model: ANTHROPIC_INTERVIEW_MODEL, max_tokens: maxTokens, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message || 'Anthropic error');
+    return data?.content?.[0]?.text || '';
+  }
+  if (!GEMINI_API_KEY) throw new Error('No AI API key configured');
+  const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.5, maxOutputTokens: maxTokens, responseMimeType: 'application/json' } });
+  let resp = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+  if (resp.status === 503) resp = await fetch(`${GEMINI_FALLBACK_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+  const data = await resp.json();
+  return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
 
 app.post('/api/interview/generate', async (req, res) => {
   const { skill } = req.body;
   if (!skill) return res.status(400).json({ error: 'skill required' });
-  if (!GEMINI_API_KEY) return res.status(503).json({ error: 'AI not configured' });
+  if (!ANTHROPIC_API_KEY && !GEMINI_API_KEY) return res.status(503).json({ error: 'AI not configured' });
 
-  const prompt = `Generate exactly 5 interview questions for a ${skill} role. Mix behavioral and technical questions.
+  const prompt = `Generate exactly 5 interview questions for a ${skill} role. Mix behavioral and technical questions. Make questions realistic and specific — avoid generic questions.
 Return ONLY a JSON object in this exact format (no markdown, no explanation):
 {"questions":[{"id":1,"type":"technical","question":"..."},{"id":2,"type":"behavioral","question":"..."},{"id":3,"type":"technical","question":"..."},{"id":4,"type":"behavioral","question":"..."},{"id":5,"type":"technical","question":"..."}]}`;
 
   try {
-    const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 1024, responseMimeType: 'application/json' } });
-    let resp = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
-    if (resp.status === 503) resp = await fetch(`${GEMINI_FALLBACK_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
-    const data = await resp.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const text = await callInterviewAI(prompt, 1024);
     const match = text.match(/\{[\s\S]*\}/);
     if (!match) return res.status(500).json({ error: 'Failed to generate questions' });
     const parsed = JSON.parse(match[0]);
@@ -3561,28 +3579,24 @@ Return ONLY a JSON object in this exact format (no markdown, no explanation):
 app.post('/api/interview/evaluate', async (req, res) => {
   const { skill, question, answer } = req.body;
   if (!skill || !question || !answer) return res.status(400).json({ error: 'skill, question, and answer required' });
-  if (!GEMINI_API_KEY) return res.status(503).json({ error: 'AI not configured' });
+  if (!ANTHROPIC_API_KEY && !GEMINI_API_KEY) return res.status(503).json({ error: 'AI not configured' });
 
-  const prompt = `You are an expert ${skill} interviewer. Score and evaluate the candidate's answer.
+  const prompt = `You are an expert ${skill} interviewer. Score and evaluate the candidate's answer below.
 
 Question: ${question}
-Candidate's Answer: ${answer.slice(0, 1000)}
+Candidate's Answer: ${answer.slice(0, 1200)}
 
 Return ONLY valid JSON in EXACTLY this format (no markdown, no code blocks, no extra text):
-{"score":7,"strengths":"Point 1. Point 2. Point 3.","improvements":"Point 1. Point 2. Point 3.","feedback":"One to two sentence overall assessment."}
+{"score":7,"strengths":"Specific strength 1. Specific strength 2. Specific strength 3.","improvements":"Specific improvement 1. Specific improvement 2. Specific improvement 3.","feedback":"One to two sentence overall assessment."}
 
 Rules:
-- score: integer 1–10 (10=excellent, 1=completely off-topic)
-- strengths: 2–3 specific positive points about THIS answer (not generic praise)
-- improvements: 2–3 specific actionable ways to improve THIS answer
+- score: integer 1–10 (10=exceptional, 7=good, 5=adequate, 3=weak, 1=off-topic)
+- strengths: exactly 2–3 specific positive observations about THIS answer
+- improvements: exactly 2–3 specific, actionable ways to improve THIS answer
 - feedback: 1–2 sentence overall summary`;
 
   try {
-    const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 600, responseMimeType: 'application/json' } });
-    let resp = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
-    if (resp.status === 503) resp = await fetch(`${GEMINI_FALLBACK_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
-    const data = await resp.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const text = await callInterviewAI(prompt, 700);
     let result;
     try { result = JSON.parse(text); } catch {
       const match = text.match(/\{[\s\S]*\}/);

@@ -2105,7 +2105,6 @@ async function searchJobs(page) {
       if (job.salary) tagsHtml += '<span class="job-tag salary">' + escapeHtml(job.salary) + '</span>';
 
       var jobJson = encodeURIComponent(JSON.stringify({ jobTitle: job.title, company: job.company, location: locationText, url: job.url }));
-      var descSnippet = job.description ? '<div class="job-desc">' + escapeHtml(job.description) + (job.description.length >= 160 ? '…' : '') + '</div>' : '';
       return '<div class="job-card" onclick="openJobModal(window._currentJobs[' + idx + '])" style="cursor:pointer;">' +
         '<div class="job-top">' +
           '<div class="job-logo">' + icon + '</div>' +
@@ -2115,7 +2114,6 @@ async function searchJobs(page) {
             (timeAgo ? '<div class="job-time">' + timeAgo + '</div>' : '') +
           '</div>' +
         '</div>' +
-        descSnippet +
         '<div class="job-tags">' + tagsHtml + '</div>' +
         '<div class="job-bottom">' +
           '<a href="' + escapeHtml(job.url) + '" target="_blank" rel="noopener" class="job-apply" onclick="event.stopPropagation();trackJobApplied(' + jobJson + ')">View Original →</a>' +
@@ -2337,6 +2335,17 @@ function searchOnPlatform(platform) {
 }
 
 // ── Job Detail Modal ──
+function sanitizeJobHtml(html) {
+  if (!html) return '';
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+    .replace(/\s(on\w+)="[^"]*"/gi, '')
+    .replace(/\s(on\w+)='[^']*'/gi, '')
+    .replace(/href="javascript:[^"]*"/gi, 'href="#"');
+}
+
 function openJobModal(job) {
   var overlay = document.getElementById('jobModalOverlay');
   var icon = getJobIcon(job.title, job.categories);
@@ -2359,7 +2368,14 @@ function openJobModal(job) {
 
   // Meta
   var timeAgo = job.publishedAt ? getTimeAgo(job.publishedAt) : '';
-  document.getElementById('jobModalMeta').textContent = (timeAgo ? 'Posted ' + timeAgo : '') + ' • Source: ' + (job.source || 'API');
+  document.getElementById('jobModalMeta').textContent = (timeAgo ? 'Posted ' + timeAgo : '') + (job.source ? ' • Source: ' + job.source : '');
+
+  // Full job description
+  var descEl = document.getElementById('jobModalDesc');
+  if (descEl) {
+    var cleanHtml = sanitizeJobHtml(job.description);
+    descEl.innerHTML = cleanHtml || '<p style="color:#94a3b8;font-style:italic;">No description available for this listing.</p>';
+  }
 
   // Platform search links for this specific job
   var searchTerm = encodeURIComponent(job.title);
