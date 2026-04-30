@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillGap Certificate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:#f1f5f9; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 16px; }
+
+    .cert-wrapper { background:#fff; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.12); max-width:720px; width:100%; overflow:hidden; }
+
+    .cert-header { background:linear-gradient(135deg,#1e1b4b 0%,#312e81 50%,#4338ca 100%); padding:32px 40px 24px; text-align:center; position:relative; }
+    .cert-logo { font-size:13px; font-weight:700; color:rgba(255,255,255,0.8); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:8px; }
+    .cert-title { font-family:'Playfair Display',serif; font-size:28px; color:#fff; margin-bottom:4px; }
+    .cert-subtitle { font-size:13px; color:rgba(255,255,255,0.6); }
+
+    .cert-body { padding:40px; text-align:center; border:2px solid transparent; background:linear-gradient(#fff,#fff) padding-box, linear-gradient(135deg,#c7d2fe,#e0e7ff,#c7d2fe) border-box; margin:16px; border-radius:12px; }
+    .cert-presented { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:#94a3b8; margin-bottom:12px; }
+    .cert-name { font-family:'Playfair Display',serif; font-size:38px; color:#1e293b; margin-bottom:8px; }
+    .cert-has-demonstrated { font-size:14px; color:#64748b; margin-bottom:20px; }
+    .cert-skill-badge { display:inline-block; background:linear-gradient(135deg,#4f46e5,#6366f1); color:#fff; font-size:22px; font-weight:700; padding:10px 32px; border-radius:50px; margin-bottom:20px; }
+    .cert-score-row { display:flex; justify-content:center; gap:32px; margin-bottom:20px; }
+    .cert-score-item { text-align:center; }
+    .cert-score-value { font-size:28px; font-weight:700; color:#4f46e5; }
+    .cert-score-label { font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-top:2px; }
+    .cert-divider { height:1px; background:linear-gradient(to right,transparent,#e2e8f0,transparent); margin:20px 0; }
+    .cert-date { font-size:13px; color:#94a3b8; }
+    .cert-id { font-size:11px; color:#cbd5e1; margin-top:6px; font-family:monospace; }
+
+    .cert-footer { padding:20px 40px; background:#f8fafc; border-top:1px solid #e2e8f0; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+    .cert-footer .btn { padding:10px 20px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; border:none; }
+    .btn-primary { background:#4f46e5; color:#fff; }
+    .btn-primary:hover { background:#4338ca; }
+    .btn-secondary { background:#fff; color:#475569; border:1px solid #e2e8f0 !important; }
+    .btn-secondary:hover { background:#f8fafc; }
+
+    .cert-error { text-align:center; padding:60px 20px; }
+    .cert-error h2 { font-size:24px; color:#1e293b; margin-bottom:8px; }
+    .cert-error p { color:#64748b; }
+
+    @media print {
+      body { background:#fff; padding:0; }
+      .cert-wrapper { box-shadow:none; border-radius:0; max-width:100%; }
+      .cert-footer { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cert-wrapper" id="certWrapper">
+  <div style="text-align:center;padding:60px;color:#94a3b8;">Loading certificate...</div>
+</div>
+
+<script>
+(async function() {
+  var params = new URLSearchParams(window.location.search);
+  var id = params.get('id');
+  if (!id) {
+    renderError('No certificate ID provided.');
+    return;
+  }
+  try {
+    var resp = await fetch('/api/certificate/' + encodeURIComponent(id));
+    if (!resp.ok) throw new Error('Not found');
+    var data = await resp.json();
+    var cert = data.certificate;
+    if (!cert) throw new Error('Not found');
+    renderCertificate(cert);
+  } catch (err) {
+    renderError('Certificate not found or has been removed.');
+  }
+})();
+
+function renderCertificate(cert) {
+  var issued = cert.issuedAt ? new Date(cert.issuedAt).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '';
+  var scoreLabel = cert.score >= 9 ? 'Expert' : cert.score >= 7 ? 'Proficient' : cert.score >= 5 ? 'Intermediate' : 'Beginner';
+
+  document.title = cert.userName + ' – ' + cert.skill + ' Certificate | SkillGap';
+  document.getElementById('certWrapper').innerHTML =
+    '<div class="cert-header">' +
+      '<div class="cert-logo">✓ SkillGap Analyzer</div>' +
+      '<div class="cert-title">Certificate of Achievement</div>' +
+      '<div class="cert-subtitle">This certifies demonstrated proficiency in a verified skill assessment</div>' +
+    '</div>' +
+    '<div class="cert-body">' +
+      '<div class="cert-presented">This certificate is proudly presented to</div>' +
+      '<div class="cert-name">' + escHtml(cert.userName) + '</div>' +
+      '<div class="cert-has-demonstrated">for successfully demonstrating proficiency in</div>' +
+      '<div class="cert-skill-badge">' + escHtml(cert.skill) + '</div>' +
+      '<div class="cert-score-row">' +
+        '<div class="cert-score-item"><div class="cert-score-value">' + cert.score + '/10</div><div class="cert-score-label">Assessment Score</div></div>' +
+        '<div class="cert-score-item"><div class="cert-score-value">' + escHtml(scoreLabel) + '</div><div class="cert-score-label">Skill Level</div></div>' +
+      '</div>' +
+      '<div class="cert-divider"></div>' +
+      '<div class="cert-date">Issued on ' + escHtml(issued) + '</div>' +
+      '<div class="cert-id">ID: ' + escHtml(cert.id) + '</div>' +
+    '</div>' +
+    '<div class="cert-footer">' +
+      '<button class="btn btn-primary" onclick="window.print()">Print / Save as PDF</button>' +
+      '<button class="btn btn-secondary" onclick="copyLink()">Copy Share Link</button>' +
+      '<a href="/index.html" class="btn btn-secondary">Go to SkillGap</a>' +
+    '</div>';
+}
+
+function renderError(msg) {
+  document.getElementById('certWrapper').innerHTML =
+    '<div class="cert-error"><h2>Certificate Not Found</h2><p>' + escHtml(msg) + '</p><br><a href="/index.html" style="color:#4f46e5;">← Back to SkillGap</a></div>';
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(function() {
+    alert('Link copied to clipboard!');
+  });
+}
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

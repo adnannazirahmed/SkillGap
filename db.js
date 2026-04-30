@@ -455,6 +455,125 @@ function rowToMessage(row) {
   };
 }
 
+// ──────────────────────────────────────────────
+// JOB APPLICATION TRACKER
+// ──────────────────────────────────────────────
+async function getJobApplications(userId) {
+  const { data, error } = await getClient()
+    .from('job_applications')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data || []).map(rowToJobApp);
+}
+
+async function insertJobApplication(userId, job) {
+  const { data, error } = await getClient()
+    .from('job_applications')
+    .insert({
+      user_id:    userId,
+      job_title:  job.jobTitle  || '',
+      company:    job.company   || '',
+      location:   job.location  || '',
+      url:        job.url       || '',
+      status:     job.status    || 'saved',
+      notes:      job.notes     || '',
+      applied_at: job.status === 'applied' ? new Date().toISOString() : null,
+      created_at: new Date().toISOString()
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return rowToJobApp(data);
+}
+
+async function updateJobApplication(id, userId, updates) {
+  const row = {};
+  if (updates.status !== undefined) {
+    row.status = updates.status;
+    if (updates.status === 'applied' && updates.appliedAt === undefined) {
+      row.applied_at = new Date().toISOString();
+    }
+  }
+  if (updates.notes      !== undefined) row.notes      = updates.notes;
+  if (updates.appliedAt  !== undefined) row.applied_at = updates.appliedAt;
+
+  const { data, error } = await getClient()
+    .from('job_applications')
+    .update(row)
+    .eq('id', id)
+    .eq('user_id', userId)
+    .select()
+    .single();
+  if (error) throw error;
+  return rowToJobApp(data);
+}
+
+async function deleteJobApplication(id, userId) {
+  const { error } = await getClient()
+    .from('job_applications')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId);
+  if (error) throw error;
+}
+
+function rowToJobApp(row) {
+  return {
+    id:        row.id,
+    userId:    row.user_id,
+    jobTitle:  row.job_title,
+    company:   row.company,
+    location:  row.location,
+    url:       row.url,
+    status:    row.status,
+    notes:     row.notes,
+    appliedAt: row.applied_at,
+    createdAt: row.created_at
+  };
+}
+
+// ──────────────────────────────────────────────
+// CERTIFICATES
+// ──────────────────────────────────────────────
+async function insertCertificate(userId, userName, skill, score) {
+  const { data, error } = await getClient()
+    .from('certificates')
+    .insert({
+      user_id:   userId,
+      user_name: userName || userId,
+      skill:     skill,
+      score:     score,
+      issued_at: new Date().toISOString()
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return rowToCertificate(data);
+}
+
+async function getCertificate(id) {
+  const { data, error } = await getClient()
+    .from('certificates')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? rowToCertificate(data) : null;
+}
+
+function rowToCertificate(row) {
+  return {
+    id:       row.id,
+    userId:   row.user_id,
+    userName: row.user_name,
+    skill:    row.skill,
+    score:    row.score,
+    issuedAt: row.issued_at
+  };
+}
+
 module.exports = {
   getHistoryForUser,
   getAllHistory,
@@ -477,5 +596,11 @@ module.exports = {
   deleteDocument,
   getChatMessages,
   insertChatMessage,
-  getAllInquiryMessages
+  getAllInquiryMessages,
+  getJobApplications,
+  insertJobApplication,
+  updateJobApplication,
+  deleteJobApplication,
+  insertCertificate,
+  getCertificate
 };

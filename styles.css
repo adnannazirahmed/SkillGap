@@ -1647,3 +1647,80 @@ body.dark-mode .app-dialog-message { color: #cbd5e1; }
 body.dark-mode .app-dialog-icon { background: rgba(99, 102, 241, 0.18); color: #a5b4fc; }
 body.dark-mode .app-dialog-icon.danger { background: rgba(239, 68, 68, 0.18); color: #fca5a5; }
 body.dark-mode .app-dialog-icon.success { background: rgba(22, 163, 74, 0.18); color: #86efac; }
+
+/* ═══════════════════════════════════════════════
+   JOB TRACKER
+═══════════════════════════════════════════════ */
+.tracker-toolbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.tracker-board { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; align-items:start; }
+.tracker-col { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px; min-height:200px; }
+.tracker-col-header { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#64748b; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+.tracker-col-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.tracker-col-dot.saved { background:#94a3b8; }
+.tracker-col-dot.applied { background:#4f46e5; }
+.tracker-col-dot.interviewing { background:#f59e0b; }
+.tracker-col-dot.offer { background:#16a34a; }
+.tracker-col-dot.rejected { background:#ef4444; }
+.tracker-col-count { margin-left:auto; background:#e2e8f0; color:#475569; font-size:11px; padding:1px 6px; border-radius:10px; }
+.tracker-card { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:8px; cursor:pointer; transition:all 0.15s; }
+.tracker-card:hover { border-color:#c7d2fe; box-shadow:0 2px 6px rgba(79,70,229,0.08); }
+.tracker-card-title { font-size:13px; font-weight:600; color:#1e293b; margin-bottom:4px; }
+.tracker-card-company { font-size:12px; color:#64748b; margin-bottom:6px; }
+.tracker-card-link { font-size:11px; color:#4f46e5; text-decoration:none; display:block; margin-bottom:4px; }
+.tracker-card-link:hover { text-decoration:underline; }
+.tracker-card-date { font-size:11px; color:#94a3b8; }
+.tracker-empty { font-size:12px; color:#cbd5e1; text-align:center; padding:20px 0; }
+
+/* Modal shared */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+.modal-box { background:#fff; border-radius:16px; padding:28px; width:90%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+.modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.modal-header h3 { font-size:18px; font-weight:700; }
+.modal-close { background:none; border:none; font-size:18px; cursor:pointer; color:#94a3b8; padding:4px; }
+.modal-close:hover { color:#1e293b; }
+.modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+.modal-box .form-group { margin-bottom:14px; }
+.modal-box .form-group label { display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px; }
+.modal-box .form-group input, .modal-box .form-group select, .modal-box .form-group textarea { width:100%; padding:9px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:13px; font-family:inherit; }
+.modal-box .form-group textarea { resize:vertical; }
+
+@media (max-width:900px) {
+  .tracker-board { grid-template-columns:1fr 1fr; }
+}
+@media (max-width:600px) {
+  .tracker-board { grid-template-columns:1fr; }
+}
+
+/* ═══════════════════════════════════════════════
+   MOCK INTERVIEW
+═══════════════════════════════════════════════ */
+.interview-header { padding:16px 0 0; }
+.interview-q-card { padding:28px; }
+.interview-q-type { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#4f46e5; margin-bottom:12px; }
+.interview-q-text { font-size:18px; font-weight:600; color:#1e293b; line-height:1.5; }
+.interview-fb-card { padding:28px; }
+.interview-fb-score { text-align:center; margin-bottom:16px; }
+.interview-fb-question { font-size:14px; font-weight:600; color:#1e293b; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #f1f5f9; }
+.interview-fb-section { padding:12px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:10px; font-size:13px; }
+.interview-fb-section strong { display:block; margin-bottom:4px; }
+.interview-summary-score { margin-bottom:8px; }
+
+/* ═══════════════════════════════════════════════
+   ROADMAP FREE COURSES
+═══════════════════════════════════════════════ */
+.rm-resources-section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:#64748b; margin:12px 0 6px; }
+.rm-course-link { display:block; font-size:13px; color:#16a34a; text-decoration:none; padding:4px 0; }
+.rm-course-link:hover { text-decoration:underline; }
+
+/* Dark mode additions */
+body.dark-mode .tracker-col { background:#1e293b; border-color:#334155; }
+body.dark-mode .tracker-card { background:#0f172a; border-color:#334155; }
+body.dark-mode .tracker-card:hover { border-color:#4f46e5; }
+body.dark-mode .tracker-card-title { color:#f1f5f9; }
+body.dark-mode .tracker-card-company { color:#94a3b8; }
+body.dark-mode .modal-box { background:#1e293b; }
+body.dark-mode .modal-header h3 { color:#f1f5f9; }
+body.dark-mode .modal-box .form-group label { color:#cbd5e1; }
+body.dark-mode .modal-box .form-group input, body.dark-mode .modal-box .form-group select, body.dark-mode .modal-box .form-group textarea { background:#0f172a; border-color:#334155; color:#e2e8f0; }
+body.dark-mode .interview-q-text { color:#f1f5f9; }
+body.dark-mode .interview-fb-section { background:#0f172a; border-color:#334155; }

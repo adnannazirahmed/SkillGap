@@ -236,7 +236,7 @@ function navigateTo(page) {
   if (navItem) navItem.classList.add('active');
 
   // Update page title
-  const titles = { home: 'Dashboard', jobs: 'Jobs', profile: 'Profile', analyzer: 'Analyzer', assessment: 'Assessment', roadmap: 'Roadmap', coaching: 'Peer Coaching' };
+  const titles = { home: 'Dashboard', jobs: 'Jobs', profile: 'Profile', analyzer: 'Analyzer', assessment: 'Assessment', roadmap: 'Roadmap', coaching: 'Peer Coaching', tracker: 'Job Tracker', interview: 'Mock Interview' };
   document.title = 'SkillGap Analyzer - ' + (titles[page] || 'Dashboard');
 
   // Initialize assessment page when navigating to it
@@ -268,6 +268,12 @@ function navigateTo(page) {
   }
   if (page === 'coaching') {
     initCoaching();
+  }
+  if (page === 'tracker') {
+    initTracker();
+  }
+  if (page === 'interview') {
+    initInterview();
   }
 
   // Scroll to top
@@ -1710,6 +1716,9 @@ async function showAssessmentResults() {
     // Save score to localStorage
     saveAssessmentScore(data.skill, data.finalScore, data.skillLevel);
 
+    // Render certificate banner
+    renderCertBanner(data.skill, data.finalScore);
+
     // Load and display assessment history
     loadAssessmentHistory(data.skill);
 
@@ -2095,6 +2104,7 @@ async function searchJobs(page) {
       if (isNew) tagsHtml += '<span class="job-tag new">New</span>';
       if (job.salary) tagsHtml += '<span class="job-tag salary">' + escapeHtml(job.salary) + '</span>';
 
+      var jobJson = encodeURIComponent(JSON.stringify({ jobTitle: job.title, company: job.company, location: locationText, url: job.url }));
       var descSnippet = job.description ? '<div class="job-desc">' + escapeHtml(job.description) + (job.description.length >= 160 ? '…' : '') + '</div>' : '';
       return '<div class="job-card" onclick="openJobModal(window._currentJobs[' + idx + '])" style="cursor:pointer;">' +
         '<div class="job-top">' +
@@ -2108,8 +2118,8 @@ async function searchJobs(page) {
         descSnippet +
         '<div class="job-tags">' + tagsHtml + '</div>' +
         '<div class="job-bottom">' +
-          '<a href="' + escapeHtml(job.url) + '" target="_blank" rel="noopener" class="job-apply" onclick="event.stopPropagation()">View Original →</a>' +
-          '<div class="job-bookmark" onclick="event.stopPropagation();toggleBookmark(this)" title="Save job">☆</div>' +
+          '<a href="' + escapeHtml(job.url) + '" target="_blank" rel="noopener" class="job-apply" onclick="event.stopPropagation();trackJobApplied(' + jobJson + ')">View Original →</a>' +
+          '<div class="job-bookmark" onclick="event.stopPropagation();saveJobToTracker(' + jobJson + ',this)" title="Save to tracker">☆</div>' +
         '</div>' +
       '</div>';
     }).join('');
@@ -2146,6 +2156,31 @@ function loadJobPage(direction) {
 function toggleBookmark(el) {
   el.textContent = el.textContent === '☆' ? '★' : '☆';
   el.style.color = el.textContent === '★' ? '#4f46e5' : '';
+}
+
+function saveJobToTracker(jobData, el) {
+  var user = getActiveUser();
+  if (!user) return;
+  if (el) { el.textContent = '★'; el.style.color = '#4f46e5'; }
+  fetch('/api/job-tracker', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: user.email, jobTitle: jobData.jobTitle, company: jobData.company, location: jobData.location, url: jobData.url, status: 'saved' })
+  }).then(function(r) { return r.json(); }).then(function() {
+    showToast('Job saved to tracker!');
+  }).catch(function() {});
+}
+
+function trackJobApplied(jobData) {
+  var user = getActiveUser();
+  if (!user) return;
+  fetch('/api/job-tracker', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: user.email, jobTitle: jobData.jobTitle, company: jobData.company, location: jobData.location, url: jobData.url, status: 'applied' })
+  }).then(function(r) { return r.json(); }).then(function() {
+    showToast('Tracked as Applied in your Job Tracker.');
+  }).catch(function() {});
 }
 
 function getJobIcon(title, categories) {
@@ -3901,6 +3936,39 @@ var SKILL_YOUTUBE_CREATORS = {
                        { name: 'John Hammond',          url: 'https://www.youtube.com/@_JohnHammond' }]
 };
 
+var SKILL_FREE_COURSES = {
+  'Python':           [{ title: 'Python for Everybody – Coursera (free audit)', url: 'https://www.coursera.org/specializations/python' },
+                       { title: 'freeCodeCamp Python Handbook', url: 'https://www.freecodecamp.org/news/the-python-guide-for-beginners/' },
+                       { title: 'The Odin Project: Python', url: 'https://www.theodinproject.com/' }],
+  'JavaScript':       [{ title: 'JavaScript Algorithms – freeCodeCamp', url: 'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/' },
+                       { title: 'The Odin Project: Full Stack JS', url: 'https://www.theodinproject.com/paths/full-stack-javascript' },
+                       { title: 'JavaScript.info (free book)', url: 'https://javascript.info/' }],
+  'React':            [{ title: 'React Official Tutorial (free)', url: 'https://react.dev/learn' },
+                       { title: 'freeCodeCamp Front End Libraries', url: 'https://www.freecodecamp.org/learn/front-end-development-libraries/' },
+                       { title: 'Scrimba React Course (free)', url: 'https://scrimba.com/learn/learnreact' }],
+  'SQL':              [{ title: 'SQL for Data Science – Coursera (free audit)', url: 'https://www.coursera.org/learn/sql-for-data-science' },
+                       { title: 'freeCodeCamp Relational Database', url: 'https://www.freecodecamp.org/learn/relational-database/' },
+                       { title: 'SQLZoo (interactive, free)', url: 'https://sqlzoo.net/' }],
+  'Machine Learning': [{ title: 'Machine Learning Specialization – Coursera (free audit)', url: 'https://www.coursera.org/specializations/machine-learning-introduction' },
+                       { title: 'fast.ai Practical Deep Learning (free)', url: 'https://course.fast.ai/' },
+                       { title: 'Google ML Crash Course (free)', url: 'https://developers.google.com/machine-learning/crash-course' }],
+  'Data Analysis':    [{ title: 'Google Data Analytics Certificate – Coursera (free audit)', url: 'https://www.coursera.org/professional-certificates/google-data-analytics' },
+                       { title: 'Kaggle Learn – Pandas (free)', url: 'https://www.kaggle.com/learn/pandas' },
+                       { title: 'freeCodeCamp Data Analysis with Python', url: 'https://www.freecodecamp.org/learn/data-analysis-with-python/' }],
+  'Cloud Computing':  [{ title: 'AWS Cloud Practitioner Essentials (free)', url: 'https://explore.skillbuilder.aws/learn/course/134' },
+                       { title: 'Google Cloud Skills Boost (free tier)', url: 'https://www.cloudskillsboost.google/' },
+                       { title: 'Azure Fundamentals – Microsoft Learn (free)', url: 'https://learn.microsoft.com/en-us/training/paths/azure-fundamentals-describe-cloud-concepts/' }],
+  'Cybersecurity':    [{ title: 'Google Cybersecurity Certificate – Coursera (free audit)', url: 'https://www.coursera.org/professional-certificates/google-cybersecurity' },
+                       { title: 'TryHackMe – Free Learning Paths', url: 'https://tryhackme.com/paths' },
+                       { title: 'Cybrary Free Courses', url: 'https://www.cybrary.it/catalog/cybersecurity/' }],
+  'Excel':            [{ title: 'Excel Skills for Business – Coursera (free audit)', url: 'https://www.coursera.org/specializations/excel' },
+                       { title: 'GCFGlobal Excel Tutorial (free)', url: 'https://edu.gcfglobal.org/en/excel/' },
+                       { title: 'Microsoft Excel Training (free)', url: 'https://support.microsoft.com/en-us/office/excel-video-training-9bc05390-e94c-46af-a5b3-d7c22f6990bb' }],
+  'Statistics':       [{ title: 'Statistics with Python – Coursera (free audit)', url: 'https://www.coursera.org/specializations/statistics-with-python' },
+                       { title: 'Khan Academy Statistics (free)', url: 'https://www.khanacademy.org/math/statistics-probability' },
+                       { title: 'Kaggle Learn – Intro to ML (free)', url: 'https://www.kaggle.com/learn/intro-to-machine-learning' }]
+};
+
 // Build a topic-specific YouTube search URL — always works, no dead links.
 function buildYouTubeSearchUrl(skill, topic) {
   var q = encodeURIComponent((skill + ' ' + topic + ' tutorial').trim());
@@ -4356,7 +4424,11 @@ function toggleRoadmapDetail(skill, idx, status, opts) {
   var docItems = (node.resources || []).map(function(r) {
     return '<a href="' + r.url + '" target="_blank" rel="noopener">' + escapeHtml(r.type) + ': ' + escapeHtml(r.title) + ' ↗</a>';
   });
-  var resources = '<div class="rm-resources">' + ytItems.concat(docItems).join('') + '</div>';
+  var freeCourses = (SKILL_FREE_COURSES[skill] || []).map(function(c) {
+    return '<a href="' + c.url + '" target="_blank" rel="noopener" class="rm-course-link">🎓 ' + escapeHtml(c.title) + ' ↗</a>';
+  });
+  var resources = '<div class="rm-resources">' + ytItems.concat(docItems).join('') + '</div>' +
+    (freeCourses.length ? '<div class="rm-resources-section-label">Free Courses</div><div class="rm-resources">' + freeCourses.join('') + '</div>' : '');
 
   // CTA — always points at the targeted YouTube search
   var ctaUrl = buildYouTubeSearchUrl(skill, node.title);
@@ -5089,4 +5161,298 @@ function sendChatMessage() {
     .then(function(r) { return r.json(); })
     .then(function() { loadChatMessages(); })
     .catch(function() { if (input) input.value = content; });
+}
+
+// ════════════════════════════════════════════════
+// TOAST UTILITY
+// ════════════════════════════════════════════════
+function showToast(msg) {
+  var existing = document.getElementById('sgaToast');
+  if (existing) existing.remove();
+  var t = document.createElement('div');
+  t.id = 'sgaToast';
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.2);';
+  document.body.appendChild(t);
+  setTimeout(function() { if (t.parentNode) t.remove(); }, 3000);
+}
+
+// ════════════════════════════════════════════════
+// JOB APPLICATION TRACKER
+// ════════════════════════════════════════════════
+var _editingJobId = null;
+
+function initTracker() {
+  loadTrackerJobs();
+}
+
+function loadTrackerJobs() {
+  var user = getActiveUser();
+  if (!user) return;
+  fetch('/api/job-tracker?userId=' + encodeURIComponent(user.email))
+    .then(function(r) { return r.json(); })
+    .then(function(data) { renderTrackerBoard(data.jobs || []); })
+    .catch(function() { renderTrackerBoard([]); });
+}
+
+function renderTrackerBoard(jobs) {
+  var statuses = ['saved', 'applied', 'interviewing', 'offer', 'rejected'];
+  statuses.forEach(function(status) {
+    var container = document.getElementById('cards-' + status);
+    var countEl = document.getElementById('count-' + status);
+    if (!container) return;
+    var filtered = jobs.filter(function(j) { return j.status === status; });
+    if (countEl) countEl.textContent = filtered.length;
+    if (filtered.length === 0) {
+      container.innerHTML = '<div class="tracker-empty">No jobs here yet</div>';
+      return;
+    }
+    container.innerHTML = filtered.map(function(job) {
+      return '<div class="tracker-card" onclick="openEditJobModal(\'' + job.id + '\',\'' + escapeHtml(job.status) + '\',\'' + escapeHtml((job.notes || '').replace(/'/g,'&#39;')) + '\')">' +
+        '<div class="tracker-card-title">' + escapeHtml(job.jobTitle) + '</div>' +
+        '<div class="tracker-card-company">' + escapeHtml(job.company || '') + (job.location ? ' · ' + escapeHtml(job.location) : '') + '</div>' +
+        (job.url ? '<a href="' + escapeHtml(job.url) + '" target="_blank" rel="noopener" class="tracker-card-link" onclick="event.stopPropagation()">View Job ↗</a>' : '') +
+        '<div class="tracker-card-date">' + (job.createdAt ? new Date(job.createdAt).toLocaleDateString() : '') + '</div>' +
+      '</div>';
+    }).join('');
+  });
+}
+
+function openAddJobModal() {
+  document.getElementById('addJobTitle').value = '';
+  document.getElementById('addJobCompany').value = '';
+  document.getElementById('addJobLocation').value = '';
+  document.getElementById('addJobUrl').value = '';
+  document.getElementById('addJobStatus').value = 'saved';
+  document.getElementById('addJobModal').style.display = 'flex';
+}
+
+function closeAddJobModal() {
+  document.getElementById('addJobModal').style.display = 'none';
+}
+
+function submitAddJob() {
+  var user = getActiveUser();
+  if (!user) return;
+  var title = document.getElementById('addJobTitle').value.trim();
+  if (!title) { alert('Job title is required.'); return; }
+  var payload = {
+    userId: user.email,
+    jobTitle: title,
+    company: document.getElementById('addJobCompany').value.trim(),
+    location: document.getElementById('addJobLocation').value.trim(),
+    url: document.getElementById('addJobUrl').value.trim(),
+    status: document.getElementById('addJobStatus').value
+  };
+  fetch('/api/job-tracker', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+    .then(function(r) { return r.json(); })
+    .then(function() { closeAddJobModal(); loadTrackerJobs(); })
+    .catch(function() { alert('Failed to save job.'); });
+}
+
+function openEditJobModal(id, status, notes) {
+  _editingJobId = id;
+  document.getElementById('editJobStatus').value = status;
+  document.getElementById('editJobNotes').value = notes || '';
+  document.getElementById('editJobModal').style.display = 'flex';
+}
+
+function closeEditJobModal() {
+  document.getElementById('editJobModal').style.display = 'none';
+  _editingJobId = null;
+}
+
+function saveEditJob() {
+  var user = getActiveUser();
+  if (!user || !_editingJobId) return;
+  var payload = {
+    userId: user.email,
+    status: document.getElementById('editJobStatus').value,
+    notes: document.getElementById('editJobNotes').value.trim()
+  };
+  fetch('/api/job-tracker/' + _editingJobId, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+    .then(function(r) { return r.json(); })
+    .then(function() { closeEditJobModal(); loadTrackerJobs(); })
+    .catch(function() { alert('Failed to update job.'); });
+}
+
+function deleteTrackedJob() {
+  var user = getActiveUser();
+  if (!user || !_editingJobId) return;
+  if (!confirm('Remove this job from your tracker?')) return;
+  fetch('/api/job-tracker/' + _editingJobId + '?userId=' + encodeURIComponent(user.email), { method: 'DELETE' })
+    .then(function() { closeEditJobModal(); loadTrackerJobs(); })
+    .catch(function() { alert('Failed to delete job.'); });
+}
+
+// ════════════════════════════════════════════════
+// AI MOCK INTERVIEW
+// ════════════════════════════════════════════════
+var _interviewQuestions = [];
+var _interviewCurrentQ = 0;
+var _interviewScores = [];
+var _interviewSkill = '';
+
+function initInterview() {
+  var select = document.getElementById('interviewSkillSelect');
+  if (!select || select.options.length > 1) return;
+  var skills = ['Python', 'JavaScript', 'React', 'SQL', 'Machine Learning', 'Data Analysis', 'Cloud Computing', 'Cybersecurity', 'Excel', 'Statistics'];
+  skills.forEach(function(s) {
+    var opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    select.appendChild(opt);
+  });
+}
+
+function showInterviewScreen(id) {
+  ['interview-select','interview-question','interview-feedback','interview-summary'].forEach(function(s) {
+    var el = document.getElementById(s);
+    if (el) el.style.display = s === id ? 'block' : 'none';
+  });
+}
+
+function showInterviewSelect() {
+  showInterviewScreen('interview-select');
+  _interviewQuestions = []; _interviewCurrentQ = 0; _interviewScores = []; _interviewSkill = '';
+}
+
+async function startMockInterview() {
+  var skill = document.getElementById('interviewSkillSelect').value;
+  if (!skill) { alert('Please select a skill.'); return; }
+  var btn = document.querySelector('#interview-select .btn-primary');
+  if (btn) { btn.textContent = 'Generating questions...'; btn.disabled = true; }
+  try {
+    var resp = await fetch('/api/interview/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skill: skill }) });
+    var data = await resp.json();
+    if (!data.questions || data.questions.length === 0) throw new Error('No questions returned');
+    _interviewQuestions = data.questions;
+    _interviewCurrentQ = 0;
+    _interviewScores = [];
+    _interviewSkill = skill;
+    showInterviewScreen('interview-question');
+    renderInterviewQuestion();
+  } catch (err) {
+    alert('Failed to generate questions. Please try again.');
+  } finally {
+    if (btn) { btn.textContent = 'Start Mock Interview →'; btn.disabled = false; }
+  }
+}
+
+function renderInterviewQuestion() {
+  var q = _interviewQuestions[_interviewCurrentQ];
+  if (!q) return;
+  document.getElementById('interviewSkillBadge').textContent = _interviewSkill;
+  document.getElementById('interviewQProgress').textContent = 'Question ' + (_interviewCurrentQ + 1) + ' of ' + _interviewQuestions.length;
+  document.getElementById('interviewProgressFill').style.width = ((_interviewCurrentQ + 1) / _interviewQuestions.length * 100) + '%';
+  document.getElementById('interviewQType').textContent = q.type === 'behavioral' ? '💬 Behavioral' : '⚙️ Technical';
+  document.getElementById('interviewQText').textContent = q.question;
+  document.getElementById('interviewAnswer').value = '';
+}
+
+async function submitInterviewAnswer() {
+  var answer = document.getElementById('interviewAnswer').value.trim();
+  if (!answer) { alert('Please write an answer before submitting.'); return; }
+  var btn = document.querySelector('#interview-question .btn-primary');
+  if (btn) { btn.textContent = 'Evaluating...'; btn.disabled = true; }
+  var q = _interviewQuestions[_interviewCurrentQ];
+  try {
+    var resp = await fetch('/api/interview/evaluate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skill: _interviewSkill, question: q.question, answer: answer }) });
+    var data = await resp.json();
+    _interviewScores.push({ question: q.question, answer: answer, score: data.score || 5, feedback: data.feedback || '', strengths: data.strengths || '', improvements: data.improvements || '' });
+    showInterviewFeedback(data, q.question, answer);
+  } catch (err) {
+    alert('Failed to evaluate answer. Please try again.');
+  } finally {
+    if (btn) { btn.textContent = 'Submit Answer →'; btn.disabled = false; }
+  }
+}
+
+function showInterviewFeedback(data, question, answer) {
+  showInterviewScreen('interview-feedback');
+  var score = data.score || 5;
+  var color = score >= 8 ? '#16a34a' : score >= 5 ? '#4f46e5' : '#ef4444';
+  document.getElementById('interviewFbScore').innerHTML = '<span style="font-size:48px;font-weight:700;color:' + color + ';">' + score + '</span><span style="font-size:18px;color:#94a3b8;">/10</span>';
+  document.getElementById('interviewFbQuestion').textContent = question;
+  document.getElementById('interviewFbAnswer').textContent = answer;
+  document.getElementById('interviewFbStrengths').textContent = data.strengths || '—';
+  document.getElementById('interviewFbImprovements').textContent = data.improvements || '—';
+  document.getElementById('interviewFbText').textContent = data.feedback || '';
+  var nextBtn = document.getElementById('interviewNextBtn');
+  var isLast = _interviewCurrentQ >= _interviewQuestions.length - 1;
+  nextBtn.textContent = isLast ? 'View Results →' : 'Next Question →';
+}
+
+function nextInterviewQuestion() {
+  _interviewCurrentQ++;
+  if (_interviewCurrentQ >= _interviewQuestions.length) {
+    showInterviewSummary();
+  } else {
+    showInterviewScreen('interview-question');
+    renderInterviewQuestion();
+  }
+}
+
+function showInterviewSummary() {
+  showInterviewScreen('interview-summary');
+  var total = _interviewScores.reduce(function(sum, s) { return sum + s.score; }, 0);
+  var avg = _interviewScores.length ? Math.round(total / _interviewScores.length * 10) / 10 : 0;
+  var color = avg >= 8 ? '#16a34a' : avg >= 5 ? '#4f46e5' : '#ef4444';
+  document.getElementById('interviewSummaryScore').innerHTML = '<div style="font-size:64px;font-weight:700;color:' + color + ';">' + avg + '<span style="font-size:24px;color:#94a3b8;">/10</span></div><div style="font-size:16px;color:#64748b;margin-top:4px;">Average Score</div>';
+  var label = avg >= 8 ? 'Excellent performance! You\'re interview-ready.' : avg >= 6 ? 'Good effort. Practice the areas marked for improvement.' : 'Keep practising — review the feedback above to improve.';
+  document.getElementById('interviewSummaryText').textContent = label;
+  document.getElementById('interviewSummaryBreakdown').innerHTML = _interviewScores.map(function(s, i) {
+    var c = s.score >= 8 ? '#16a34a' : s.score >= 5 ? '#4f46e5' : '#ef4444';
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9;">' +
+      '<span style="font-size:20px;font-weight:700;color:' + c + ';min-width:32px;">' + s.score + '</span>' +
+      '<span style="font-size:13px;color:#475569;">' + escapeHtml(s.question) + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+// ════════════════════════════════════════════════
+// SHAREABLE CERTIFICATES
+// ════════════════════════════════════════════════
+async function issueCertificate(skill, score) {
+  var user = getActiveUser();
+  if (!user) return;
+  var btn = document.getElementById('certIssuBtn');
+  if (btn) { btn.textContent = 'Generating...'; btn.disabled = true; }
+  try {
+    var resp = await fetch('/api/certificate/issue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.email, userName: user.name || user.email, skill: skill, score: score })
+    });
+    var data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    var certUrl = window.location.origin + '/certificate.html?id=' + data.certificate.id;
+    var wrap = document.getElementById('certBannerWrap');
+    if (wrap) {
+      wrap.innerHTML = '<div style="margin-top:16px;padding:16px 20px;background:linear-gradient(135deg,#fef9c3,#fef08a);border:1px solid #fde047;border-radius:12px;">' +
+        '<div style="font-weight:700;color:#713f12;margin-bottom:6px;">🏆 Certificate Issued!</div>' +
+        '<div style="font-size:13px;color:#854d0e;margin-bottom:10px;">Your ' + escapeHtml(skill) + ' certificate is ready to share.</div>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+          '<a href="' + escapeHtml(certUrl) + '" target="_blank" rel="noopener" class="btn btn-primary" style="font-size:13px;padding:8px 16px;">View Certificate ↗</a>' +
+          '<button class="btn btn-secondary" style="font-size:13px;padding:8px 16px;" onclick="navigator.clipboard.writeText(\'' + escapeHtml(certUrl) + '\').then(function(){showToast(\'Link copied!\')})">Copy Link</button>' +
+        '</div>' +
+      '</div>';
+    }
+  } catch (err) {
+    if (btn) { btn.textContent = 'Get Certificate'; btn.disabled = false; }
+    alert(err.message || 'Failed to issue certificate.');
+  }
+}
+
+function renderCertBanner(skill, score) {
+  var wrap = document.getElementById('certBannerWrap');
+  if (!wrap) return;
+  if (score < 6) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = '<div style="margin-top:16px;padding:16px 20px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #86efac;border-radius:12px;display:flex;align-items:center;gap:12px;">' +
+    '<span style="font-size:32px;">🏆</span>' +
+    '<div style="flex:1;">' +
+      '<div style="font-weight:700;color:#14532d;">Earn your ' + escapeHtml(skill) + ' Certificate</div>' +
+      '<div style="font-size:13px;color:#166534;margin-top:2px;">You scored ' + score + '/10 — eligible for a shareable certificate.</div>' +
+    '</div>' +
+    '<button id="certIssuBtn" class="btn btn-primary" style="white-space:nowrap;" onclick="issueCertificate(\'' + escapeHtml(skill) + '\',' + score + ')">Get Certificate</button>' +
+  '</div>';
 }

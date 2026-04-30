@@ -262,6 +262,7 @@ const STEP_DECAY = 0.7;
 const MIN_STEP = 0.3;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const GEMINI_FALLBACK_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 const ADZUNA_APP_ID = process.env.ADZUNA_APP_ID;
 const ADZUNA_APP_KEY = process.env.ADZUNA_APP_KEY;
 const ADZUNA_BASE = 'https://api.adzuna.com/v1/api/jobs';
@@ -2240,7 +2241,6 @@ IMPORTANT RULES:
 Resume text:
 ${resumeText.slice(0, 10000)}`;
 
-        const GEMINI_FALLBACK_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
         const geminiBody = JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: { temperature: 0.1, maxOutputTokens: 4096, responseMimeType: 'application/json' }
@@ -3411,7 +3411,6 @@ IMPORTANT: scan the ENTIRE resume for any university, college, job, internship, 
 
 Resume:
 ${resumeText.slice(0, 10000)}`;
-        const GEMINI_FALLBACK_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
         const geminiBody = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1, maxOutputTokens: 4096, responseMimeType: 'application/json' } });
         let response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: geminiBody
@@ -3478,6 +3477,141 @@ ${resumeText.slice(0, 10000)}`;
 });
 
 // ── Health Check (useful for Railway / Render) ──
+// ════════════════════════════════════════════════
+// JOB APPLICATION TRACKER
+// ════════════════════════════════════════════════
+
+app.get('/api/job-tracker', async (req, res) => {
+  const userId = req.query.userId;
+  if (!userId) return res.status(400).json({ error: 'userId required' });
+  try {
+    const jobs = await db.getJobApplications(userId);
+    res.json({ jobs });
+  } catch (err) {
+    console.error('job-tracker GET error:', err.message);
+    res.status(500).json({ error: 'Failed to load job applications' });
+  }
+});
+
+app.post('/api/job-tracker', async (req, res) => {
+  const { userId, jobTitle, company, location, url, status, notes } = req.body;
+  if (!userId || !jobTitle) return res.status(400).json({ error: 'userId and jobTitle required' });
+  try {
+    const job = await db.insertJobApplication(userId, { jobTitle, company, location, url, status: status || 'saved', notes });
+    res.json({ job });
+  } catch (err) {
+    console.error('job-tracker POST error:', err.message);
+    res.status(500).json({ error: 'Failed to save job application' });
+  }
+});
+
+app.put('/api/job-tracker/:id', async (req, res) => {
+  const { userId, status, notes } = req.body;
+  if (!userId) return res.status(400).json({ error: 'userId required' });
+  try {
+    const job = await db.updateJobApplication(req.params.id, userId, { status, notes });
+    res.json({ job });
+  } catch (err) {
+    console.error('job-tracker PUT error:', err.message);
+    res.status(500).json({ error: 'Failed to update job application' });
+  }
+});
+
+app.delete('/api/job-tracker/:id', async (req, res) => {
+  const userId = req.query.userId;
+  if (!userId) return res.status(400).json({ error: 'userId required' });
+  try {
+    await db.deleteJobApplication(req.params.id, userId);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('job-tracker DELETE error:', err.message);
+    res.status(500).json({ error: 'Failed to delete job application' });
+  }
+});
+
+// ════════════════════════════════════════════════
+// AI MOCK INTERVIEW
+// ════════════════════════════════════════════════
+
+app.post('/api/interview/generate', async (req, res) => {
+  const { skill } = req.body;
+  if (!skill) return res.status(400).json({ error: 'skill required' });
+  if (!GEMINI_API_KEY) return res.status(503).json({ error: 'AI not configured' });
+
+  const prompt = `Generate exactly 5 interview questions for a ${skill} role. Mix behavioral and technical questions.
+Return ONLY a JSON object in this exact format (no markdown, no explanation):
+{"questions":[{"id":1,"type":"technical","question":"..."},{"id":2,"type":"behavioral","question":"..."},{"id":3,"type":"technical","question":"..."},{"id":4,"type":"behavioral","question":"..."},{"id":5,"type":"technical","question":"..."}]}`;
+
+  try {
+    const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 1024, responseMimeType: 'application/json' } });
+    let resp = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+    if (resp.status === 503) resp = await fetch(`${GEMINI_FALLBACK_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+    const data = await resp.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) return res.status(500).json({ error: 'Failed to generate questions' });
+    const parsed = JSON.parse(match[0]);
+    res.json({ questions: parsed.questions || [] });
+  } catch (err) {
+    console.error('interview/generate error:', err.message);
+    res.status(500).json({ error: 'Failed to generate interview questions' });
+  }
+});
+
+app.post('/api/interview/evaluate', async (req, res) => {
+  const { skill, question, answer } = req.body;
+  if (!skill || !question || !answer) return res.status(400).json({ error: 'skill, question, and answer required' });
+  if (!GEMINI_API_KEY) return res.status(503).json({ error: 'AI not configured' });
+
+  const prompt = `You are an expert interviewer for ${skill} roles. Evaluate this interview answer.
+Question: ${question}
+Candidate Answer: ${answer.slice(0, 1000)}
+Score the answer from 1-10 and give brief constructive feedback (2-3 sentences).
+Return ONLY a JSON object (no markdown): {"score":7,"feedback":"...","strengths":"...","improvements":"..."}`;
+
+  try {
+    const body = JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 512, responseMimeType: 'application/json' } });
+    let resp = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+    if (resp.status === 503) resp = await fetch(`${GEMINI_FALLBACK_URL}?key=${GEMINI_API_KEY}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+    const data = await resp.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) return res.status(500).json({ error: 'Failed to evaluate answer' });
+    res.json(JSON.parse(match[0]));
+  } catch (err) {
+    console.error('interview/evaluate error:', err.message);
+    res.status(500).json({ error: 'Failed to evaluate answer' });
+  }
+});
+
+// ════════════════════════════════════════════════
+// CERTIFICATES
+// ════════════════════════════════════════════════
+
+app.post('/api/certificate/issue', async (req, res) => {
+  const { userId, userName, skill, score } = req.body;
+  if (!userId || !skill || score == null) return res.status(400).json({ error: 'userId, skill, and score required' });
+  if (score < 6) return res.status(400).json({ error: 'Score must be at least 6 to earn a certificate' });
+  try {
+    const cert = await db.insertCertificate(userId, userName, skill, score);
+    res.json({ certificate: cert });
+  } catch (err) {
+    console.error('certificate/issue error:', err.message);
+    res.status(500).json({ error: 'Failed to issue certificate' });
+  }
+});
+
+app.get('/api/certificate/:id', async (req, res) => {
+  try {
+    const cert = await db.getCertificate(req.params.id);
+    if (!cert) return res.status(404).json({ error: 'Certificate not found' });
+    res.json({ certificate: cert });
+  } catch (err) {
+    console.error('certificate GET error:', err.message);
+    res.status(500).json({ error: 'Failed to load certificate' });
+  }
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -3488,8 +3622,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// ── Catch-all: serve index.html for SPA ──
+// ── Catch-all: serve named .html files directly, otherwise SPA fallback ──
 app.get('*', (req, res) => {
+  if (req.path.endsWith('.html')) {
+    const filePath = path.join(STATIC_DIR, req.path);
+    if (fs.existsSync(filePath)) return res.sendFile(filePath);
+  }
   res.sendFile(path.join(STATIC_DIR, 'index.html'));
 });
 
